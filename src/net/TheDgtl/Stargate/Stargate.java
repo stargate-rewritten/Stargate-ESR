@@ -1331,7 +1331,7 @@ public class Stargate extends JavaPlugin {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		String cmd = command.getName();
-		if (cmd.equalsIgnoreCase("sg")) {
+		if (cmd.equalsIgnoreCase("stargate")) {
 			if (args.length != 1) return false;
 			if (args[0].equalsIgnoreCase("about")) {
 				sender.sendMessage("Stargate Plugin created by Drakia");
