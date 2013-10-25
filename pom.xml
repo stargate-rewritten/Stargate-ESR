@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.thedgtl</groupId>
   <artifactId>Stargate</artifactId>
-  <version>0.7.5.11</version>
+  <version>0.7.9.11</version>
   <name>Stargate</name>
   <url>http://forum.thedgtl.net/</url>
   <dependencies>
