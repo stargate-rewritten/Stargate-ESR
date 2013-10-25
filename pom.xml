@@ -39,4 +39,27 @@
   	</plugins>
   </build>
 
+  <dependencies>
+    <!-- Bukkit Dependency -->
+    <dependency>
+      <groupId>org.bukkit</groupId>
+      <artifactId>bukkit</artifactId>
+      <version>1.6.4-R0.1</version>
+      <!-- If you want the lates, use this -->
+      <!-- <version>LATEST</version> -->
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <!-- Bukkit Dependency -->
+
+    <!-- Start of Metrics Dependency -->
+    <dependency>
+      <groupId>org.mcstats</groupId>
+      <artifactId>metrics</artifactId>
+      <version>1.2-SNAPSHOT</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <!-- End of Metrics Dependency -->
+  </dependencies>
 </project>
