@@ -14,18 +14,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   
-  <repositories>
-    <repository>
-      <id>Bukkit Official</id>
-      <url>http://repo.bukkit.org/content/repositories/public</url>
-    </repository>
-    <!-- Required for Metrics -->
-    <repository>
-      <id>mcstats</id>
-      <url>http://repo.mcstats.org/content/repositories/snapshots</url>
-    </repository>
-  </repositories>
-
   <build>
   	<plugins>
   		<plugin>
@@ -40,20 +28,25 @@
   	</plugins>
   </build>
 
+  <repositories>
+    <repository>
+      <id>Bukkit Official</id>
+      <url>http://repo.bukkit.org/content/repositories/public</url>
+    </repository>
+    <repository>
+      <id>mcstats</id>
+      <url>http://repo.mcstats.org/content/repositories/snapshots</url>
+    </repository>
+  </repositories>
+
   <dependencies>
-    <!-- Bukkit Dependency -->
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
-      <version>1.6.4-R0.1</version>
-      <!-- If you want the lates, use this -->
-      <!-- <version>LATEST</version> -->
+      <version>1.6.4-R1.0</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
-    <!-- Bukkit Dependency -->
-
-    <!-- Start of Metrics Dependency -->
     <dependency>
       <groupId>org.mcstats</groupId>
       <artifactId>metrics</artifactId>
@@ -61,6 +54,6 @@
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
-    <!-- End of Metrics Dependency -->
   </dependencies>
+
 </project>
