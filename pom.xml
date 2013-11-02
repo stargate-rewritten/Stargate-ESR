@@ -3,7 +3,7 @@
   
   <groupId>net.thedgtl</groupId>
   <artifactId>Stargate</artifactId>
-  <version>0.7.9.10-CHOICECRAFT</version>
+  <version>0.7.9.11-CHOICECRAFT</version>
   <packaging>jar</packaging>
 
   <name>Stargate</name>
@@ -21,6 +21,13 @@
         <filtering>true</filtering>
         <includes>
           <include>net/TheDgtl/Stargate/resources/*.txt</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>*.*</include>
         </includes>
       </resource>
     </resources>
