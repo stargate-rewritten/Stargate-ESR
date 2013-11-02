@@ -17,10 +17,10 @@
   <build>
     <resources>
       <resource>
-        <directory>src/main/java/net/TheDgtl/Stargate/resources</directory>
+        <directory>src/main/java</directory>
         <filtering>true</filtering>
         <includes>
-          <include>*.txt</include>
+          <include>net/TheDgtl/Stargate/resources/*.txt</include>
         </includes>
       </resource>
     </resources>
