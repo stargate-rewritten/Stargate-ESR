@@ -215,6 +215,9 @@ Bukkit Issue: Stargate will randomly NPE when drawing a sign. Long-standing Bukk
 =============
   Changes
 =============
+[Version 0.7.9.11]
+ - Removed iConomy support. Updated Vault support. Changed setting from "useiconomy" to "useeconomy".
+ - Updated to support Metrics for 1.7.10
 [Version 0.7.9.10]
  - Fix personal gate permission check for players with mixed-case names
 [Version 0.7.9.9]
