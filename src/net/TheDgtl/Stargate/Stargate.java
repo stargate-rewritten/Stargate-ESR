@@ -31,7 +31,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
-import org.bukkit.event.Event;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -163,12 +162,10 @@ public class Stargate extends JavaPlugin {
 		this.migrate();
 		this.reloadGates();
 		
-		// Check to see if iConomy is loaded yet.
-		if (iConomyHandler.setupeConomy(pm)) {
-			if (iConomyHandler.register != null)
-				log.info("[Stargate] Register v" + iConomyHandler.register.getDescription().getVersion() + " found");
-			if (iConomyHandler.economy != null)
-				log.info("[Stargate] Vault v" + iConomyHandler.vault.getDescription().getVersion() + " found");
+		// Check to see if Economy is loaded yet.
+		if (EconomyHandler.setupEconomy(pm)) {
+			if (EconomyHandler.economy != null)
+				log.info("[Stargate] Vault v" + EconomyHandler.vault.getDescription().getVersion() + " found");
         }
 		
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new SGThread(), 0L, 100L);
@@ -218,14 +215,14 @@ public class Stargate extends JavaPlugin {
 		// Debug
 		debug = newConfig.getBoolean("debug");
 		permDebug = newConfig.getBoolean("permdebug");
-		// iConomy
-		iConomyHandler.useiConomy = newConfig.getBoolean("useiconomy");
-		iConomyHandler.createCost = newConfig.getInt("createcost");
-		iConomyHandler.destroyCost = newConfig.getInt("destroycost");
-		iConomyHandler.useCost = newConfig.getInt("usecost");
-		iConomyHandler.toOwner = newConfig.getBoolean("toowner");
-		iConomyHandler.chargeFreeDestination = newConfig.getBoolean("chargefreedestination");
-		iConomyHandler.freeGatesGreen = newConfig.getBoolean("freegatesgreen");
+		// Economy
+		EconomyHandler.economyEnabled = newConfig.getBoolean("useeconomy");
+		EconomyHandler.createCost = newConfig.getInt("createcost");
+		EconomyHandler.destroyCost = newConfig.getInt("destroycost");
+		EconomyHandler.useCost = newConfig.getInt("usecost");
+		EconomyHandler.toOwner = newConfig.getBoolean("toowner");
+		EconomyHandler.chargeFreeDestination = newConfig.getBoolean("chargefreedestination");
+		EconomyHandler.freeGatesGreen = newConfig.getBoolean("freegatesgreen");
 		
 		this.saveConfig();
 	}
@@ -460,7 +457,7 @@ public class Stargate extends JavaPlugin {
 		// Player gets free use
 		if (hasPerm(player, "stargate.free") || Stargate.hasPerm(player,  "stargate.free.use")) return true;
 		// Don't charge for free destination gates
-		if (dest != null && !iConomyHandler.chargeFreeDestination && dest.isFree()) return true;
+		if (dest != null && !EconomyHandler.chargeFreeDestination && dest.isFree()) return true;
 		return false;
 	}
 	
@@ -572,22 +569,22 @@ public class Stargate extends JavaPlugin {
 	public static boolean chargePlayer(Player player, String target, int cost) {
 		// If cost is 0
 		if (cost == 0) return true;
-		// iConomy is disabled
-		if (!iConomyHandler.useiConomy()) return true;
+		// Economy is disabled
+		if (!EconomyHandler.useEconomy()) return true;
 		// Charge player
-		return iConomyHandler.chargePlayer(player.getName(), target, cost);
+		return EconomyHandler.chargePlayer(player.getName(), target, cost);
 	}
 	
 	/*
 	 * Determine the cost of a gate
 	 */
 	public static int getUseCost(Player player, Portal src, Portal dest) {
-		// Not using iConomy
-		if (!iConomyHandler.useiConomy()) return 0;
+		// Not using Economy
+		if (!EconomyHandler.useEconomy()) return 0;
 		// Portal is free
 		if (src.isFree()) return 0;
 		// Not charging for free destinations
-		if (dest != null && !iConomyHandler.chargeFreeDestination && dest.isFree()) return 0;
+		if (dest != null && !EconomyHandler.chargeFreeDestination && dest.isFree()) return 0;
 		// Cost is 0 if the player owns this gate and funds go to the owner
 		if (src.getGate().getToOwner() && src.getOwner().equalsIgnoreCase(player.getName())) return 0;
 		// Player gets free gate use
@@ -600,8 +597,8 @@ public class Stargate extends JavaPlugin {
 	 * Determine the cost to create the gate
 	 */
 	public static int getCreateCost(Player player, Gate gate) {
-		// Not using iConomy
-		if (!iConomyHandler.useiConomy()) return 0;
+		// Not using Economy
+		if (!EconomyHandler.useEconomy()) return 0;
 		// Player gets free gate destruction
 		if (hasPerm(player, "stargate.free") || hasPerm(player, "stargate.free.create")) return 0;
 		
@@ -612,8 +609,8 @@ public class Stargate extends JavaPlugin {
 	 * Determine the cost to destroy the gate
 	 */
 	public static int getDestroyCost(Player player, Gate gate) {
-		// Not using iConomy
-		if (!iConomyHandler.useiConomy()) return 0;
+		// Not using Economy
+		if (!EconomyHandler.useEconomy()) return 0;
 		// Player gets free gate destruction
 		if (hasPerm(player, "stargate.free") || hasPerm(player, "stargate.free.destroy")) return 0;
 		
@@ -696,13 +693,13 @@ public class Stargate extends JavaPlugin {
 						return;
 					}
 					String deductMsg = Stargate.getString("ecoDeduct");
-					deductMsg = Stargate.replaceVars(deductMsg, new String[] {"%cost%", "%portal%"}, new String[] {iConomyHandler.format(cost), portal.getName()});
+					deductMsg = Stargate.replaceVars(deductMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(cost), portal.getName()});
 					sendMessage(player, deductMsg, false);
 					if (target != null) {
 						Player p = server.getPlayer(target);
 						if (p != null) {
 							String obtainedMsg = Stargate.getString("ecoObtain");
-							obtainedMsg = Stargate.replaceVars(obtainedMsg, new String[] {"%cost%", "%portal%"}, new String[] {iConomyHandler.format(cost), portal.getName()});
+							obtainedMsg = Stargate.replaceVars(obtainedMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(cost), portal.getName()});
 							Stargate.sendMessage(p, obtainedMsg, false);
 						}
 					}
@@ -825,13 +822,13 @@ public class Stargate extends JavaPlugin {
 					return;
 				}
 				String deductMsg = Stargate.getString("ecoDeduct");
-				deductMsg = Stargate.replaceVars(deductMsg, new String[] {"%cost%", "%portal%"}, new String[] {iConomyHandler.format(cost), portal.getName()});
+				deductMsg = Stargate.replaceVars(deductMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(cost), portal.getName()});
 				sendMessage(player, deductMsg, false);
 				if (target != null) {
 					Player p = server.getPlayer(target);
 					if (p != null) {
 						String obtainedMsg = Stargate.getString("ecoObtain");
-						obtainedMsg = Stargate.replaceVars(obtainedMsg, new String[] {"%cost%", "%portal%"}, new String[] {iConomyHandler.format(cost), portal.getName()});
+						obtainedMsg = Stargate.replaceVars(obtainedMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(cost), portal.getName()});
 						Stargate.sendMessage(p, obtainedMsg, false);
 					}
 				}
@@ -1084,11 +1081,11 @@ public class Stargate extends JavaPlugin {
 				
 				if (cost > 0) {
 					String deductMsg = Stargate.getString("ecoDeduct");
-					deductMsg = Stargate.replaceVars(deductMsg, new String[] {"%cost%", "%portal%"}, new String[] {iConomyHandler.format(cost), portal.getName()});
+					deductMsg = Stargate.replaceVars(deductMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(cost), portal.getName()});
 					sendMessage(player, deductMsg, false);
 				} else if (cost < 0) {
 					String refundMsg = Stargate.getString("ecoRefund");
-					refundMsg = Stargate.replaceVars(refundMsg, new String[] {"%cost%", "%portal%"}, new String[] {iConomyHandler.format(-cost), portal.getName()});
+					refundMsg = Stargate.replaceVars(refundMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(-cost), portal.getName()});
 					sendMessage(player, refundMsg, false);
 				}
 			}
@@ -1274,18 +1271,15 @@ public class Stargate extends JavaPlugin {
 	private class sListener implements Listener {
 		@EventHandler
 		public void onPluginEnable(PluginEnableEvent event) {
-			if (iConomyHandler.setupRegister(event.getPlugin())) {
-				log.info("[Stargate] Register v" + iConomyHandler.register.getDescription().getVersion() + " found");
-			}
-			if (iConomyHandler.setupVault(event.getPlugin())) {
-				log.info("[Stargate] Vault v" + iConomyHandler.vault.getDescription().getVersion() + " found");
+			if (EconomyHandler.setupEconomy(getServer().getPluginManager())) {
+				log.info("[Stargate] Vault v" + EconomyHandler.vault.getDescription().getVersion() + " found");
 			}
 		}
 		
 		@EventHandler
 		public void onPluginDisable(PluginDisableEvent event) {
-			if (iConomyHandler.checkLost(event.getPlugin())) {
-				log.info("[Stargate] Register/Vault plugin lost.");
+			if (event.getPlugin().equals(EconomyHandler.vault)) {
+				log.info("[Stargate] Vault plugin lost.");
 			}
 		}
 	}
@@ -1369,19 +1363,16 @@ public class Stargate extends JavaPlugin {
 				lang.setLang(langName);
 				lang.reload();
 				
-				// Load iConomy support if enabled/clear if disabled
-				if (iConomyHandler.useiConomy && iConomyHandler.register == null && iConomyHandler.economy == null) {
-					if (iConomyHandler.setupeConomy(pm)) {
-						if (iConomyHandler.register != null)
-							log.info("[Stargate] Register v" + iConomyHandler.register.getDescription().getVersion() + " found");
-						if (iConomyHandler.economy != null)
-							log.info("[Stargate] Vault v" + iConomyHandler.vault.getDescription().getVersion() + " found");
+				// Load Economy support if enabled/clear if disabled
+				if (EconomyHandler.economyEnabled && EconomyHandler.economy == null) {
+					if (EconomyHandler.setupEconomy(pm)) {
+						if (EconomyHandler.economy != null)
+							log.info("[Stargate] Vault v" + EconomyHandler.vault.getDescription().getVersion() + " found");
 			        }
 				}
-				if (!iConomyHandler.useiConomy) {
-					iConomyHandler.vault = null;
-					iConomyHandler.register = null;
-					iConomyHandler.economy = null;
+				if (!EconomyHandler.economyEnabled) {
+					EconomyHandler.vault = null;
+					EconomyHandler.economy = null;
 				}
 				
 				// Enable the required channels for Bungee support

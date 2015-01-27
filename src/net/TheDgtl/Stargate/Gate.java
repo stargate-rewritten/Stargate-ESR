@@ -55,7 +55,7 @@ public class Gate {
 	private int portalBlockOpen = Material.PORTAL.getId();
 	private int portalBlockClosed = Material.AIR.getId();
 	
-	// iConomy information
+	// Economy information
 	private int useCost = -1;
 	private int createCost = -1;
 	private int destroyCost = -1;
@@ -228,17 +228,17 @@ public class Gate {
 	}
 	
 	public int getUseCost() {
-		if (useCost < 0) return iConomyHandler.useCost;
+		if (useCost < 0) return EconomyHandler.useCost;
 		return useCost;
 	}
 	
 	public Integer getCreateCost() {
-		if (createCost < 0) return iConomyHandler.createCost;
+		if (createCost < 0) return EconomyHandler.createCost;
 		return createCost;
 	}
 	
 	public Integer getDestroyCost() {
-		if (destroyCost < 0) return iConomyHandler.destroyCost;
+		if (destroyCost < 0) return EconomyHandler.destroyCost;
 		return destroyCost;
 	}
 	
@@ -404,7 +404,7 @@ public class Gate {
 		gate.useCost = readConfig(config, gate, file, "usecost", -1);
 		gate.destroyCost = readConfig(config, gate, file, "destroycost", -1);
 		gate.createCost = readConfig(config, gate, file, "createcost", -1);
-		gate.toOwner = (config.containsKey("toowner") ? Boolean.valueOf(config.get("toowner")) : iConomyHandler.toOwner);
+		gate.toOwner = (config.containsKey("toowner") ? Boolean.valueOf(config.get("toowner")) : EconomyHandler.toOwner);
 
 		if (gate.getControls().length != 2) {
 			Stargate.log.log(Level.SEVERE, "Could not load Gate " + file.getName() + " - Gates must have exactly 2 control points.");

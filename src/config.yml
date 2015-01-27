@@ -16,7 +16,7 @@
 ############################
 # Stargate economy options #
 ############################
-# useiconomy - Whether to use an economy plugin (Uses Register to interact with all economy plugins)
+# useeconomy - Whether to use an economy plugin
 # createcost - The cost to create a gate
 # destroycost - The cost to destroy a gate
 # usecost - The cost to use a gate
@@ -40,7 +40,7 @@ handleVehicles: true
 sortLists: false
 protectEntrance: false
 signColor: BLACK
-useiconomy: false
+useeconomy: false
 createcost: 0
 destroycost: 0
 usecost: 0
