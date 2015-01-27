@@ -9,7 +9,7 @@ Please visit http://forum.thedgtl.net for all updates and support!
 This is a port of the Stargate plugin from hMod by Dinnerbone.
 Create gates that allow for instant-teleportation between large distances. Gates can be always-open, or triggered, they can be hidden, or accessible to everybody, they can share a network, or they can be split into clusters.
 This port will import your existing locations.dat file from the hMod Stargate plugin!
-iConomy support added back in, only costs are create, destroy and use.
+Economy support added back in, only costs are create, destroy and use.
 
 =============
  Permissions
@@ -111,8 +111,8 @@ Hidden Gates:
  - A hidden gate is only visible to the creator of the gate, or somebody with the stargate.hidden permission.
  - Set the 4th line of the stargate sign to 'H' to make it a hidden gate.
  
-iConomy Support:
- The latest version of Stargate has support for iConomy. Gate creation, destruction and use can all have different costs associated with them. You can also define per-gate layout costs. The default cost is assigned in the config.yml file, while the per-gate costs re defined in the .gate files. To define a certain cost to a gate just add these lines to your .gate file:
+Economy Support:
+ The latest version of Stargate has support for Vault. Gate creation, destruction and use can all have different costs associated with them. You can also define per-gate layout costs. The default cost is assigned in the config.yml file, while the per-gate costs re defined in the .gate files. To define a certain cost to a gate just add these lines to your .gate file:
 usecost=5
 destroycost=5
 createcost=5
@@ -150,7 +150,7 @@ default-gate-network - The default gate network
 portal-folder - The folder your portal databases are saved in
 gate-folder - The folder containing your .gate files
 destroyexplosion - Whether to destroy a stargate with explosions, or stop an explosion if it contains a gates controls.
-useiconomy - Whether or not to use iConomy
+useeconomy - Whether or not to use Economy
 createcost - The cost to create a stargate
 destroycost - The cost to destroy a stargate (Can be negative for a "refund"
 usecost - The cost to use a stargate
