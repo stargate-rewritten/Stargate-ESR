@@ -69,11 +69,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.bukkit</groupId>
-      <artifactId>bukkit</artifactId>
-      <version>1.6.4-R2.0</version>
-    </dependency>
-    <dependency>
       <groupId>org.mcstats</groupId>
       <artifactId>metrics</artifactId>
       <version>1.2-SNAPSHOT</version>
@@ -89,6 +84,14 @@
       <version>1.5</version>
       <type>jar</type>
     </dependency>
+      <dependency>
+          <groupId>org.spigotmc</groupId>
+          <artifactId>spigot-api</artifactId>
+          <!-- Bukkit API Version, change if out dated -->
+          <version>1.9-R0.1-SNAPSHOT</version>
+          <scope>provided</scope>
+          <type>jar</type>
+      </dependency>
   </dependencies>
 
 </project>
