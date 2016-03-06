@@ -103,7 +103,7 @@ public class MetricsLite {
     /**
      * Id of the scheduled task
      */
-    private volatile BukkitTask task = null;
+    private volatile int task = 0;
 
     public MetricsLite(Plugin plugin) throws IOException {
         if (plugin == null) {
@@ -147,12 +147,13 @@ public class MetricsLite {
             }
 
             // Is metrics already running?
-            if (task != null) {
+            if (task != 0) {
                 return true;
             }
 
             // Begin hitting the server with glorious data
-            task = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
+
+            task = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
 
                 private boolean firstPost = true;
 
@@ -161,9 +162,9 @@ public class MetricsLite {
                         // This has to be synchronized or it can collide with the disable method.
                         synchronized (optOutLock) {
                             // Disable Task, if it is running and the server owner decided to opt-out
-                            if (isOptOut() && task != null) {
-                                task.cancel();
-                                task = null;
+                            if (isOptOut() && task != 0) {
+                                plugin.getServer().getScheduler().cancelTask(task);
+                                task = 0;
                             }
                         }
 
@@ -182,7 +183,6 @@ public class MetricsLite {
                     }
                 }
             }, 0, PING_INTERVAL * 1200);
-
             return true;
         }
     }
@@ -227,7 +227,7 @@ public class MetricsLite {
             }
 
             // Enable Task, if it is not running
-            if (task == null) {
+            if (task == 0) {
                 start();
             }
         }
@@ -248,9 +248,9 @@ public class MetricsLite {
             }
 
             // Disable Task, if it is running
-            if (task != null) {
-                task.cancel();
-                task = null;
+            if (task != 0) {
+                plugin.getServer().getScheduler().cancelTask(task);
+                task = 0;
             }
         }
     }
