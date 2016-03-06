@@ -4,11 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -899,7 +895,7 @@ public class Stargate extends JavaPlugin {
 			Block block = null;
 			if (event.isCancelled() && event.getAction() == Action.RIGHT_CLICK_AIR) {
 				try {
-					block = player.getTargetBlock(null, 5);
+					block = player.getTargetBlock((Set<Material>) null, 5);
 				} catch (IllegalStateException ex) {
 					// We can safely ignore this exception, it only happens in void or max height
 					return;
