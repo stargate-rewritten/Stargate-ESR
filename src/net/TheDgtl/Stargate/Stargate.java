@@ -893,22 +893,10 @@ public class Stargate extends JavaPlugin {
 		@EventHandler
 		public void onPlayerInteract(PlayerInteractEvent event) {
 			Player player = event.getPlayer();
-			Block block = null;
-			if (event.isCancelled() && event.getAction() == Action.RIGHT_CLICK_AIR) {
-				try {
-					block = player.getTargetBlock(null, 5);
-				} catch (IllegalStateException ex) {
-					// We can safely ignore this exception, it only happens in void or max height
-					return;
-				}
-			} else {
-				block = event.getClickedBlock();
-			}
-			
-			if (block == null) return;
-			
+			Block block = event.getClickedBlock();
+
 			// Right click
-			if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
+			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 				if (block.getType() == Material.WALL_SIGN) {
 					Portal portal = Portal.getByBlock(block);
 					if (portal == null) return;
