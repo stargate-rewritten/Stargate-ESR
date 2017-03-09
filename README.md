@@ -1,6 +1,7 @@
 Stuff from me:
 =======
 This is my own repo forked from the above (look above, can't remember who atm). All it's set up to do is make the latest version of Stargate, compiled together with the latest version of everything else.
+All builds are handled by Travis CI (link coming soon). Check the releases page for releases.
 
 
 Stargate [![Build Status](https://travis-ci.org/DustCore/Stargate-Bukkit.png?branch=master)](https://travis-ci.org/DustCore/Stargate-Bukkit)
