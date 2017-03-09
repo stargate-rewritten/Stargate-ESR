@@ -4,7 +4,7 @@
 
     <groupId>net.thedgtl</groupId>
     <artifactId>Stargate</artifactId>
-    <version>0.7.9.11-CHOICECRAFT</version>
+    <version>0.7.9.11-TKPublic</version>
     <packaging>jar</packaging>
 
     <name>Stargate</name>
