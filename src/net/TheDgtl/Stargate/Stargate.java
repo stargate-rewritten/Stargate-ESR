@@ -973,29 +973,6 @@ public class Stargate extends JavaPlugin {
 					if ((!portal.isOpen()) && (!portal.isFixed())) {
 						portal.cycleDestination(player, -1);
 					}
-					return;
-				}
-
-				// Check if we're pushing a button.
-				if (block.getType() == Material.STONE_BUTTON) {
-					Portal portal = Portal.getByBlock(block);
-					if (portal == null) return;
-					
-					event.setUseInteractedBlock(Result.DENY);
-					if (player.getGameMode().equals(GameMode.CREATIVE)) {
-						event.setCancelled(true);
-					}
-					
-					boolean deny = false;
-					if (!Stargate.canAccessNetwork(player, portal.getNetwork())) {
-						deny = true;
-					}
-					
-					if (!Stargate.canAccessPortal(player, portal, deny)) {
-						Stargate.sendMessage(player, Stargate.getString("denyMsg"));
-						return;
-					}
-					openPortal(player, portal);
 				}
 			}
 		}
@@ -1088,9 +1065,9 @@ public class Stargate extends JavaPlugin {
 			Portal portal = null;
 			
 			// Handle keeping portal material and buttons around
-			if (block.getTypeId() == 90) {
+			if (block.getType() == Material.PORTAL) {
 				portal = Portal.getByEntrance(block);
-			} else if (block.getTypeId() == 77) {
+			} else if (block.getType() == Material.STONE_BUTTON) {
 				portal = Portal.getByControl(block);
 			}
 			if (portal != null) event.setCancelled(true);
@@ -1119,9 +1096,13 @@ public class Stargate extends JavaPlugin {
 		@EventHandler
 		public void onPistonRetract(BlockPistonRetractEvent event) {
 			if (!event.isSticky()) return;
-			Block affected = event.getRetractLocation().getBlock();
-			Portal portal = Portal.getByBlock(affected);
-			if (portal != null) event.setCancelled(true);
+			for(Block block : event.getBlocks()) {
+				Portal portal = Portal.getByBlock(block);
+				if (portal != null) {
+					event.setCancelled(true);
+					return;
+				}
+			}
 		}
 	}
 	
@@ -1140,10 +1121,14 @@ public class Stargate extends JavaPlugin {
 		public void onWorldUnload(WorldUnloadEvent event) {
 			Stargate.debug("onWorldUnload", "Reloading all Stargates");
 			World w = event.getWorld();
-			Portal.clearGates();
-			for (World world : server.getWorlds()) {
-				if (world.equals(w)) continue;
-				Portal.loadAllGates(world);
+			String location = Stargate.getSaveLocation();
+			File db = new File(location, w.getName() + ".db");
+			if (db.exists()) {
+				Portal.clearGates();
+				for (World world : server.getWorlds()) {
+					if (world.equals(w)) continue;
+					Portal.loadAllGates(world);
+				}
 			}
 		}
 	}
@@ -1163,15 +1148,7 @@ public class Stargate extends JavaPlugin {
 				}
 			}
 		}
-		// TODO: Uncomment when Bukkit pulls SnowmanTrailEvent
-		/*
-		@Override
-		public void onSnowmanTrail(SnowmanTrailEvent event) {
-			Portal p = Portal.getByEntrance(event.getBlock());
-			if (p != null) event.setCancelled(true);
-		}
-		*/
-		
+
 		// Going to leave this commented out until they fix EntityDamagebyBlock
 		/*
 		@Override
@@ -1278,8 +1255,8 @@ public class Stargate extends JavaPlugin {
 			while (System.nanoTime() - sTime < 50000000) {
 				BloxPopulator b = Stargate.blockPopulatorQueue.poll();
 				if (b == null) return;
-				b.getBlox().getBlock().setTypeId(b.getMat());
-				b.getBlox().getBlock().setData(b.getData());
+				b.getBlox().getBlock().setTypeId(b.getMat(), false);
+				b.getBlox().getBlock().setData(b.getData(), false);
 			}
 		}
 	}
