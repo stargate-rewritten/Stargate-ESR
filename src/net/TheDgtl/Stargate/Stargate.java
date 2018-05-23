@@ -29,6 +29,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.Event.Result;
@@ -109,14 +110,14 @@ public class Stargate extends JavaPlugin {
 	public static boolean debug = false;
 	public static boolean permDebug = false;
 	
-	public static ConcurrentLinkedQueue<Portal> openList = new ConcurrentLinkedQueue<Portal>();
-	public static ConcurrentLinkedQueue<Portal> activeList = new ConcurrentLinkedQueue<Portal>();
+	public static ConcurrentLinkedQueue<Portal> openList = new ConcurrentLinkedQueue<>();
+	public static ConcurrentLinkedQueue<Portal> activeList = new ConcurrentLinkedQueue<>();
 	
 	// Used for populating gate open/closed material.
-	public static Queue<BloxPopulator> blockPopulatorQueue = new LinkedList<BloxPopulator>();
+	public static Queue<BloxPopulator> blockPopulatorQueue = new LinkedList<>();
 	
 	// HashMap of player names for Bungee support
-	public static Map<String, String> bungeeQueue = new HashMap<String, String>();
+	public static Map<String, String> bungeeQueue = new HashMap<>();
 	
 	public void onDisable() {
 		Portal.closeAllGates();
@@ -170,19 +171,6 @@ public class Stargate extends JavaPlugin {
 		
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new SGThread(), 0L, 100L);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new BlockPopulatorThread(), 0L, 1L);
-		
-		// Enable Plugin Metrics
-		try {
-			MetricsLite ml = new MetricsLite(this);
-			if (!ml.isOptOut()) {
-				ml.start();
-				log.info("[Stargate] Plugin metrics enabled.");
-			} else {
-				log.info("[Stargate] Plugin metrics not enabled.");
-			}
-		} catch (IOException ex) {
-			log.warning("[Stargate] Error enabling plugin metrics: " + ex);
-		}
 	}
 
 	public void loadConfig() {
@@ -253,23 +241,6 @@ public class Stargate extends JavaPlugin {
 		File newFile = new File(portalFolder, getServer().getWorlds().get(0).getName() + ".db");
 		if (!newFile.exists()) {
 			newFile.getParentFile().mkdirs();
-			// Migrate not-so-old stargate db
-			File oldishFile = new File("plugins/Stargate/stargate.db");
-			if (oldishFile.exists()) {
-				Stargate.log.info("[Stargate] Migrating existing stargate.db");
-				oldishFile.renameTo(newFile);
-			}
-		}
-		
-		// Migrate old gates if applicaple
-		File oldDir = new File("stargates");
-		if (oldDir.exists()) {
-			File newDir = new File(gateFolder);
-			if (!newDir.exists()) newDir.mkdirs();
-			for (File file : oldDir.listFiles(new Gate.StargateFilenameFilter())) {
-				Stargate.log.info("[Stargate] Migrating existing gate " + file.getName());
-				file.renameTo(new File(gateFolder, file.getName()));
-			}
 		}
 	}
 	
@@ -396,12 +367,10 @@ public class Stargate extends JavaPlugin {
 		// Can use all Stargate player features or access all worlds
 		if (hasPerm(player, "stargate.use") || hasPerm(player, "stargate.world")) {
 			// Do a deep check to see if the player lacks this specific world node
-			if (!hasPermDeep(player, "stargate.world." + world)) return false;
-			return true;
+			return hasPermDeep(player, "stargate.world." + world);
 		}
 		// Can access dest world
-		if (hasPerm(player, "stargate.world." + world)) return true;
-		return false;
+		return hasPerm(player, "stargate.world." + world);
 	}
 	
 	/*
@@ -411,16 +380,14 @@ public class Stargate extends JavaPlugin {
 		// Can user all Stargate player features, or access all networks
 		if (hasPerm(player, "stargate.use") || hasPerm(player, "stargate.network")) {
 			// Do a deep check to see if the player lacks this specific network node
-			if (!hasPermDeep(player, "stargate.network." + network)) return false;
-			return true;
+			return hasPermDeep(player, "stargate.network." + network);
 		}
 		// Can access this network
 		if (hasPerm(player, "stargate.network." + network)) return true;
 		// Is able to create personal gates (Assumption is made they can also access them)
 		String playerName = player.getName();
 		if (playerName.length() > 11) playerName = playerName.substring(0, 11);
-		if (network.equals(playerName) && hasPerm(player, "stargate.create.personal")) return true;
-		return false;
+		return network.equals(playerName) && hasPerm(player, "stargate.create.personal");
 	}
 	
 	/*
@@ -430,12 +397,10 @@ public class Stargate extends JavaPlugin {
 		// Can user all Stargate player features, or access all servers
 		if (hasPerm(player, "stargate.use") || hasPerm(player, "stargate.servers")) {
 			// Do a deep check to see if the player lacks this specific server node
-			if (!hasPermDeep(player, "stargate.server." + server)) return false;
-			return true;
+			return hasPermDeep(player, "stargate.server." + server);
 		}
 		// Can access this server
-		if (hasPerm(player, "stargate.server." + server)) return true;
-		return false;
+		return hasPerm(player, "stargate.server." + server);
 	}
 	
 	/*
@@ -444,8 +409,7 @@ public class Stargate extends JavaPlugin {
 	public static boolean canAccessPortal(Player player, Portal portal, boolean deny) {
 		StargateAccessEvent event = new StargateAccessEvent(player, portal, deny);
 		Stargate.server.getPluginManager().callEvent(event);
-		if (event.getDeny()) return false;
-		return true;
+		return !event.getDeny();
 	}
 	
 	/*
@@ -457,8 +421,7 @@ public class Stargate extends JavaPlugin {
 		// Player gets free use
 		if (hasPerm(player, "stargate.free") || Stargate.hasPerm(player,  "stargate.free.use")) return true;
 		// Don't charge for free destination gates
-		if (dest != null && !EconomyHandler.chargeFreeDestination && dest.isFree()) return true;
-		return false;
+		return dest != null && !EconomyHandler.chargeFreeDestination && dest.isFree();
 	}
 	
 	/*
@@ -470,8 +433,7 @@ public class Stargate extends JavaPlugin {
 		// The player is an admin with the ability to see hidden gates
 		if (hasPerm(player, "stargate.admin") || hasPerm(player, "stargate.admin.hidden")) return true;
 		// The player is the owner of the gate
-		if (portal.getOwner().equalsIgnoreCase(player.getName())) return true;
-		return false;
+		return portal.getOwner().equalsIgnoreCase(player.getName());
 	}
 	
 	/*
@@ -481,8 +443,7 @@ public class Stargate extends JavaPlugin {
 		// Check if the player is the owner of the gate
 		if (portal.getOwner().equalsIgnoreCase(player.getName())) return true;
 		// The player is an admin with the ability to use private gates
-		if (hasPerm(player, "stargate.admin") || hasPerm(player, "stargate.admin.private")) return true;
-		return false;
+		return hasPerm(player, "stargate.admin") || hasPerm(player, "stargate.admin.private");
 	}
 	
 	/*
@@ -492,8 +453,7 @@ public class Stargate extends JavaPlugin {
 		// Check if the player can use all options
 		if (hasPerm(player, "stargate.option")) return true;
 		// Check if they can use this specific option
-		if (hasPerm(player, "stargate.option." + option)) return true;
-		return false;
+		return hasPerm(player, "stargate.option." + option);
 	}
 	
 	/*
@@ -505,13 +465,11 @@ public class Stargate extends JavaPlugin {
 		// Check for all network create permission
 		if (hasPerm(player, "stargate.create.network")) {
 			// Do a deep check to see if the player lacks this specific network node
-			if (!hasPermDeep(player, "stargate.create.network." + network)) return false;
-			return true;
+			return hasPermDeep(player, "stargate.create.network." + network);
 		}
 		// Check for this specific network
-		if (hasPerm(player, "stargate.create.network." + network)) return true;
-		
-		return false;
+		return hasPerm(player, "stargate.create.network." + network);
+
 	}
 	
 	/*
@@ -521,8 +479,7 @@ public class Stargate extends JavaPlugin {
 		// Check for general create
 		if (hasPerm(player, "stargate.create")) return true;
 		// Check for personal
-		if (hasPerm(player, "stargate.create.personal")) return true;
-		return false;
+		return hasPerm(player, "stargate.create.personal");
 	}
 	
 	/*
@@ -534,13 +491,10 @@ public class Stargate extends JavaPlugin {
 		// Check for all gate create permissions
 		if (hasPerm(player, "stargate.create.gate")) {
 			// Do a deep check to see if the player lacks this specific gate node
-			if (!hasPermDeep(player, "stargate.create.gate." + gate)) return false;
-			return true;
+			return hasPermDeep(player, "stargate.create.gate." + gate);
 		}
 		// Check for this specific gate
-		if (hasPerm(player, "stargate.create.gate." + gate)) return true;
-		
-		return false;
+		return hasPerm(player, "stargate.create.gate." + gate);
 	}
 	
 	/*
@@ -553,14 +507,12 @@ public class Stargate extends JavaPlugin {
 		// Check for all network destroy permission
 		if (hasPerm(player, "stargate.destroy.network")) {
 			// Do a deep check to see if the player lacks permission for this network node
-			if (!hasPermDeep(player, "stargate.destroy.network." + network)) return false;
-			return true;
+			return hasPermDeep(player, "stargate.destroy.network." + network);
 		}
 		// Check for this specific network
 		if (hasPerm(player, "stargate.destroy.network." + network)) return true;
 		// Check for personal gate
-		if (player.getName().equalsIgnoreCase(portal.getOwner()) && hasPerm(player, "stargate.destroy.personal")) return true;
-		return false;
+		return player.getName().equalsIgnoreCase(portal.getOwner()) && hasPerm(player, "stargate.destroy.personal");
 	}
 	
 	/*
@@ -1148,89 +1100,6 @@ public class Stargate extends JavaPlugin {
 				}
 			}
 		}
-
-		// Going to leave this commented out until they fix EntityDamagebyBlock
-		/*
-		@Override
-		public void onEntityDamage(EntityDamageEvent event) {
-			if (!(event.getEntity() instanceof Player)) return;
-			if (!(event instanceof EntityDamageByBlockEvent)) return;
-			EntityDamageByBlockEvent bEvent = (EntityDamageByBlockEvent)event;
-			Player player = (Player)bEvent.getEntity();
-			Block block = bEvent.getDamager();
-			// Fucking null blocks, we'll do it live! This happens for lava only, as far as I know.
-			// So we're "borrowing" the code from World.java used to determine if we're intersecting a lava block
-			if (block == null) {
-				CraftEntity ce = (CraftEntity)event.getEntity();
-				net.minecraft.server.Entity entity = ce.getHandle();
-				AxisAlignedBB axisalignedbb = entity.boundingBox.b(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D); 
-		        int minx = MathHelper.floor(axisalignedbb.a);
-		        int maxx = MathHelper.floor(axisalignedbb.d + 1.0D);
-		        int miny = MathHelper.floor(axisalignedbb.b);
-		        int maxy = MathHelper.floor(axisalignedbb.e + 1.0D);
-		        int minz = MathHelper.floor(axisalignedbb.c);
-		        int maxz = MathHelper.floor(axisalignedbb.f + 1.0D);
-
-		        for (int x = minx; x < maxx; ++x) {
-		            for (int y = miny; y < maxy; ++y) {
-		                for (int z = minz; z < maxz; ++z) {
-		                	int blockType = player.getWorld().getBlockTypeIdAt(x, y, z);
-		                    if (blockType == Material.LAVA.getId() || blockType == Material.STATIONARY_LAVA.getId()) {
-		                        block = player.getWorld().getBlockAt(x, y, z);
-		                        log.info("Found block! " + block);
-		                        break;
-		                    }
-		                }
-		                if (block != null) break;
-		            }
-		            if (block != null) break;
-		        }
-			}
-			if (block == null) return;
-			Portal portal = Portal.getByEntrance(block);
-			if (portal == null) return;
-			log.info("Found portal");
-			bEvent.setDamage(0);
-			bEvent.setCancelled(true);
-		}
-		
-		@Override
-		public void onEntityCombust(EntityCombustEvent event) {
-			if (!(event.getEntity() instanceof Player)) return;
-			Player player = (Player)event.getEntity();
-			// WHY DOESN'T THIS CANCEL IF YOU CANCEL LAVA DAMAGE?!
-			Block block = null;
-			CraftEntity ce = (CraftEntity)event.getEntity();
-			net.minecraft.server.Entity entity = ce.getHandle();
-			AxisAlignedBB axisalignedbb = entity.boundingBox.b(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D); 
-	        int minx = MathHelper.floor(axisalignedbb.a);
-	        int maxx = MathHelper.floor(axisalignedbb.d + 1.0D);
-	        int miny = MathHelper.floor(axisalignedbb.b);
-	        int maxy = MathHelper.floor(axisalignedbb.e + 1.0D);
-	        int minz = MathHelper.floor(axisalignedbb.c);
-	        int maxz = MathHelper.floor(axisalignedbb.f + 1.0D);
-
-	        for (int x = minx; x < maxx; ++x) {
-	            for (int y = miny; y < maxy; ++y) {
-	                for (int z = minz; z < maxz; ++z) {
-	                	int blockType = player.getWorld().getBlockTypeIdAt(x, y, z);
-	                    if (blockType == Material.LAVA.getId() || blockType == Material.STATIONARY_LAVA.getId()) {
-	                        block = player.getWorld().getBlockAt(x, y, z);
-	                        log.info("Found block! " + block);
-	                        break;
-	                    }
-	                }
-	                if (block != null) break;
-	            }
-	            if (block != null) break;
-	        }
-			if (block == null) return;
-			log.info("What? " + block);
-			Portal portal = Portal.getByEntrance(block);
-			if (portal == null) return;
-			log.info("What2?");
-			event.setCancelled(true);
-		}*/
 	}
 	
 	private class sListener implements Listener {

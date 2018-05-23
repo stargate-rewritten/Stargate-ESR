@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -26,12 +27,13 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.StorageMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.material.Button;
 import org.bukkit.material.MaterialData;
+import org.bukkit.material.Step;
 import org.bukkit.util.Vector;
 
 /**
@@ -56,15 +58,15 @@ import org.bukkit.util.Vector;
  
 public class Portal {
 	// Static variables used to store portal lists
-	private static final HashMap<Blox, Portal> lookupBlocks = new HashMap<Blox, Portal>();
-	private static final HashMap<Blox, Portal> lookupEntrances = new HashMap<Blox, Portal>();
-	private static final HashMap<Blox, Portal> lookupControls = new HashMap<Blox, Portal>();
-	private static final ArrayList<Portal> allPortals = new ArrayList<Portal>();
-	private static final HashMap<String, ArrayList<String>> allPortalsNet = new HashMap<String, ArrayList<String>>();
-	private static final HashMap<String, HashMap<String, Portal>> lookupNamesNet = new HashMap<String, HashMap<String, Portal>>();
+	private static final HashMap<Blox, Portal> lookupBlocks = new HashMap<>();
+	private static final HashMap<Blox, Portal> lookupEntrances = new HashMap<>();
+	private static final HashMap<Blox, Portal> lookupControls = new HashMap<>();
+	private static final ArrayList<Portal> allPortals = new ArrayList<>();
+	private static final HashMap<String, ArrayList<String>> allPortalsNet = new HashMap<>();
+	private static final HashMap<String, HashMap<String, Portal>> lookupNamesNet = new HashMap<>();
 	
 	// A list of Bungee gates
-	private static final HashMap<String, Portal> bungeePortals = new HashMap<String, Portal>();
+	private static final HashMap<String, Portal> bungeePortals = new HashMap<>();
 	
 	// Gate location block info
 	private Blox topLeft;
@@ -103,7 +105,7 @@ public class Portal {
 	// In-use information
 	private Player player;
 	private Player activePlayer;
-	private ArrayList<String> destinations = new ArrayList<String>();
+	private ArrayList<String> destinations = new ArrayList<>();
 	private boolean isOpen = false;
 	private long openTime;
 
@@ -496,19 +498,19 @@ public class Portal {
 		
 		// Get new velocity
 		final Vector newVelocity = new Vector();
-		switch ((int)id.getBlock().getData()) {
-		case 2:
-			newVelocity.setZ(-1);
-			break;
-		case 3:
-			newVelocity.setZ(1);
-			break;
-		case 4:
-			newVelocity.setX(-1);
-			break;
-		case 5:
-			newVelocity.setX(1);
-			break;
+		switch (id.getBlock().getData()) {
+			case 2:
+				newVelocity.setZ(-1);
+				break;
+			case 3:
+				newVelocity.setZ(1);
+				break;
+			case 4:
+				newVelocity.setX(-1);
+				break;
+			case 5:
+				newVelocity.setX(1);
+				break;
 		}
 		newVelocity.multiply(velocity);
 		
@@ -547,7 +549,7 @@ public class Portal {
 		}
 		
 		if (loc != null) {
-			if (getWorld().getBlockTypeIdAt(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()) == Material.STEP.getId()) {
+			if (getWorld().getBlockAt(loc).getState().getData() instanceof Step) {
 				loc.setY(loc.getY() + 0.5);
 			}
 
@@ -581,9 +583,10 @@ public class Portal {
 	}
 	
 	public ArrayList<String> getDestinations(Player player, String network) {
-		ArrayList<String> destinations = new ArrayList<String>();
+		ArrayList<String> destinations = new ArrayList<>();
 		for (String dest : allPortalsNet.get(network.toLowerCase())) {
 			Portal portal = getByName(dest, network);
+			if (portal == null) continue;
 			// Check if dest is a random gate
 			if (portal.isRandom()) continue;
 			// Check if dest is always open (Don't show if so)
@@ -1324,15 +1327,15 @@ public class Portal {
 					String network = (split.length > 9) ? split[9] : Stargate.getDefaultNetwork();
 					if (network.isEmpty()) network = Stargate.getDefaultNetwork();
 					String owner = (split.length > 10) ? split[10] : "";
-					boolean hidden = (split.length > 11) ? split[11].equalsIgnoreCase("true") : false;
-					boolean alwaysOn = (split.length > 12) ? split[12].equalsIgnoreCase("true") : false;
-					boolean priv = (split.length > 13) ? split[13].equalsIgnoreCase("true") : false;
-					boolean free = (split.length > 15) ? split[15].equalsIgnoreCase("true") : false;
-					boolean backwards = (split.length > 16) ? split[16].equalsIgnoreCase("true") : false;
-					boolean show = (split.length > 17) ? split[17].equalsIgnoreCase("true") : false;
-					boolean noNetwork = (split.length > 18) ? split[18].equalsIgnoreCase("true") : false;
-					boolean random = (split.length > 19) ? split[19].equalsIgnoreCase("true") : false;
-					boolean bungee = (split.length > 20) ? split[20].equalsIgnoreCase("true") : false;
+					boolean hidden = (split.length > 11) && split[11].equalsIgnoreCase("true");
+					boolean alwaysOn = (split.length > 12) && split[12].equalsIgnoreCase("true");
+					boolean priv = (split.length > 13) && split[13].equalsIgnoreCase("true");
+					boolean free = (split.length > 15) && split[15].equalsIgnoreCase("true");
+					boolean backwards = (split.length > 16) && split[16].equalsIgnoreCase("true");
+					boolean show = (split.length > 17) && split[17].equalsIgnoreCase("true");
+					boolean noNetwork = (split.length > 18) && split[18].equalsIgnoreCase("true");
+					boolean random = (split.length > 19) && split[19].equalsIgnoreCase("true");
+					boolean bungee = (split.length > 20) && split[20].equalsIgnoreCase("true");
 
 					Portal portal = new Portal(topLeft, modX, modZ, rotX, sign, button, dest, name, false, network, gate, owner, hidden, alwaysOn, priv, free, backwards, show, noNetwork, random, bungee);
 					portal.register();

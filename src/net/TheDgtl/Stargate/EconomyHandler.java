@@ -76,8 +76,7 @@ public class EconomyHandler {
 	}
 
 	public static boolean useEconomy() {
-		if(!economyEnabled || economy == null) return false;
-		return true;
+		return economyEnabled && economy != null;
 	}
 
 }

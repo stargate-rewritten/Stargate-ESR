@@ -81,8 +81,8 @@ public class LangLoader {
 	// with missing lines from the in-JAR files
 	private void updateLanguage(String lang) {
 		// Load the current language file
-		ArrayList<String> keyList = new ArrayList<String>();
-		ArrayList<String> valList = new ArrayList<String>();
+		ArrayList<String> keyList = new ArrayList<>();
+		ArrayList<String> valList = new ArrayList<>();
 		
 		HashMap<String, String> curLang = load(lang);
 		
@@ -160,7 +160,7 @@ public class LangLoader {
 	}
 	
 	private HashMap<String, String> load(String lang, InputStream is) {
-		HashMap<String, String> strings = new HashMap<String, String>();
+		HashMap<String, String> strings = new HashMap<>();
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
 		try {
@@ -192,8 +192,9 @@ public class LangLoader {
 			return null;
 		} finally {
 			if (fis != null) {
-				try {fis.close();}
-				catch (Exception ex) {}
+				try {
+					fis.close();
+				} catch (Exception ex) {}
 			}
 		}
 		return strings;
