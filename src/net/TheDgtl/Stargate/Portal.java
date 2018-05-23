@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -366,7 +365,7 @@ public class Portal {
 
 		getWorld().loadChunk(getWorld().getChunkAt(topLeft.getBlock()));
 
-		int openType = gate.getPortalBlockOpen();
+		Material openType = gate.getPortalBlockOpen();
 		for (Blox inside : getEntrances()) {
 			Stargate.blockPopulatorQueue.add(new BloxPopulator(inside, openType));
 		}
@@ -403,7 +402,7 @@ public class Portal {
 		if (isAlwaysOn() && !force) return; // Only close always-open if forced
 		
 		// Close this gate, then the dest gate.
-		int closedType = gate.getPortalBlockClosed();
+		Material closedType = gate.getPortalBlockClosed();
 		for (Blox inside : getEntrances()) {
 			Stargate.blockPopulatorQueue.add(new BloxPopulator(inside, closedType));
 		}
@@ -569,8 +568,9 @@ public class Portal {
 
 	public boolean isVerified() {
 		verified = true;
-		for (RelativeBlockVector control : gate.getControls())
-			verified = verified && getBlockAt(control).getBlock().getTypeId() == gate.getControlBlock();
+		for (RelativeBlockVector control : gate.getControls()) {
+			verified = verified && getBlockAt(control).getBlock().getType().equals(gate.getControlBlock());
+		}
 		return verified;
 	}
 
@@ -1144,7 +1144,7 @@ public class Portal {
 		// No button on an always-open gate.
 		if (!alwaysOn) {
 			button = topleft.modRelative(buttonVector.getRight(), buttonVector.getDepth(), buttonVector.getDistance() + 1, modX, 1, modZ);
-			button.setType(Material.STONE_BUTTON.getId());
+			button.setType(Material.STONE_BUTTON);
 			button.setData(facing);
 			portal.setButton(button);
 		}
@@ -1354,7 +1354,7 @@ public class Portal {
 						if (!portal.isVerified() || !portal.checkIntegrity()) {
 							// DEBUG
 							for (RelativeBlockVector control : portal.getGate().getControls()) {
-								if (portal.getBlockAt(control).getBlock().getTypeId() != portal.getGate().getControlBlock()) {
+								if (!portal.getBlockAt(control).getBlock().getType().equals(portal.getGate().getControlBlock())) {
 									Stargate.debug("loadAllGates", "Control Block Type == " + portal.getBlockAt(control).getBlock().getTypeId());
 								}
 							}

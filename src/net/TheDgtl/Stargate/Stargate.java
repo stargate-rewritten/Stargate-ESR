@@ -29,7 +29,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.Event.Result;
@@ -1095,7 +1094,7 @@ public class Stargate extends JavaPlugin {
 				if (destroyExplosion) {
 					portal.unregister(true);
 				} else {
-					Stargate.blockPopulatorQueue.add(new BloxPopulator(new Blox(b), b.getTypeId(), b.getData()));
+					Stargate.blockPopulatorQueue.add(new BloxPopulator(new Blox(b), b.getType(), b.getData()));
 					event.setCancelled(true);
 				}
 			}
@@ -1124,7 +1123,7 @@ public class Stargate extends JavaPlugin {
 			while (System.nanoTime() - sTime < 50000000) {
 				BloxPopulator b = Stargate.blockPopulatorQueue.poll();
 				if (b == null) return;
-				b.getBlox().getBlock().setTypeId(b.getMat(), false);
+				b.getBlox().getBlock().setType(b.getMat(), false);
 				b.getBlox().getBlock().setData(b.getData(), false);
 			}
 		}

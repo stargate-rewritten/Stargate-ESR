@@ -77,12 +77,12 @@ public class Blox {
 		return makeRelativeLoc(0.5 + -right * modX + distance * modZ, depth, 0.5 + -right * modZ + -distance * modX, rotX, 0);
 	}
 
-	public void setType(int type) {
-		world.getBlockAt(x, y, z).setTypeId(type);
+	public void setType(Material type) {
+		world.getBlockAt(x, y, z).setType(type);
 	}
 
-	public int getType() {
-		return world.getBlockAt(x, y, z).getTypeId();
+	public Material getType() {
+		return world.getBlockAt(x, y, z).getType();
 	}
 
 	public void setData(int data) {

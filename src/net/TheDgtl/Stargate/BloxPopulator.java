@@ -1,17 +1,19 @@
 package net.TheDgtl.Stargate;
 
+import org.bukkit.Material;
+
 public class BloxPopulator {
 	private Blox blox;
-	private int nextMat;
+	private Material nextMat;
 	private byte nextData;
 	
-	public BloxPopulator(Blox b, int m) {
+	public BloxPopulator(Blox b, Material m) {
 		blox = b;
 		nextMat = m;
 		nextData = 0;
 	}
 	
-	public BloxPopulator(Blox b, int m, byte d) {
+	public BloxPopulator(Blox b, Material m, byte d) {
 		blox = b;
 		nextMat = m;
 		nextData = d;
@@ -21,7 +23,7 @@ public class BloxPopulator {
 		blox = b;
 	}
 	
-	public void setMat(int m) {
+	public void setMat(Material m) {
 		nextMat = m;
 	}
 	
@@ -33,7 +35,7 @@ public class BloxPopulator {
 		return blox;
 	}
 	
-	public int getMat() {
+	public Material getMat() {
 		return nextMat;
 	}
 	
