@@ -46,7 +46,6 @@ public class Gate {
 	private String filename;
 	private Character[][] layout;
 	private HashMap<Character, Material> types;
-	private HashMap<Character, Integer> metadata;
 	private RelativeBlockVector[] entrances = new RelativeBlockVector[0];
 	private RelativeBlockVector[] border = new RelativeBlockVector[0];
 	private RelativeBlockVector[] controls = new RelativeBlockVector[0];
@@ -61,10 +60,9 @@ public class Gate {
 	private int destroyCost = -1;
 	private boolean toOwner = false;
 
-	public Gate(String filename, Character[][] layout, HashMap<Character, Material> types, HashMap<Character, Integer> metadata) {
+	public Gate(String filename, Character[][] layout, HashMap<Character, Material> types) {
 		this.filename = filename;
 		this.layout = layout;
-		this.metadata = metadata;
 		this.types = types;
 
 		populateCoordinates();
@@ -141,12 +139,6 @@ public class Gate {
 				bw.append(type);
 				bw.append('=');
 				bw.append(value.toString());
-				Integer mData = metadata.get(type);
-				// Append metadata
-				if (mData != null) {
-					bw.append(':');
-					bw.append(mData.toString());
-				}
 				bw.newLine();
 			}
 
@@ -186,10 +178,6 @@ public class Gate {
 	
 	public HashMap<Character, Material> getTypes() {
 		return types;
-	}
-	
-	public HashMap<Character, Integer> getMetaData() {
-		return metadata;
 	}
 
 	public RelativeBlockVector[] getEntrances() {
@@ -293,11 +281,6 @@ public class Gate {
 						 Stargate.debug("Gate::Matches", "Block Type Mismatch: " + topleft.modRelative(x, y, 0, modX, 1, modZ).getType() + " != " + id);
 						 return false;
 					 }
-					 Integer mData = metadata.get(layout[y][x]);
-					 if (mData != null && topleft.modRelative(x, y, 0, modX, 1, modZ).getData() != mData) {
-						 Stargate.debug("Gate::Matches", "Block Data Mismatch: " + topleft.modRelative(x, y, 0, modX, 1, modZ).getData() + " != " + mData);
-						 return false;
-					 }
 				}
 			}
 		}
@@ -322,7 +305,6 @@ public class Gate {
 		boolean designing = false;
 		ArrayList<ArrayList<Character>> design = new ArrayList<>();
 		HashMap<Character, Material> types = new HashMap<>();
-		HashMap<Character, Integer> metadata = new HashMap<>();
 		HashMap<String, String> config = new HashMap<>();
 		HashSet<Material> frameTypes = new HashSet<>();
 		int cols = 0;
@@ -364,15 +346,7 @@ public class Gate {
 
 						if (key.length() == 1) {
 							Character symbol = key.charAt(0);
-							// Check for metadata
-							if (value.contains(":")) {
-								split = value.split(":");
-								value = split[0].trim();
-								String mData = split[1].trim();
-								metadata.put(symbol, Integer.parseInt(mData));
-							}
-							Material id = Material.valueOf(value);
-
+							Material id = Material.getMaterial(value);
 							types.put(symbol, id);
 							frameTypes.add(id);
 						} else {
@@ -405,7 +379,7 @@ public class Gate {
 			layout[y] = result;
 		}
 
-		Gate gate = new Gate(file.getName(), layout, types, metadata);
+		Gate gate = new Gate(file.getName(), layout, types);
 
 		gate.portalBlockOpen = readConfig(config, gate, file, "portal-open", gate.portalBlockOpen);
 		gate.portalBlockClosed = readConfig(config, gate, file, "portal-closed", gate.portalBlockClosed);
@@ -485,9 +459,8 @@ public class Gate {
 		types.put(ANYTHING, Material.AIR);
 		types.put('X', Material.OBSIDIAN);
 		types.put('-', Material.OBSIDIAN);
-		HashMap<Character, Integer> metadata = new HashMap<>();
 
-		Gate gate = new Gate("nethergate.gate", layout, types, metadata);
+		Gate gate = new Gate("nethergate.gate", layout, types);
 		gate.save(gateFolder);
 		registerGate(gate);
 	}
