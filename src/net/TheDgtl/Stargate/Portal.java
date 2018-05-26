@@ -1317,7 +1317,7 @@ public class Portal {
 					int modZ = Integer.parseInt(split[4]);
 					float rotX = Float.parseFloat(split[5]);
 					Blox topLeft = new Blox(world, split[6]);
-					Gate gate = (split[7].contains(";")) ? Gate.getGateByName("nethergate.gate") : Gate.getGateByName(split[7]);
+					Gate gate = Gate.getGateByName(split[7]);
 					if (gate == null) {
 						Stargate.log.info("[Stargate] Gate layout on line " + l + " does not exist [" + split[7] + "]");
 						continue;

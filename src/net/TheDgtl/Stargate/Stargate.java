@@ -221,10 +221,6 @@ public class Stargate extends JavaPlugin {
 		}
 		
 		Gate.loadGates(gateFolder);
-		// Replace nethergate.gate if it doesn't have an exit point.
-		if (Gate.getGateByName("nethergate.gate") == null || Gate.getGateByName("nethergate.gate").getExit() == null) {
-			Gate.populateDefaults(gateFolder);
-		}
 		log.info("[Stargate] Loaded " + Gate.getGateCount() + " gate layouts");
 		for (World world : getServer().getWorlds()) {
 			Portal.loadAllGates(world);
