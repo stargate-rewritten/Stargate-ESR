@@ -4,6 +4,7 @@ version: 0.7.9.11
 description: Stargate mod for Bukkit
 author: Drakia
 website: http://www.thedgtl.net
+api-version: 1.13
 commands:
   sg:
     description: Used to reload the plugin. Console use only.

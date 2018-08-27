@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -18,20 +19,23 @@ import net.TheDgtl.Stargate.event.StargateDeactivateEvent;
 import net.TheDgtl.Stargate.event.StargateOpenEvent;
 import net.TheDgtl.Stargate.event.StargatePortalEvent;
 
+import org.bukkit.Axis;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.material.Button;
-import org.bukkit.material.MaterialData;
 import org.bukkit.material.Step;
 import org.bukkit.util.Vector;
 
@@ -72,6 +76,7 @@ public class Portal {
 	private int modX;
 	private int modZ;
 	private float rotX;
+	private Axis rot;
 	
 	// Block references
 	private Blox id;
@@ -117,6 +122,7 @@ public class Portal {
 		this.modX = modX;
 		this.modZ = modZ;
 		this.rotX = rotX;
+		this.rot = rotX == 90.0F || rotX == 270.0F ? Axis.X : Axis.Z;
 		this.id = id;
 		this.destination = dest;
 		this.button = button;
@@ -233,6 +239,10 @@ public class Portal {
 
 	public float getRotation() {
 		return rotX;
+	}
+
+	public Axis getAxis() {
+		return rot;
 	}
 	
 	public Player getActivePlayer() {
@@ -366,8 +376,9 @@ public class Portal {
 		getWorld().loadChunk(getWorld().getChunkAt(topLeft.getBlock()));
 
 		Material openType = gate.getPortalBlockOpen();
+		Axis ax = openType == Material.NETHER_PORTAL ? rot : null;
 		for (Blox inside : getEntrances()) {
-			Stargate.blockPopulatorQueue.add(new BloxPopulator(inside, openType));
+			Stargate.blockPopulatorQueue.add(new BloxPopulator(inside, openType, ax));
 		}
 
 		isOpen = true;
@@ -442,10 +453,11 @@ public class Portal {
 		RelativeBlockVector[] controls = gate.getControls();
 
 		for (RelativeBlockVector vector : controls) {
-			MaterialData mat = getBlockAt(vector).getBlock().getState().getData();
+			BlockData data = getBlockAt(vector).getBlock().getBlockData();
 			
-			if (mat instanceof Button && ((Button)mat).isPowered())
+			if (data instanceof Powerable && ((Powerable) data).isPowered()) {
 				return true;
+			}
 		}
 
 		return false;
@@ -496,34 +508,20 @@ public class Portal {
 		vehicle.setVelocity(new Vector());
 		
 		// Get new velocity
-		final Vector newVelocity = new Vector();
-		switch (id.getBlock().getData()) {
-			case 2:
-				newVelocity.setZ(-1);
-				break;
-			case 3:
-				newVelocity.setZ(1);
-				break;
-			case 4:
-				newVelocity.setX(-1);
-				break;
-			case 5:
-				newVelocity.setX(1);
-				break;
-		}
+		final Vector newVelocity = new Vector(modX, 0.0F, modZ);
 		newVelocity.multiply(velocity);
 		
-		final Entity passenger = vehicle.getPassenger();
-		if (passenger != null) {
+		List<Entity> passengers = vehicle.getPassengers();
+		if (!passengers.isEmpty()) {
 			final Vehicle v = exit.getWorld().spawn(exit, vehicle.getClass());
+			final Entity passenger = passengers.get(0);
 			vehicle.eject();
 			vehicle.remove();
+			passenger.eject();
 			passenger.teleport(exit);
-			Stargate.server.getScheduler().scheduleSyncDelayedTask(Stargate.stargate, new Runnable() {
-				public void run() {
-					v.setPassenger(passenger);
-					v.setVelocity(newVelocity);
-				}
+			Stargate.server.getScheduler().scheduleSyncDelayedTask(Stargate.stargate, () -> {
+				v.addPassenger(passenger);
+				v.setVelocity(newVelocity);
 			}, 1);
 		} else {
 			Vehicle mc = exit.getWorld().spawn(exit, vehicle.getClass());
@@ -568,6 +566,9 @@ public class Portal {
 
 	public boolean isVerified() {
 		verified = true;
+		if(!Stargate.verifyPortals) {
+			return true;
+		}
 		for (RelativeBlockVector control : gate.getControls()) {
 			verified = verified && getBlockAt(control).getBlock().getType().equals(gate.getControlBlock());
 		}
@@ -575,10 +576,16 @@ public class Portal {
 	}
 
 	public boolean wasVerified() {
+		if(!Stargate.verifyPortals) {
+			return true;
+		}
 		return verified;
 	}
 
 	public boolean checkIntegrity() {
+		if(!Stargate.verifyPortals) {
+			return true;
+		}
 		return gate.matches(topLeft, modX, modZ);
 	}
 	
@@ -692,7 +699,7 @@ public class Portal {
 
 	public final void drawSign() {
 		Material sMat = id.getBlock().getType();
-		if (sMat != Material.SIGN && sMat != Material.WALL_SIGN && sMat != Material.SIGN_POST) {
+		if (sMat != Material.SIGN && sMat != Material.WALL_SIGN) {
 			Stargate.log.warning("[Stargate] Sign block is not a Sign object");
 			Stargate.debug("Portal::drawSign", "Block: " + id.getBlock().getType() + " @ " + id.getBlock().getLocation());
 			return;
@@ -854,14 +861,14 @@ public class Portal {
 			// Check if network exists in our network list
 			if (!lookupNamesNet.containsKey(getNetwork().toLowerCase())) {
 				Stargate.debug("register", "Network " + getNetwork() + " not in lookupNamesNet, adding");
-				lookupNamesNet.put(getNetwork().toLowerCase(), new HashMap<String, Portal>());
+				lookupNamesNet.put(getNetwork().toLowerCase(), new HashMap<>());
 			}
 			lookupNamesNet.get(getNetwork().toLowerCase()).put(getName().toLowerCase(), this);
 			
 			// Check if this network exists
 			if (!allPortalsNet.containsKey(getNetwork().toLowerCase())) {
 				Stargate.debug("register", "Network " + getNetwork() + " not in allPortalsNet, adding");
-				allPortalsNet.put(getNetwork().toLowerCase(), new ArrayList<String>());
+				allPortalsNet.put(getNetwork().toLowerCase(), new ArrayList<>());
 			}
 			allPortalsNet.get(getNetwork().toLowerCase()).add(getName().toLowerCase());
 		}
@@ -952,24 +959,24 @@ public class Portal {
 		int modX = 0;
 		int modZ = 0;
 		float rotX = 0f;
-		int facing = 0;
+		BlockFace buttonfacing = BlockFace.DOWN;
 
 		if (idParent.getX() > id.getBlock().getX()) {
 			modZ -= 1;
 			rotX = 90f;
-			facing = 2;
+			buttonfacing = BlockFace.WEST;
 		} else if (idParent.getX() < id.getBlock().getX()) {
 			modZ += 1;
 			rotX = 270f;
-			facing = 1;
+			buttonfacing = BlockFace.EAST;
 		} else if (idParent.getZ() > id.getBlock().getZ()) {
 			modX += 1;
 			rotX = 180f;
-			facing = 4;
+			buttonfacing = BlockFace.NORTH;
 		} else if (idParent.getZ() < id.getBlock().getZ()) {
 			modX -= 1;
 			rotX = 0f;
-			facing = 3;
+			buttonfacing = BlockFace.SOUTH;
 		}
 
 		Gate[] possibleGates = Gate.getGatesByControlBlock(idParent);
@@ -1145,7 +1152,9 @@ public class Portal {
 		if (!alwaysOn) {
 			button = topleft.modRelative(buttonVector.getRight(), buttonVector.getDepth(), buttonVector.getDistance() + 1, modX, 1, modZ);
 			button.setType(Material.STONE_BUTTON);
-			button.setData(facing);
+			Directional buttondata = (Directional) button.getBlock().getBlockData();
+			buttondata.setFacing(buttonfacing);
+			button.getBlock().setBlockData(buttondata);
 			portal.setButton(button);
 		}
 		
@@ -1197,6 +1206,34 @@ public class Portal {
 
 	public static Portal getByEntrance(Block block) {
 		return lookupEntrances.get(new Blox(block));
+	}
+
+	public static Portal getByAdjacentEntrance(Location loc) {
+		int centerX = loc.getBlockX();
+		int centerY = loc.getBlockY();
+		int centerZ = loc.getBlockZ();
+		World world = loc.getWorld();
+		Portal portal = lookupEntrances.get(new Blox(world, centerX, centerY, centerZ));
+		if(portal != null) {
+			return portal;
+		}
+		portal = lookupEntrances.get(new Blox(world, centerX + 1, centerY, centerZ));
+		if(portal != null) {
+			return portal;
+		}
+		portal = lookupEntrances.get(new Blox(world, centerX - 1, centerY, centerZ));
+		if(portal != null) {
+			return portal;
+		}
+		portal = lookupEntrances.get(new Blox(world, centerX, centerY, centerZ + 1));
+		if(portal != null) {
+			return portal;
+		}
+		portal = lookupEntrances.get(new Blox(world, centerX, centerY, centerZ - 1));
+		if(portal != null) {
+			return portal;
+		}
+		return null;
 	}
 	
 	public static Portal getByControl(Block block) {
@@ -1355,18 +1392,17 @@ public class Portal {
 							// DEBUG
 							for (RelativeBlockVector control : portal.getGate().getControls()) {
 								if (!portal.getBlockAt(control).getBlock().getType().equals(portal.getGate().getControlBlock())) {
-									Stargate.debug("loadAllGates", "Control Block Type == " + portal.getBlockAt(control).getBlock().getTypeId());
+									Stargate.debug("loadAllGates", "Control Block Type == " + portal.getBlockAt(control).getBlock().getType().name());
 								}
 							}
 							portal.unregister(false);
 							iter.remove();
 							Stargate.log.info("[Stargate] Destroying stargate at " + portal.toString());
 							continue;
-						} else {
-							portal.drawSign();
-							portalCount++;
 						}
 					}
+					portal.drawSign();
+					portalCount++;
 
 					if (!portal.isFixed()) continue;
 					

@@ -4,6 +4,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Sign;
+import org.bukkit.block.data.type.WallSign;
 
 /**
  * Stargate - A portal plugin for Bukkit
@@ -85,14 +88,6 @@ public class Blox {
 		return world.getBlockAt(x, y, z).getType();
 	}
 
-	public void setData(int data) {
-		world.getBlockAt(x, y, z).setData((byte)data);
-	}
-
-	public int getData() {
-		return world.getBlockAt(x, y, z).getData();
-	}
-
 	public Block getBlock() {
 		return world.getBlockAt(x, y, z);
 	}
@@ -125,16 +120,10 @@ public class Blox {
 		int offsetZ = 0;
 		
 		if (getBlock().getType() == Material.WALL_SIGN) {
-			if (getData() == 0x2) {
-				offsetZ = 1;
-			} else if (getData() == 0x3) {
-				offsetZ = -1;
-			} else if (getData() == 0x4) {
-				offsetX = 1;
-			} else if (getData() == 0x5) {
-				offsetX = -1;
-			}
-		} else if (getBlock().getType() == Material.SIGN_POST) {
+			BlockFace facing = ((WallSign) getBlock().getBlockData()).getFacing().getOppositeFace();
+			offsetX = facing.getModX();
+			offsetZ = facing.getModZ();
+		} else if (getBlock().getType() == Material.SIGN) {
 			offsetY = -1;
 		} else {
 			return;

@@ -51,7 +51,7 @@ public class Gate {
 	private RelativeBlockVector[] controls = new RelativeBlockVector[0];
 	private RelativeBlockVector exitBlock = null;
 	private HashMap<RelativeBlockVector, Integer> exits = new HashMap<>();
-	private Material portalBlockOpen = Material.PORTAL;
+	private Material portalBlockOpen = Material.NETHER_PORTAL;
 	private Material portalBlockClosed = Material.AIR;
 	
 	// Economy information
@@ -138,7 +138,9 @@ public class Gate {
 
 				bw.append(type);
 				bw.append('=');
-				bw.append(value.toString());
+				if(value != null) {
+					bw.append(value.toString());
+				}
 				bw.newLine();
 			}
 
@@ -247,6 +249,7 @@ public class Gate {
 	}
 
 	public boolean matches(Blox topleft, int modX, int modZ, boolean onCreate) {
+		HashMap<Character, Material> portalTypes = new HashMap<>(types);
 		for (int y = 0; y < layout.length; y++) {
 			for (int x = 0; x < layout[y].length; x++) {
 				Character key = layout[y][x];
@@ -260,27 +263,17 @@ public class Gate {
 					if (onCreate && type == Material.AIR) continue;
 					
 					if (type != portalBlockClosed && type != portalBlockOpen) {
-						// Special case for water gates
-						if (portalBlockOpen == Material.WATER || portalBlockOpen == Material.STATIONARY_WATER) {
-							if (type == Material.WATER || type == Material.STATIONARY_WATER) {
-								continue;
-							}
-						}
-						// Special case for lava gates
-						if (portalBlockOpen == Material.LAVA || portalBlockOpen == Material.STATIONARY_LAVA) {
-							if (type == Material.LAVA || type == Material.STATIONARY_LAVA) {
-								continue;
-							}
-						}
 						Stargate.debug("Gate::Matches", "Entrance/Exit Material Mismatch: " + type);
 						return false;
 					}
 				} else if (!key.equals(ANYTHING)) {
-					Material id = types.get(key);
-					 if (topleft.modRelative(x, y, 0, modX, 1, modZ).getType() != id) {
-						 Stargate.debug("Gate::Matches", "Block Type Mismatch: " + topleft.modRelative(x, y, 0, modX, 1, modZ).getType() + " != " + id);
-						 return false;
-					 }
+					Material id = portalTypes.get(key);
+					if(id == null) {
+						portalTypes.put(key, topleft.modRelative(x, y, 0, modX, 1, modZ).getType());
+					} else if(topleft.modRelative(x, y, 0, modX, 1, modZ).getType() != id) {
+						Stargate.debug("Gate::Matches", "Block Type Mismatch: " + topleft.modRelative(x, y, 0, modX, 1, modZ).getType() + " != " + id);
+						return false;
+					}
 				}
 			}
 		}
@@ -294,7 +287,7 @@ public class Gate {
 		Material blockID = gate.getControlBlock();
 
 		if (!controlBlocks.containsKey(blockID)) {
-			controlBlocks.put(blockID, new ArrayList<Gate>());
+			controlBlocks.put(blockID, new ArrayList<>());
 		}
 
 		controlBlocks.get(blockID).add(gate);

@@ -19,12 +19,13 @@ import net.TheDgtl.Stargate.event.StargateDestroyEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.EndGateway;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.Orientable;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -46,7 +47,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
@@ -100,6 +101,7 @@ public class Stargate extends JavaPlugin {
 	public static boolean sortLists = false;
 	public static boolean protectEntrance = false;
 	public static boolean enableBungee = true;
+	public static boolean verifyPortals = true;
 	public static ChatColor signColor;
 	
 	// Temp workaround for snowmen, don't check gate entrance
@@ -191,6 +193,7 @@ public class Stargate extends JavaPlugin {
 		sortLists = newConfig.getBoolean("sortLists");
 		protectEntrance = newConfig.getBoolean("protectEntrance");
 		enableBungee = newConfig.getBoolean("enableBungee");
+		verifyPortals = newConfig.getBoolean("verifyPortals");
 		// Sign color
 		String sc = newConfig.getString("signColor");
 		try {
@@ -681,32 +684,14 @@ public class Stargate extends JavaPlugin {
 		}
 
 		@EventHandler
-		public void onPlayerPortal(PlayerPortalEvent event) {
-			if (event.isCancelled()) return;
-			// Do a quick check for a stargate
-			Location from = event.getFrom();
-			if (from == null) {
-				Stargate.debug("onPlayerPortal", "From location is null. Stupid Bukkit");
-				return;
-			}
-			World world = from.getWorld();
-			int cX = from.getBlockX();
-			int cY = from.getBlockY();
-			int cZ = from.getBlockZ();
-			for (int i = -2; i < 2; i++) {
-				for (int j = -2; j < 2; j++) {
-					for (int k = -2; k < 2; k++) {
-						Block b = world.getBlockAt(cX + i, cY + j, cZ + k);
-						// We only need to worry about portal mat
-						// Commented out for now, due to new Minecraft insta-nether
-						//if (b.getType() != Material.PORTAL) continue;
-						Portal portal = Portal.getByEntrance(b);
-						if (portal != null) {
-							event.setCancelled(true);
-							return;
-						}
-					}
-				}
+		public void onPlayerTeleport(PlayerTeleportEvent event) {
+			// cancel portal and endgateway teleportation if it's from a Stargate entrance
+			PlayerTeleportEvent.TeleportCause cause = event.getCause();
+			if(!event.isCancelled()
+			&& (cause == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL
+			|| cause == PlayerTeleportEvent.TeleportCause.END_GATEWAY && World.Environment.THE_END == event.getFrom().getWorld().getEnvironment())
+			&& Portal.getByAdjacentEntrance(event.getFrom()) != null) {
+				event.setCancelled(true);
 			}
 		}
 		
@@ -1012,7 +997,7 @@ public class Stargate extends JavaPlugin {
 			Portal portal = null;
 			
 			// Handle keeping portal material and buttons around
-			if (block.getType() == Material.PORTAL) {
+			if (block.getType() == Material.NETHER_PORTAL) {
 				portal = Portal.getByEntrance(block);
 			} else if (block.getType() == Material.STONE_BUTTON) {
 				portal = Portal.getByControl(block);
@@ -1056,11 +1041,7 @@ public class Stargate extends JavaPlugin {
 	private class wListener implements Listener {
 		@EventHandler
 		public void onWorldLoad(WorldLoadEvent event) {
-			World w = event.getWorld();
-			// We have to make sure the world is actually loaded. This gets called twice for some reason.
-			if (w.getBlockAt(w.getSpawnLocation()).getWorld() != null) {
-				Portal.loadAllGates(w);
-			}
+			Portal.loadAllGates(event.getWorld());
 		}
 		
 		// We need to reload all gates on world unload, boo
@@ -1090,8 +1071,8 @@ public class Stargate extends JavaPlugin {
 				if (destroyExplosion) {
 					portal.unregister(true);
 				} else {
-					Stargate.blockPopulatorQueue.add(new BloxPopulator(new Blox(b), b.getType(), b.getData()));
 					event.setCancelled(true);
+					break;
 				}
 			}
 		}
@@ -1116,11 +1097,22 @@ public class Stargate extends JavaPlugin {
 	private class BlockPopulatorThread implements Runnable {
 		public void run() {
 			long sTime = System.nanoTime();
-			while (System.nanoTime() - sTime < 50000000) {
+			while (System.nanoTime() - sTime < 25000000) {
 				BloxPopulator b = Stargate.blockPopulatorQueue.poll();
 				if (b == null) return;
-				b.getBlox().getBlock().setType(b.getMat(), false);
-				b.getBlox().getBlock().setData(b.getData(), false);
+				Block blk = b.getBlox().getBlock();
+				blk.setType(b.getMat(), false);
+				if(b.getMat() == Material.END_GATEWAY && blk.getWorld().getEnvironment() == World.Environment.THE_END) {
+					// force a location to prevent exit gateway generation
+					EndGateway gateway = (EndGateway) blk.getState();
+					gateway.setExitLocation(blk.getWorld().getSpawnLocation());
+					gateway.setExactTeleport(true);
+					gateway.update(false, false);
+				} else if(b.getAxis() != null) {
+					Orientable orientable = (Orientable) blk.getBlockData();
+					orientable.setAxis(b.getAxis());
+					blk.setBlockData(orientable);
+				}
 			}
 		}
 	}
