@@ -26,10 +26,12 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Powerable;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.StorageMinecart;
@@ -339,17 +341,16 @@ public class Portal {
 		return frame;
 	}
 	
-	public Block getSign() {
-		return id.getBlock();
+	public Blox getSign() {
+		return id;
 	}
 	
 	public World getWorld() {
 		return world;
 	}
 	
-	public Block getButton() {
-		if (button == null) return null;
-		return button.getBlock();
+	public Blox getButton() {
+		return button;
 	}
 	
 	public void setButton(Blox button) {
@@ -372,8 +373,6 @@ public class Portal {
 		force = event.getForce();
 		
 		if (isOpen() && !force) return false;
-
-		getWorld().loadChunk(getWorld().getChunkAt(topLeft.getBlock()));
 
 		Material openType = gate.getPortalBlockOpen();
 		Axis ax = openType == Material.NETHER_PORTAL ? rot : null;
@@ -559,10 +558,6 @@ public class Portal {
 	public boolean isChunkLoaded() {
 		return getWorld().isChunkLoaded(topLeft.getBlock().getChunk());
 	}
-	
-	public void loadChunk() {
-		getWorld().loadChunk(topLeft.getBlock().getChunk());
-	}
 
 	public boolean isVerified() {
 		verified = true;
@@ -697,14 +692,14 @@ public class Portal {
 		drawSign();
 	}
 
-	public final void drawSign() {
-		Material sMat = id.getBlock().getType();
-		if (sMat != Material.SIGN && sMat != Material.WALL_SIGN) {
+	public final void drawSign() { 
+		BlockState state = id.getBlock().getState();
+		if (!(state instanceof Sign)) {
 			Stargate.log.warning("[Stargate] Sign block is not a Sign object");
 			Stargate.debug("Portal::drawSign", "Block: " + id.getBlock().getType() + " @ " + id.getBlock().getLocation());
 			return;
 		}
-		Sign sign = (Sign)id.getBlock().getState();
+		Sign sign = (Sign) state;
 		Stargate.setLine(sign, 0, "-" + name + "-");
 		int max = destinations.size() - 1;
 		int done = 0;
@@ -835,7 +830,7 @@ public class Portal {
 			}
 		}
 
-		if (id.getBlock().getType() == Material.WALL_SIGN && id.getBlock().getState() instanceof Sign) {
+		if (id.getBlock().getBlockData() instanceof WallSign) {
 			Sign sign = (Sign)id.getBlock().getState();
 			sign.setLine(0, getName());
 			sign.setLine(1, "");
@@ -1249,6 +1244,9 @@ public class Portal {
 	}
 
 	public static void saveAllGates(World world) {
+		if(!Stargate.managedWorlds.contains(world.getName())) {
+			Stargate.managedWorlds.add(world.getName());
+		}
 		String loc = Stargate.getSaveLocation() + "/" + world.getName() + ".db";
 
 		try {
@@ -1258,7 +1256,7 @@ public class Portal {
 				String wName = portal.world.getName();
 				if (!wName.equalsIgnoreCase(world.getName())) continue;
 				StringBuilder builder = new StringBuilder();
-				Blox sign = new Blox(portal.id.getBlock());
+				Blox sign = portal.id;
 				Blox button = portal.button;
 
 				builder.append(portal.name);
@@ -1404,23 +1402,10 @@ public class Portal {
 					portal.drawSign();
 					portalCount++;
 
-					if (!portal.isFixed()) continue;
-					
-					if (Stargate.enableBungee && portal.isBungee()) {
-						OpenCount++;
+					if (portal.isFixed() && (Stargate.enableBungee && portal.isBungee() 
+							|| portal.getDestination() != null && portal.isAlwaysOn())) {
 						portal.open(true);
-						portal.drawSign();
-						continue;
-					}
-					
-					Portal dest = portal.getDestination();
-					if (dest != null) {
-						if (portal.isAlwaysOn()) {
-							portal.open(true);
-							OpenCount++;
-						}
-						portal.drawSign();
-						dest.drawSign();
+						OpenCount++;
 					}
 				}
 				Stargate.log.info("[Stargate] {" + world.getName() + "} Loaded " + portalCount + " stargates with " + OpenCount + " set as always-on");

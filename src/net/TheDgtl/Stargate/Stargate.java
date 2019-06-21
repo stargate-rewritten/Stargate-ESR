@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.EndGateway;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Orientable;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -120,6 +122,8 @@ public class Stargate extends JavaPlugin {
 	// HashMap of player names for Bungee support
 	public static Map<String, String> bungeeQueue = new HashMap<>();
 	
+	public static HashSet<String> managedWorlds = new HashSet<>();
+	
 	public void onDisable() {
 		Portal.closeAllGates();
 		Portal.clearGates();
@@ -162,14 +166,15 @@ public class Stargate extends JavaPlugin {
 		lang = new LangLoader(langFolder, Stargate.langName);
 		
 		this.migrate();
-		this.reloadGates();
+		this.loadGates();
+		this.loadAllPortals();
 		
 		// Check to see if Economy is loaded yet.
 		if (EconomyHandler.setupEconomy(pm)) {
 			if (EconomyHandler.economy != null)
 				log.info("[Stargate] Vault v" + EconomyHandler.vault.getDescription().getVersion() + " found");
         }
-		
+
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new SGThread(), 0L, 100L);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new BlockPopulatorThread(), 0L, 1L);
 	}
@@ -217,16 +222,24 @@ public class Stargate extends JavaPlugin {
 		this.saveConfig();
 	}
 	
-	public void reloadGates() {
+	public void closeAllPortals() {
 		// Close all gates prior to reloading
 		for (Portal p : openList) {
 			p.close(true);
 		}
-		
+	}
+	
+	public void loadGates() {
 		Gate.loadGates(gateFolder);
 		log.info("[Stargate] Loaded " + Gate.getGateCount() + " gate layouts");
+	}
+	
+	public void loadAllPortals() {
 		for (World world : getServer().getWorlds()) {
-			Portal.loadAllGates(world);
+			if(!managedWorlds.contains(world.getName())) {
+				Portal.loadAllGates(world);
+				managedWorlds.add(world.getName());
+			}
 		}
 	}
 	
@@ -829,7 +842,7 @@ public class Stargate extends JavaPlugin {
 
 			// Right click
 			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				if (block.getType() == Material.WALL_SIGN) {
+				if (block.getBlockData() instanceof WallSign) {
 					Portal portal = Portal.getByBlock(block);
 					if (portal == null) return;
 					// Cancel item use
@@ -882,7 +895,7 @@ public class Stargate extends JavaPlugin {
 			// Left click
 			if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
 				// Check if we're scrolling a sign
-				if (block.getType() == Material.WALL_SIGN) {
+				if (block.getBlockData() instanceof WallSign) {
 					Portal portal = Portal.getByBlock(block);
 					if (portal == null) return;
 					
@@ -916,7 +929,7 @@ public class Stargate extends JavaPlugin {
 			if (event.isCancelled()) return;
 			Player player = event.getPlayer();
 			Block block = event.getBlock();
-			if (block.getType() != Material.WALL_SIGN) return;
+			if (!(block.getBlockData() instanceof WallSign)) return;
 			
 			final Portal portal = Portal.createPortal(event, player);
 			// Not creating a gate, just placing a sign
@@ -1041,7 +1054,10 @@ public class Stargate extends JavaPlugin {
 	private class wListener implements Listener {
 		@EventHandler
 		public void onWorldLoad(WorldLoadEvent event) {
-			Portal.loadAllGates(event.getWorld());
+			if(!managedWorlds.contains(event.getWorld().getName())) {
+				Portal.loadAllGates(event.getWorld());
+				managedWorlds.add(event.getWorld().getName());
+			}
 		}
 		
 		// We need to reload all gates on world unload, boo
@@ -1049,13 +1065,13 @@ public class Stargate extends JavaPlugin {
 		public void onWorldUnload(WorldUnloadEvent event) {
 			Stargate.debug("onWorldUnload", "Reloading all Stargates");
 			World w = event.getWorld();
-			String location = Stargate.getSaveLocation();
-			File db = new File(location, w.getName() + ".db");
-			if (db.exists()) {
+			if(managedWorlds.contains(w.getName())) {
+				managedWorlds.remove(w.getName());
 				Portal.clearGates();
-				for (World world : server.getWorlds()) {
-					if (world.equals(w)) continue;
-					Portal.loadAllGates(world);
+				for(World world : server.getWorlds()) {
+					if(managedWorlds.contains(world.getName())) {
+						Portal.loadAllGates(world);
+					}
 				}
 			}
 		}
@@ -1101,7 +1117,7 @@ public class Stargate extends JavaPlugin {
 				BloxPopulator b = Stargate.blockPopulatorQueue.poll();
 				if (b == null) return;
 				Block blk = b.getBlox().getBlock();
-				blk.setType(b.getMat(), false);
+				blk.setType(b.getMat());
 				if(b.getMat() == Material.END_GATEWAY && blk.getWorld().getEnvironment() == World.Environment.THE_END) {
 					// force a location to prevent exit gateway generation
 					EndGateway gateway = (EndGateway) blk.getState();
@@ -1167,12 +1183,11 @@ public class Stargate extends JavaPlugin {
 					p.deactivate();
 				}
 				// Close portals
-				for (Portal p : openList) {
-					p.close(true);
-				}
+				closeAllPortals();
 				// Clear all lists
 				activeList.clear();
 				openList.clear();
+				managedWorlds.clear();
 				Portal.clearGates();
 				Gate.clearGates();
 				
@@ -1180,7 +1195,8 @@ public class Stargate extends JavaPlugin {
 				boolean oldEnableBungee = enableBungee;
 				// Reload data
 				loadConfig();
-				reloadGates();
+				loadGates();
+				loadAllPortals();
 				lang.setLang(langName);
 				lang.reload();
 				

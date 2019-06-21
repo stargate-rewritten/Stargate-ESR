@@ -1,6 +1,6 @@
 name: Stargate
 main: net.TheDgtl.Stargate.Stargate
-version: 0.7.9.11
+version: 0.8.0.0-SNAPSHOT
 description: Stargate mod for Bukkit
 author: Drakia
 website: http://www.thedgtl.net

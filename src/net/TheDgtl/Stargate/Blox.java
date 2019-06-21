@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Sign;
 import org.bukkit.block.data.type.WallSign;
 
@@ -92,6 +93,10 @@ public class Blox {
 		return world.getBlockAt(x, y, z);
 	}
 	
+	public Location getLocation() {
+		return new Location(world, x, y, z);
+	}
+	
 	public int getX() {
 		return x;
 	}
@@ -119,11 +124,12 @@ public class Blox {
 		int offsetY = 0;
 		int offsetZ = 0;
 		
-		if (getBlock().getType() == Material.WALL_SIGN) {
-			BlockFace facing = ((WallSign) getBlock().getBlockData()).getFacing().getOppositeFace();
+		BlockData blk = getBlock().getBlockData();
+		if (blk instanceof WallSign) {
+			BlockFace facing = ((WallSign) blk).getFacing().getOppositeFace();
 			offsetX = facing.getModX();
 			offsetZ = facing.getModZ();
-		} else if (getBlock().getType() == Material.SIGN) {
+		} else if (blk instanceof Sign) {
 			offsetY = -1;
 		} else {
 			return;

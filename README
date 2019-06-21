@@ -162,7 +162,7 @@ handleVehicles - Whether or not to handle vehicles going through gates. Set to f
 sortLists - If true, network lists will be sorted alphabetically.
 protectEntrance - If true, will protect from users breaking gate entrance blocks (This is more resource intensive than the usual check, and should only be enabled for servers that use solid open/close blocks)
 signColor: This allows you to specify the color of the gate signs. Valid colors:
-verifyPortals: Whether or not all the non-sign blocks are checked to match the gate layout when a stargate is loaded.
+verifyPortals: Whether or not all the non-sign blocks are checked to match the gate layout when an old stargate is loaded.
 
 debug - Whether to show massive debug output
 permdebug - Whether to show massive permission debug output
@@ -211,8 +211,8 @@ Stargates are stored under player names, not UUIDs. This will be changed in the 
   Changes
 =============
 [Version 0.8.0.0] PseudoKnight fork
- - Update for 1.13 compatibility. This changes gate layouts to use new material names instead of numeric ids. You need to update your gate layout configs.
- - Adds "verifyPortals" config option, which sets whether a stargate layout is verified when it is loaded.
+ - Update for 1.13/1.14 compatibility. This changes gate layouts to use new material names instead of numeric ids. You need to update your gate layout configs.
+ - Adds "verifyPortals" config option, which sets whether an old stargate's blocks are verified when loaded.
 [Version 0.7.9.11] PseudoKnight fork
  - Removed iConomy support. Updated Vault support. Changed setting from "useiconomy" to "useeconomy".
  - Updated to support Metrics for 1.7.10
