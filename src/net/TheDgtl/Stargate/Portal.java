@@ -1343,10 +1343,6 @@ public class Portal {
 					}
 					String name = split[0];
 					Blox sign = new Blox(world, split[1]);
-					if (!(sign.getBlock().getState() instanceof Sign)) {
-						Stargate.log.info("[Stargate] Sign on line " + l + " doesn't exist. BlockType = " + sign.getBlock().getType());
-						continue;
-					}
 					Blox button = (split[2].length() > 0) ? new Blox(world, split[2]) : null;
 					int modX = Integer.parseInt(split[3]);
 					int modZ = Integer.parseInt(split[4]);
@@ -1399,7 +1395,6 @@ public class Portal {
 							continue;
 						}
 					}
-					portal.drawSign();
 					portalCount++;
 
 					if (portal.isFixed() && (Stargate.enableBungee && portal.isBungee() 
