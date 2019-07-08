@@ -3,13 +3,7 @@ package net.TheDgtl.Stargate;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 import java.util.logging.Level;
 
 import net.TheDgtl.Stargate.event.StargateActivateEvent;
@@ -1244,9 +1238,7 @@ public class Portal {
 	}
 
 	public static void saveAllGates(World world) {
-		if(!Stargate.managedWorlds.contains(world.getName())) {
-			Stargate.managedWorlds.add(world.getName());
-		}
+		Stargate.managedWorlds.add(world.getName());
 		String loc = Stargate.getSaveLocation() + "/" + world.getName() + ".db";
 
 		try {
@@ -1320,7 +1312,7 @@ public class Portal {
 		allPortalsNet.clear();
 	}
 
-	public static void loadAllGates(World world) {
+	public static boolean loadAllGates(World world) {
 		String location = Stargate.getSaveLocation();
 		
 		File db = new File(location, world.getName() + ".db");
@@ -1404,6 +1396,7 @@ public class Portal {
 					}
 				}
 				Stargate.log.info("[Stargate] {" + world.getName() + "} Loaded " + portalCount + " stargates with " + OpenCount + " set as always-on");
+				return true;
 			} catch (Exception e) {
 				Stargate.log.log(Level.SEVERE, "Exception while reading stargates from " + db.getName() + ": " + l);
 				e.printStackTrace();
@@ -1411,6 +1404,7 @@ public class Portal {
 		} else {
 			Stargate.log.info("[Stargate] {" + world.getName() + "} No stargates for world ");
 		}
+		return false;
 	}
 	
 	public static void closeAllGates() {

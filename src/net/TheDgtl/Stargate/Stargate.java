@@ -122,11 +122,13 @@ public class Stargate extends JavaPlugin {
 	// HashMap of player names for Bungee support
 	public static Map<String, String> bungeeQueue = new HashMap<>();
 	
+	// World names that contain stargates
 	public static HashSet<String> managedWorlds = new HashSet<>();
 	
 	public void onDisable() {
 		Portal.closeAllGates();
 		Portal.clearGates();
+		managedWorlds.clear();
 		getServer().getScheduler().cancelTasks(this);
 	}
 
@@ -1054,8 +1056,8 @@ public class Stargate extends JavaPlugin {
 	private class wListener implements Listener {
 		@EventHandler
 		public void onWorldLoad(WorldLoadEvent event) {
-			if(!managedWorlds.contains(event.getWorld().getName())) {
-				Portal.loadAllGates(event.getWorld());
+			if(!managedWorlds.contains(event.getWorld().getName())
+			&& Portal.loadAllGates(event.getWorld())) {
 				managedWorlds.add(event.getWorld().getName());
 			}
 		}
@@ -1117,7 +1119,7 @@ public class Stargate extends JavaPlugin {
 				BloxPopulator b = Stargate.blockPopulatorQueue.poll();
 				if (b == null) return;
 				Block blk = b.getBlox().getBlock();
-				blk.setType(b.getMat());
+				blk.setType(b.getMat(), false);
 				if(b.getMat() == Material.END_GATEWAY && blk.getWorld().getEnvironment() == World.Environment.THE_END) {
 					// force a location to prevent exit gateway generation
 					EndGateway gateway = (EndGateway) blk.getState();
