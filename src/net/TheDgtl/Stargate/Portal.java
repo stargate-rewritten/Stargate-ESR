@@ -118,7 +118,7 @@ public class Portal {
 		this.modX = modX;
 		this.modZ = modZ;
 		this.rotX = rotX;
-		this.rot = rotX == 90.0F || rotX == 270.0F ? Axis.X : Axis.Z;
+		this.rot = rotX == 0.0F || rotX == 180.0F ? Axis.X : Axis.Z;
 		this.id = id;
 		this.destination = dest;
 		this.button = button;
