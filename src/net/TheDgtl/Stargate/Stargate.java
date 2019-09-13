@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -446,7 +447,7 @@ public class Stargate extends JavaPlugin {
 		// The player is an admin with the ability to see hidden gates
 		if (hasPerm(player, "stargate.admin") || hasPerm(player, "stargate.admin.hidden")) return true;
 		// The player is the owner of the gate
-		return portal.getOwner().equalsIgnoreCase(player.getName());
+		return portal.isOwner(player);
 	}
 	
 	/*
@@ -454,7 +455,7 @@ public class Stargate extends JavaPlugin {
 	 */
 	public static boolean canPrivate(Player player, Portal portal) {
 		// Check if the player is the owner of the gate
-		if (portal.getOwner().equalsIgnoreCase(player.getName())) return true;
+		if (portal.isOwner(player)) return true;
 		// The player is an admin with the ability to use private gates
 		return hasPerm(player, "stargate.admin") || hasPerm(player, "stargate.admin.private");
 	}
@@ -525,7 +526,7 @@ public class Stargate extends JavaPlugin {
 		// Check for this specific network
 		if (hasPerm(player, "stargate.destroy.network." + network)) return true;
 		// Check for personal gate
-		return player.getName().equalsIgnoreCase(portal.getOwner()) && hasPerm(player, "stargate.destroy.personal");
+		return portal.isOwner(player) && hasPerm(player, "stargate.destroy.personal");
 	}
 	
 	/*
@@ -537,7 +538,31 @@ public class Stargate extends JavaPlugin {
 		// Economy is disabled
 		if (!EconomyHandler.useEconomy()) return true;
 		// Charge player
-		return EconomyHandler.chargePlayer(player.getName(), target, cost);
+		return EconomyHandler.chargePlayer(player, target, cost);
+	}
+
+	/*
+	 * Charge player for {action} if required, true on success, false if can't afford
+	 */
+	public static boolean chargePlayer(Player player, UUID target, int cost) {
+		// If cost is 0
+		if (cost == 0) return true;
+		// Economy is disabled
+		if (!EconomyHandler.useEconomy()) return true;
+		// Charge player
+		return EconomyHandler.chargePlayer(player, target, cost);
+	}
+
+	/*
+	 * Charge player for {action} if required, true on success, false if can't afford
+	 */
+	public static boolean chargePlayer(Player player, int cost) {
+		// If cost is 0
+		if (cost == 0) return true;
+		// Economy is disabled
+		if (!EconomyHandler.useEconomy()) return true;
+		// Charge player
+		return EconomyHandler.chargePlayer(player, cost);
 	}
 	
 	/*
@@ -551,7 +576,7 @@ public class Stargate extends JavaPlugin {
 		// Not charging for free destinations
 		if (dest != null && !EconomyHandler.chargeFreeDestination && dest.isFree()) return 0;
 		// Cost is 0 if the player owns this gate and funds go to the owner
-		if (src.getGate().getToOwner() && src.getOwner().equalsIgnoreCase(player.getName())) return 0;
+		if (src.getGate().getToOwner() && src.isOwner(player)) return 0;
 		// Player gets free gate use
 		if (hasPerm(player, "stargate.free") || hasPerm(player, "stargate.free.use")) return 0;
 		
@@ -650,8 +675,17 @@ public class Stargate extends JavaPlugin {
 				
 				int cost = Stargate.getUseCost(player, portal, dest);
 				if (cost > 0) {
-					String target = portal.getGate().getToOwner() ? portal.getOwner() : null;
-					if (!Stargate.chargePlayer(player, target, cost)) {
+					boolean success;
+					if(portal.getGate().getToOwner()) {
+						if(portal.getOwnerUUID() == null) {
+							success = Stargate.chargePlayer(player, portal.getOwnerUUID(), cost);
+						} else {
+							success = Stargate.chargePlayer(player, portal.getOwnerName(), cost);
+						}
+					} else {
+						success = Stargate.chargePlayer(player, cost);
+					}
+					if(!success) {
 						// Insufficient Funds
 						Stargate.sendMessage(player, Stargate.getString("inFunds"));
 						portal.close(false);
@@ -660,8 +694,13 @@ public class Stargate extends JavaPlugin {
 					String deductMsg = Stargate.getString("ecoDeduct");
 					deductMsg = Stargate.replaceVars(deductMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(cost), portal.getName()});
 					sendMessage(player, deductMsg, false);
-					if (target != null) {
-						Player p = server.getPlayer(target);
+					if (portal.getGate().getToOwner()) {
+						Player p;
+						if(portal.getOwnerUUID() != null) {
+							p = server.getPlayer(portal.getOwnerUUID());
+						} else {
+							p = server.getPlayer(portal.getOwnerName());
+						}
 						if (p != null) {
 							String obtainedMsg = Stargate.getString("ecoObtain");
 							obtainedMsg = Stargate.replaceVars(obtainedMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(cost), portal.getName()});
@@ -761,18 +800,32 @@ public class Stargate extends JavaPlugin {
 			
 			int cost = Stargate.getUseCost(player, portal, destination);
 			if (cost > 0) {
-				String target = portal.getGate().getToOwner() ? portal.getOwner() : null;
-				if (!Stargate.chargePlayer(player, target, cost)) {
+				boolean success;
+				if(portal.getGate().getToOwner()) {
+					if(portal.getOwnerUUID() == null) {
+						success = Stargate.chargePlayer(player, portal.getOwnerUUID(), cost);
+					} else {
+						success = Stargate.chargePlayer(player, portal.getOwnerName(), cost);
+					}
+				} else {
+					success = Stargate.chargePlayer(player, cost);
+				}
+				if(!success) {
 					// Insufficient Funds
-					Stargate.sendMessage(player, "Insufficient Funds");
+					Stargate.sendMessage(player, Stargate.getString("inFunds"));
 					portal.close(false);
 					return;
 				}
 				String deductMsg = Stargate.getString("ecoDeduct");
 				deductMsg = Stargate.replaceVars(deductMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(cost), portal.getName()});
 				sendMessage(player, deductMsg, false);
-				if (target != null) {
-					Player p = server.getPlayer(target);
+				if (portal.getGate().getToOwner() && portal.getOwnerUUID() != null) {
+					Player p;
+					if(portal.getOwnerUUID() != null) {
+						p = server.getPlayer(portal.getOwnerUUID());
+					} else {
+						p = server.getPlayer(portal.getOwnerName());
+					}
 					if (p != null) {
 						String obtainedMsg = Stargate.getString("ecoObtain");
 						obtainedMsg = Stargate.replaceVars(obtainedMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(cost), portal.getName()});
@@ -984,7 +1037,7 @@ public class Stargate extends JavaPlugin {
 			cost = dEvent.getCost();
 			
 			if (cost != 0) {
-				if (!Stargate.chargePlayer(player, null, cost)) {
+				if (!Stargate.chargePlayer(player, cost)) {
 					Stargate.debug("onBlockBreak", "Insufficient Funds");
 					Stargate.sendMessage(player, Stargate.getString("inFunds"));
 					event.setCancelled(true);

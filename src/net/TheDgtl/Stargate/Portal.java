@@ -14,9 +14,11 @@ import net.TheDgtl.Stargate.event.StargateOpenEvent;
 import net.TheDgtl.Stargate.event.StargatePortalEvent;
 
 import org.bukkit.Axis;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -86,7 +88,8 @@ public class Portal {
 	private String lastDest = "";
 	private String network;
 	private Gate gate;
-	private String owner = "";
+	private String ownerName = "";
+	private UUID ownerUUID = null;
 	private World world;
 	private boolean verified;
 	private boolean fixed;
@@ -110,10 +113,10 @@ public class Portal {
 	private long openTime;
 
 	private Portal(Blox topLeft, int modX, int modZ,
-			float rotX, Blox id, Blox button,
-			String dest, String name,
-			boolean verified, String network, Gate gate, String owner, 
-			boolean hidden, boolean alwaysOn, boolean priv, boolean free, boolean backwards, boolean show, boolean noNetwork, boolean random, boolean bungee) {
+				float rotX, Blox id, Blox button,
+				String dest, String name,
+				boolean verified, String network, Gate gate, UUID ownerUUID, String ownerName,
+				boolean hidden, boolean alwaysOn, boolean priv, boolean free, boolean backwards, boolean show, boolean noNetwork, boolean random, boolean bungee) {
 		this.topLeft = topLeft;
 		this.modX = modX;
 		this.modZ = modZ;
@@ -126,7 +129,8 @@ public class Portal {
 		this.network = network;
 		this.name = name;
 		this.gate = gate;
-		this.owner = owner;
+		this.ownerUUID = ownerUUID;
+		this.ownerName = ownerName;
 		this.hidden = hidden;
 		this.alwaysOn = alwaysOn;
 		this.priv = priv;
@@ -300,14 +304,26 @@ public class Portal {
 		return gate;
 	}
 
-	public String getOwner() {
-		return owner;
+	public String getOwnerName() {
+		return ownerName;
 	}
-	
-	public void setOwner(String owner) {
-		this.owner = owner;
+
+	public UUID getOwnerUUID() {
+		return ownerUUID;
 	}
-	
+
+	public void setOwner(UUID owner) {
+		this.ownerUUID = owner;
+	}
+
+	public boolean isOwner(Player player) {
+		if(this.ownerUUID != null) {
+			return player.getUniqueId().compareTo(this.ownerUUID) == 0;
+		} else {
+			return player.getName().equalsIgnoreCase(this.ownerName);
+		}
+	}
+
 	public Blox[] getEntrances() {
 		if (entrances == null) {
 			RelativeBlockVector[] space = gate.getEntrances();
@@ -1078,7 +1094,7 @@ public class Portal {
 		
 		Blox button = null;
 		Portal portal = null;
-		portal = new Portal(topleft, modX, modZ, rotX, id, button, destName, name, false, network, gate, player.getName(), hidden, alwaysOn, priv, free, backwards, show, noNetwork, random, bungee);
+		portal = new Portal(topleft, modX, modZ, rotX, id, button, destName, name, false, network, gate, player.getUniqueId(), player.getName(), hidden, alwaysOn, priv, free, backwards, show, noNetwork, random, bungee);
 		
 		int cost = Stargate.getCreateCost(player, gate);
 		
@@ -1125,7 +1141,7 @@ public class Portal {
 		}
 		
 		if (cost > 0) {
-			if (!Stargate.chargePlayer(player, null, cost)) {
+			if (!Stargate.chargePlayer(player, cost)) {
 				String inFundMsg = Stargate.getString("ecoInFunds");
 				inFundMsg = Stargate.replaceVars(inFundMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(cost), name});
 				Stargate.sendMessage(player, inFundMsg);
@@ -1271,7 +1287,12 @@ public class Portal {
 				builder.append(':');
 				builder.append(portal.getNetwork());
 				builder.append(':');
-				builder.append(portal.getOwner());
+				UUID owner = portal.getOwnerUUID();
+				if(owner != null) {
+					builder.append(portal.getOwnerUUID().toString());
+				} else {
+					builder.append(portal.getOwnerName());
+				}
 				builder.append(':');
 				builder.append(portal.isHidden());
 				builder.append(':');
@@ -1349,7 +1370,7 @@ public class Portal {
 					String dest = (split.length > 8) ? split[8] : "";
 					String network = (split.length > 9) ? split[9] : Stargate.getDefaultNetwork();
 					if (network.isEmpty()) network = Stargate.getDefaultNetwork();
-					String owner = (split.length > 10) ? split[10] : "";
+					String ownerString = (split.length > 10) ? split[10] : "";
 					boolean hidden = (split.length > 11) && split[11].equalsIgnoreCase("true");
 					boolean alwaysOn = (split.length > 12) && split[12].equalsIgnoreCase("true");
 					boolean priv = (split.length > 13) && split[13].equalsIgnoreCase("true");
@@ -1359,8 +1380,25 @@ public class Portal {
 					boolean noNetwork = (split.length > 18) && split[18].equalsIgnoreCase("true");
 					boolean random = (split.length > 19) && split[19].equalsIgnoreCase("true");
 					boolean bungee = (split.length > 20) && split[20].equalsIgnoreCase("true");
+					
+					// Attempt to get owner as UUID
+					UUID ownerUUID = null;
+					String ownerName;
+					if(ownerString.length() > 16) {
+						try {
+							ownerUUID = UUID.fromString(ownerString);
+							OfflinePlayer offlineOwner = Bukkit.getServer().getOfflinePlayer(ownerUUID);
+							ownerName = offlineOwner.getName();
+						} catch (IllegalArgumentException ex) {
+							// neither name nor UUID, so keep it as-is
+							ownerName = ownerString;
+							Stargate.debug("loadAllGates", "Invalid Stargate owner string: " + ownerString);
+						}
+					} else {
+						ownerName = ownerString;
+					}
 
-					Portal portal = new Portal(topLeft, modX, modZ, rotX, sign, button, dest, name, false, network, gate, owner, hidden, alwaysOn, priv, free, backwards, show, noNetwork, random, bungee);
+					Portal portal = new Portal(topLeft, modX, modZ, rotX, sign, button, dest, name, false, network, gate, ownerUUID, ownerName, hidden, alwaysOn, priv, free, backwards, show, noNetwork, random, bungee);
 					portal.register();
 					portal.close(true);
 				}

@@ -2,9 +2,13 @@ package net.TheDgtl.Stargate;
 
 import net.milkbowl.vault.economy.Economy;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
+
+import java.util.UUID;
 
 /**
  * Stargate - A portal plugin for Bukkit
@@ -36,18 +40,38 @@ public class EconomyHandler {
 	public static boolean chargeFreeDestination = true;
 	public static boolean freeGatesGreen = false;
 	
-	public static double getBalance(String player) {
+	public static double getBalance(Player player) {
 		if (!economyEnabled) return 0;
 		return economy.getBalance(player);
 	}
 	
-	public static boolean chargePlayer(String player, String target, double amount) {
+	public static boolean chargePlayer(Player player, String target, double amount) {
 		if (!economyEnabled) return true;
-		if(player.equals(target)) return true;
+		if(player.getName().equals(target)) return true;
 		if(economy != null) {
 			if(!economy.has(player, amount)) return false;
 			economy.withdrawPlayer(player, amount);
-			if(target != null) economy.depositPlayer(target, amount);
+			economy.depositPlayer(target, amount);
+		}
+		return false;
+	}
+
+	public static boolean chargePlayer(Player player, UUID target, double amount) {
+		if (!economyEnabled) return true;
+		if(player.getUniqueId().compareTo(target) == 0) return true;
+		if(economy != null) {
+			if(!economy.has(player, amount)) return false;
+			economy.withdrawPlayer(player, amount);
+			economy.depositPlayer(Bukkit.getOfflinePlayer(target), amount);
+		}
+		return false;
+	}
+
+	public static boolean chargePlayer(Player player, double amount) {
+		if (!economyEnabled) return true;
+		if(economy != null) {
+			if(!economy.has(player, amount)) return false;
+			economy.withdrawPlayer(player, amount);
 		}
 		return false;
 	}
