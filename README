@@ -213,6 +213,7 @@ Stargates are stored under player names, not UUIDs. This will be changed in the 
 [Version 0.8.0.0] PseudoKnight fork
  - Update for 1.13/1.14 compatibility. This changes gate layouts to use new material names instead of numeric ids. You need to update your gate layout configs.
  - Adds "verifyPortals" config option, which sets whether an old stargate's blocks are verified when loaded.
+ - Adds UUID support. (falls back to player names)
 [Version 0.7.9.11] PseudoKnight fork
  - Removed iConomy support. Updated Vault support. Changed setting from "useiconomy" to "useeconomy".
  - Updated to support Metrics for 1.7.10
