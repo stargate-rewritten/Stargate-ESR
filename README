@@ -1,19 +1,12 @@
-=============
-   Updates
-=============
-Please visit http://forum.thedgtl.net for all updates and support!
-
-=============
- Description
-=============
-This is a port of the Stargate plugin from hMod by Dinnerbone.
+# Description
 Create gates that allow for instant-teleportation between large distances. Gates can be always-open, or triggered, they can be hidden, or accessible to everybody, they can share a network, or they can be split into clusters.
-This port will import your existing locations.dat file from the hMod Stargate plugin!
-Economy support added back in, only costs are create, destroy and use.
+Vault economy support: only costs are create, destroy and use.
 
-=============
- Permissions
-=============
+## Background
+This was originally TheDgtl's Bukkit port of the Stargate plugin for hMod by Dinnerbone.
+This fork updates it for modern versions of Spigot.
+
+# Permissions
 stargate.use -- Allow use of all gates linking to any world in any network (Override ALL network/world permissions. Set to false to use network/world specific permissions)
   stargate.world -- Allow use of gates linking to any world
     stargate.world.{world} -- Allow use of gates with a destination in {world}. Set to false to disallow use.
@@ -52,9 +45,7 @@ stargate.admin -- Allow all admin features (Hidden/Private only so far)
   stargate.admin.hidden -- Allow access to Hidden gates not ownerd by user
   stargate.admin.reload -- Allow use of /sg reload
 
-=============
-Default Permissions
-=============
+## Default Permissions
 stargate.use -- Everyone
 stargate.create -- Op
 stargate.destroy -- Op
@@ -62,17 +53,18 @@ stargate.option -- Op
 stargate.free -- Op
 stargate.admin -- Op
 
-=============
-Instructions
-=============
-Building a gate:
+# Instructions
+## Building a gate:
+This is the default gate configuration. This can be modified in the /gates/ directory.
+
     OO 
    O  O - These are Obsidian blocks. You need 10.
    O  O - Place a sign on either of these two blocks of Obsidian.
    O  O
     OO
 
-Sign Layout:
+### Sign Layout:
+
  - Line 1: Gate Name (Max 12 characters)
  - Line 2: Destination Name [Optional] (Max 12 characters, used for fixed-gates only)
  - Line 3: Network name [Optional] (Max 12 characters)
@@ -86,41 +78,38 @@ Sign Layout:
  			'N' is for hiding the network name
  			'R' is for random gates. These follow standard permissions of gates, but have a random exit location every time a player enters.
 
-Options:
 The options are the single letter, not the word. So to make a private hidden gate, your 4th line would be 'PH'.
 
-Using a gate:
- - Right click the sign to choose a destination.
- - Right click the button to open up a portal.
- - Step through.
-
-Fixed gates:
- - Fixed gates go to only one set destination.
- - Fixed gates can be linked to other fixed gates, or normal gates. A normal gate cannot open a portal to a fixed gate however.
- - To create a fixed gate, specify a destination on the second line of the stargate sign.
- - Set the 4th line of the stargate sign to "A" to enable an always-open fixed gate.
-
-Gate networks:
+### Gate networks:
  - Gates are all part of a network, by default this is "central".
  - You can specify (and create) your own network on the third line of the sign when making a new gate.
  - Gates on one network will not see gates on the second network, and vice versa.
  - Gates on different worlds, but in the same network, will see eachother.
+
+### Fixed gates:
+ - Fixed gates go to only one set destination.
+ - Fixed gates can be linked to other fixed gates, or normal gates. A normal gate cannot open a portal to a fixed gate however.
+ - To create a fixed gate, specify a destination on the second line of the stargate sign.
+ - Set the 4th line of the stargate sign to "A" to enable an always-open fixed gate.
  
-Hidden Gates:
+### Hidden Gates:
  - Hidden gates are like normal gates, but only show on the destination list of other gates under certain conditions.
  - A hidden gate is only visible to the creator of the gate, or somebody with the stargate.hidden permission.
  - Set the 4th line of the stargate sign to 'H' to make it a hidden gate.
+
+## Using a gate:
+ - Right click the sign to choose a destination.
+ - Right click the button to open up a portal.
+ - Step through.
  
-Economy Support:
- The latest version of Stargate has support for Vault. Gate creation, destruction and use can all have different costs associated with them. You can also define per-gate layout costs. The default cost is assigned in the config.yml file, while the per-gate costs re defined in the .gate files. To define a certain cost to a gate just add these lines to your .gate file:
+## Economy Support:
+The latest version of Stargate has support for Vault. Gate creation, destruction and use can all have different costs associated with them. You can also define per-gate layout costs. The default cost is assigned in the config.yml file, while the per-gate costs re defined in the .gate files. To define a certain cost to a gate just add these lines to your .gate file:
 usecost=5
 destroycost=5
 createcost=5
 toowner=true
 
-==============
-Custom Gate Layout
-==============
+# Custom Gate Layout
 You can create as many gate formats as you want, the gate layouts are stored in plugins/Stargate/gates/
 The .gate file must be laid out a specific way, the first lines will be config information, and after a blank line you will lay out the gate format. Here is the default nether.gate file:
 
@@ -140,9 +129,7 @@ portal-open/closed are used to define the material in the gate when it is open o
 In the gate format, you can see we use "X" to show where obsidian must be, "-" where the controls (Button/sign) are.
 You will also notice a "*" in the gate layout, this is the "exit point" of the gate, the block at which the player will teleport in front of.
 
-==============
-Configuration
-==============
+# Configuration
 default-gate-network - The default gate network
 portal-folder - The folder your portal databases are saved in
 gate-folder - The folder containing your .gate files
@@ -162,15 +149,13 @@ handleVehicles - Whether or not to handle vehicles going through gates. Set to f
 sortLists - If true, network lists will be sorted alphabetically.
 protectEntrance - If true, will protect from users breaking gate entrance blocks (This is more resource intensive than the usual check, and should only be enabled for servers that use solid open/close blocks)
 signColor: This allows you to specify the color of the gate signs. Valid colors:
-verifyPortals: Whether or not all the non-sign blocks are checked to match the gate layout when an old stargate is loaded.
+verifyPortals: Whether or not all the non-sign blocks are checked to match the gate layout when an old stargate is loaded at startup.
 
 debug - Whether to show massive debug output
 permdebug - Whether to show massive permission debug output
 
-=======================
- Message Customization
-=======================
-As of 0.6.5 it is possible to customize all of the messages Stargate displays, including the [Stargate] prefix. You can find the strings in plugins/Stargate/lang/en.txt. 
+# Message Customization
+It is possible to customize all of the messages Stargate displays, including the [Stargate] prefix. You can find the strings in plugins/Stargate/lang/en.txt. 
 If a string is removed, or left blank, it will not be shown when the user does the action associated with it.
 There are three special cases when it comes to messages, these are:
 ecoDeduct=Spent %cost%
@@ -202,14 +187,7 @@ createFull=This network is full
 createWorldDeny=You do not have access to that world
 createConflict=Gate conflicts with existing gate
 
-=============
- Known Bugs
-=============
-Stargates are stored under player names, not UUIDs. This will be changed in the future.
-
-=============
-  Changes
-=============
+# Changes
 [Version 0.8.0.0] PseudoKnight fork
  - Update for 1.13/1.14 compatibility. This changes gate layouts to use new material names instead of numeric ids. You need to update your gate layout configs.
  - Adds "verifyPortals" config option, which sets whether an old stargate's blocks are verified when loaded.
