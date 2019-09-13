@@ -138,9 +138,11 @@ public class LangLoader {
 			}
 			bw.newLine();
 			// Output any custom language strings the user had
-			for (String key : curLang.keySet()) {
-				bw.write(key + "=" + curLang.get(key));
-				bw.newLine();
+			if(curLang != null) {
+				for (String key : curLang.keySet()) {
+					bw.write(key + "=" + curLang.get(key));
+					bw.newLine();
+				}
 			}
 			
 			bw.close();
