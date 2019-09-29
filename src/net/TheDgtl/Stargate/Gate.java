@@ -340,6 +340,9 @@ public class Gate {
 						if (key.length() == 1) {
 							Character symbol = key.charAt(0);
 							Material id = Material.getMaterial(value);
+							if(id == null) {
+								throw new Exception("Invalid material in line: " + line);
+							}
 							types.put(symbol, id);
 							frameTypes.add(id);
 						} else {
@@ -349,7 +352,7 @@ public class Gate {
 				}
 			}
 		} catch (Exception ex) {
-			Stargate.log.log(Level.SEVERE, "Could not load Gate " + file.getName() + " - Invalid block ID given");
+			Stargate.log.log(Level.SEVERE, "Could not load Gate " + file.getName() + " - " + ex.getMessage());
 			return null;
 		} finally {
 			if (scanner != null) scanner.close();
