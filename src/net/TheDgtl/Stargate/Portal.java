@@ -24,6 +24,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Powerable;
@@ -34,7 +35,6 @@ import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.material.Step;
 import org.bukkit.util.Vector;
 
 /**
@@ -274,7 +274,6 @@ public class Portal {
 		if (isRandom()) {
 			destinations = getDestinations(player, getNetwork());
 			if (destinations.size() == 0) {
-				destinations.clear();
 				return null;
 			}
 			String dest = destinations.get((new Random()).nextInt(destinations.size()));
@@ -555,8 +554,9 @@ public class Portal {
 		}
 		
 		if (loc != null) {
-			if (getWorld().getBlockAt(loc).getState().getData() instanceof Step) {
-				loc.setY(loc.getY() + 0.5);
+			BlockData bd = getWorld().getBlockAt(loc).getBlockData();
+			if (bd instanceof Bisected && ((Bisected) bd).getHalf() == Bisected.Half.BOTTOM) {
+				loc.add(0, 0.5, 0);
 			}
 
 			loc.setPitch(traveller.getPitch());
@@ -672,7 +672,7 @@ public class Portal {
 	}
 	
 	public void cycleDestination(Player player, int dir) {
-		Boolean activate = false;
+		boolean activate = false;
 		if (!isActive() || getActivePlayer() != player) {
 			// If the event is cancelled, return
 			if (!activate(player)) {
