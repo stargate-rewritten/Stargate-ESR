@@ -205,7 +205,7 @@ createConflict=Gate conflicts with existing gate
 # Changes
 #### [Version 0.9.0.1-SNAPSHOT]
 ### WARNING; THIS VERSION IS UNSTABLE. DO NOT USE IT
- - Started the proccess of updating to 1.15
+ - Started the process of updating to 1.15
 #### [Version 0.8.0.0] PseudoKnight fork
  - Update for 1.13/1.14 compatibility. This changes gate layouts to use new material names instead of numeric ids. You need to update your gate layout configs.
  - Adds "verifyPortals" config option, which sets whether an old stargate's blocks are verified when loaded.
