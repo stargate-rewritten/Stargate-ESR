@@ -276,7 +276,7 @@ public class Portal {
 			if (destinations.size() == 0) {
 				return null;
 			}
-			String dest = destinations.get((new Random()).nextInt(destinations.size()));
+			String dest = destinations.get(new Random().nextInt(destinations.size()));
 			destinations.clear();
 			return Portal.getByName(dest, getNetwork());
 		}

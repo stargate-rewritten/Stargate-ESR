@@ -1,8 +1,8 @@
 name: Stargate
 main: net.TheDgtl.Stargate.Stargate
-version: 0.8.0.1-SNAPSHOT
+version: 0.9.0.2-SNAPSHOT
 description: Stargate mod for Bukkit
-author: Drakia
+author: [Drakia, PseudoKnight, Frostalf, InteriorCamping, ProfX66]
 website: http://www.thedgtl.net
 api-version: 1.13
 commands:
