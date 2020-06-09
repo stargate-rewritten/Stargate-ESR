@@ -1159,11 +1159,17 @@ public class Portal {
 		
 		// No button on an always-open gate.
 		if (!alwaysOn) {
+                    if (gate.getPortalBlockClosed() != Material.WATER) {
 			button = topleft.modRelative(buttonVector.getRight(), buttonVector.getDepth(), buttonVector.getDistance() + 1, modX, 1, modZ);
 			button.setType(Material.STONE_BUTTON);
 			Directional buttondata = (Directional) button.getBlock().getBlockData();
 			buttondata.setFacing(buttonfacing);
 			button.getBlock().setBlockData(buttondata);
+			portal.setButton(button);
+                    } else {
+                    }                    
+			button = topleft.modRelative(buttonVector.getRight(), buttonVector.getDepth(), buttonVector.getDistance() + 1, modX, 1, modZ);
+			button.setType(Material.STONE_PRESSURE_PLATE);
 			portal.setButton(button);
 		}
 		

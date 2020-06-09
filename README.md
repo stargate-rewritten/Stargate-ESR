@@ -203,10 +203,11 @@ createWorldDeny=You do not have access to that world
 createConflict=Gate conflicts with existing gate
 ```
 # Changes
-#### [Version 0.9.0.3-SNAPSHOT]
+#### [Version 0.9.0.4-SNAPSHOT]
 ### WARNING; THIS VERSION IS UNSTABLE. DO NOT USE IT
  - Updated to 1.15 compatibility
  - Partial fix of a bug that prevented random gates from functioning properly.
+ - Added partial support for underwater portals.
 #### [Version 0.8.0.0] PseudoKnight fork
  - Update for 1.13/1.14 compatibility. This changes gate layouts to use new material names instead of numeric ids. You need to update your gate layout configs.
  - Adds "verifyPortals" config option, which sets whether an old stargate's blocks are verified when loaded.
