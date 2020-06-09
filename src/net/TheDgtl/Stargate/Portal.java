@@ -1169,10 +1169,7 @@ public class Portal {
                     } else {
                     }                    
 			button = topleft.modRelative(buttonVector.getRight(), buttonVector.getDepth(), buttonVector.getDistance() + 1, modX, 1, modZ);
-			button.setType(Material.DEAD_TUBE_CORAL_FAN);
-			Directional buttondata = (Directional) button.getBlock().getBlockData();
-			buttondata.setFacing(buttonfacing);
-			button.getBlock().setBlockData(buttondata);
+			button.setType(Material.STONE_PRESSURE_PLATE);
 			portal.setButton(button);
 		}
 		
