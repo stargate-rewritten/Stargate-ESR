@@ -943,7 +943,7 @@ public class Stargate extends JavaPlugin {
 					if (portal.isOpenFor(player)) {
 						event.setUseInteractedBlock(Result.ALLOW);
 					}
-				} else if (block.getType() == Material.STONE_PRESSURE_PLATE) {
+				} else if (block.getType() == Material.DEAD_TUBE_CORAL_FAN) {
                                         Portal portal = Portal.getByBlock(block);
 					if (portal == null) return;
 					
