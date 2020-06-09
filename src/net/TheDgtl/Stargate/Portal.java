@@ -65,6 +65,9 @@ public class Portal {
 	private static final ArrayList<Portal> allPortals = new ArrayList<>();
 	private static final HashMap<String, ArrayList<String>> allPortalsNet = new HashMap<>();
 	private static final HashMap<String, HashMap<String, Portal>> lookupNamesNet = new HashMap<>();
+        private Random randomNumber = new Random();
+        private int randomize = 0;
+        
 	
 	// A list of Bungee gates
 	private static final HashMap<String, Portal> bungeePortals = new HashMap<>();
@@ -276,7 +279,8 @@ public class Portal {
 			if (destinations.size() == 0) {
 				return null;
 			}
-			String dest = destinations.get(new Random().nextInt(destinations.size()));
+                        randomize = randomNumber.nextInt(destinations.size()) + 1;
+			String dest = destinations.get(randomize);
 			destinations.clear();
 			return Portal.getByName(dest, getNetwork());
 		}
