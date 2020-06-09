@@ -1168,7 +1168,10 @@ public class Portal {
 			portal.setButton(button);
                     } else {            
 			button = topleft.modRelative(buttonVector.getRight(), buttonVector.getDepth(), buttonVector.getDistance() + 1, modX, 1, modZ);
-			button.setType(Material.BEDROCK);
+			button.setType(Material.DEAD_TUBE_CORAL_WALL_FAN);
+			Directional buttondata = (Directional) button.getBlock().getBlockData();
+			buttondata.setFacing(buttonfacing);
+			button.getBlock().setBlockData(buttondata);
 			portal.setButton(button);
                     }
 		}
