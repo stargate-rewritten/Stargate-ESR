@@ -1166,11 +1166,11 @@ public class Portal {
 			buttondata.setFacing(buttonfacing);
 			button.getBlock().setBlockData(buttondata);
 			portal.setButton(button);
-                    } else {
-                    }                    
+                    } else {            
 			button = topleft.modRelative(buttonVector.getRight(), buttonVector.getDepth(), buttonVector.getDistance() + 1, modX, 1, modZ);
-			button.setType(Material.STONE_PRESSURE_PLATE);
+			button.setType(Material.BEDROCK);
 			portal.setButton(button);
+                    }
 		}
 		
 		portal.register();

@@ -203,7 +203,7 @@ createWorldDeny=You do not have access to that world
 createConflict=Gate conflicts with existing gate
 ```
 # Changes
-#### [Version 0.9.0.4-SNAPSHOT]
+#### [Version 0.9.0.7-SNAPSHOT]
 ### WARNING; THIS VERSION IS UNSTABLE. DO NOT USE IT
  - Updated to 1.15 compatibility
  - Partial fix of a bug that prevented random gates from functioning properly.
