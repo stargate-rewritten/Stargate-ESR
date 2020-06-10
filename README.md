@@ -8,7 +8,8 @@ Create gates that allow for instant-teleportation between large distances. Gates
 
 ## Background
 This was originally TheDgtl's Bukkit port of the Stargate plugin for hMod by Dinnerbone.
-This fork updates it for modern versions of Spigot.
+After this plugin was dropped by TheDgtl, PseudoKnight began maintaining it for modern versions of Spigot.
+This is a niche fork made by the LCLO to address some minor issues in Pseudo's current versions.
 
 # Permissions
 ```
@@ -84,7 +85,7 @@ This is the default gate configuration. See the Custom Gate Layout section on ho
   - 'B' is for a backwards facing gate (You will exit the back)
   - 'S' is for showing an always-on gate in the network list
   - 'N' is for hiding the network name
-  - 'R' is for random gates. These follow standard permissions of gates, but have a random exit location every time a player enters.
+  - ''BROKEN'' 'R' is for random gates. These follow standard permissions of gates, but have a random exit location every time a player enters.
 
 The options are the single letter, not the word. So to make a private hidden gate, your 4th line would be 'PH'.
 
@@ -138,6 +139,24 @@ portal-open/closed are used to define the material in the gate when it is open o
 "X" and "-" are used to define block "types" for the layout (Any single-character can be used, such as "#").  
 In the gate format, you can see we use "X" to show where obsidian must be, "-" where the controls (Button/sign) are.  
 You will also notice a "*" in the gate layout, this is the "exit point" of the gate, the block at which the player will teleport in front of.
+
+By default, all portals do not function properly when waterlogged (built underwater).
+To make an underwater gate, set the portal-closed value to WATER.
+
+Note that this will replace the button with some coral; the functionality remains the same insofar as you must right click said coral.
+
+```
+portal-open=KELP_PLANT
+portal-closed=WATER
+X=SEA_LANTERN
+-=SEA_LANTERN
+
+ XX 
+X..X
+-..-
+X*.X
+ XX 
+```
 
 # Configuration
 ```
@@ -203,11 +222,12 @@ createWorldDeny=You do not have access to that world
 createConflict=Gate conflicts with existing gate
 ```
 # Changes
-#### [Version 0.9.0.8-SNAPSHOT]
+#### [Version 0.9.1.0]
 ### WARNING; THIS VERSION IS UNSTABLE. DO NOT USE IT
+ - Groundwork to fix a bug preventing random teleportation
+ - Added support for underwater portals
+#### [Version 0.9.0.0] LCLO Fork
  - Updated to 1.15 compatibility
- - Partial fix of a bug that prevented random gates from functioning properly.
- - Added partial support for underwater portals.
 #### [Version 0.8.0.0] PseudoKnight fork
  - Update for 1.13/1.14 compatibility. This changes gate layouts to use new material names instead of numeric ids. You need to update your gate layout configs.
  - Adds "verifyPortals" config option, which sets whether an old stargate's blocks are verified when loaded.
