@@ -4,7 +4,7 @@ version: maven-version-number
 description: Stargate mod for Bukkit
 author: [Drakia, PseudoKnight, Frostalf, InteriorCamping, ProfX66]
 website: http://www.thedgtl.net
-api-version: 1.13
+api-version: 1.14
 commands:
   sg:
     description: Used to reload the plugin. Console use only.
