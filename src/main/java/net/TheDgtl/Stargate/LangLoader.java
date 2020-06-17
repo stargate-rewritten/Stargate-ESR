@@ -33,14 +33,14 @@ import java.util.Set;
 public class LangLoader {
 	private String UTF8_BOM = "\uFEFF";
 	// Variables
-	private String datFolder;
+	private String dataFolder;
 	private String lang;
 	private HashMap<String, String> strList;
 	private HashMap<String, String> defList;
 
 	public LangLoader(String datFolder, String lang) {
 		this.lang = lang;
-		this.datFolder = datFolder;
+		this.dataFolder = datFolder;
 
 		File tmp = new File(datFolder, lang + ".txt");
 		if (!tmp.exists()) {
@@ -127,7 +127,8 @@ public class LangLoader {
 			br.close();
 
 			// Save file
-			fos = new FileOutputStream(datFolder + lang + ".txt");
+            File langFile = new File(dataFolder, lang +".txt");
+			fos = new FileOutputStream(langFile);
 			OutputStreamWriter out = new OutputStreamWriter(fos, "UTF8");
 			BufferedWriter bw = new BufferedWriter(out);
 
@@ -167,7 +168,8 @@ public class LangLoader {
 		InputStreamReader isr = null;
 		try {
 			if (is == null) {
-				fis = new FileInputStream(datFolder + lang + ".txt");
+                File langFile = new File(dataFolder, lang +".txt");
+				fis = new FileInputStream(langFile);
 				isr = new InputStreamReader(fis, "UTF8");
 			} else {
 				isr = new InputStreamReader(is, "UTF8");
