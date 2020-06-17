@@ -280,7 +280,7 @@ public class Portal {
 				return null;
 			}
             if (!destinations.isEmpty()) {
-                randomize = randomNumber.nextInt(destinations.size()+1);
+                randomize = randomNumber.nextInt(destinations.size());
             }
 			String dest = destinations.get(randomize);
 			destinations.clear();
