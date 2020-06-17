@@ -1,6 +1,6 @@
 name: Stargate
 main: net.TheDgtl.Stargate.Stargate
-version: ${project.version}
+version: maven-version-number
 description: Stargate mod for Bukkit
 author: [Drakia, PseudoKnight, Frostalf, InteriorCamping, ProfX66]
 website: http://www.thedgtl.net
