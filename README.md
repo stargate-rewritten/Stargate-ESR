@@ -110,15 +110,15 @@ The options are the single letter, not the word. So to make a private hidden gat
 
 #### Detached (Random) Gates:
  - Always-on detached gates are similar to always-on fixed gates, but do not have a fixed exit;
-   They instead randomly select an exit from the list of gates on their network.
+   - They instead randomly select an exit from the list of gates on their network.
  - Marking a gate as 'R' will automatically make that gate always-on.
  - 'R' gates ignore any gate with the 'R', 'A', and/or 'S' flag(s) when choosing their exit.
 
 ## Using a gate:
  - Right click the sign to choose a destination (not needed for Fixed gates, undefined gates).
  - Right click the activator to open up a portal.
-  - Normally, the activator is a button
-  - If the gate is underwater, the activator will be a dead coral fan
+   - Normally, the activator is a button
+   - If the gate is underwater, the activator will be a dead coral fan
  - Step through.
  
 ## Economy Support:
@@ -156,7 +156,6 @@ By default, all portals do not function properly when waterlogged (built underwa
 To make an underwater gate, set the portal-closed value to WATER.
 
 Note that this will replace the button with some coral; the functionality remains the same insofar as you must right click said coral.
-
 ```
 portal-open=KELP_PLANT
 portal-closed=WATER
