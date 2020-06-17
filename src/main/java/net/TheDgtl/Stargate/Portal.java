@@ -271,14 +271,15 @@ public class Portal {
 	}
 
 	public Portal getDestination(Player player) {
-        Random random = new Random();
+        Random randomness = new Random();
 
 		if (isRandom()) {
 			destinations = getDestinations(player, getNetwork());
-			if (destinations.size() == 0) {
+			if (destinations.isEmpty()) {
 				return null;
 			}
-			String dest = destinations.get((new Random()).nextInt(destinations.size()));
+            int randomInt = randomness.nextInt(destinations.size() + 1);
+			String dest = destinations.get(randomInt);
 			destinations.clear();
 			return Portal.getByName(dest, getNetwork());
 		}
@@ -597,7 +598,6 @@ public class Portal {
 	}
 
 	public ArrayList<String> getDestinations(Player player, String network) {
-		ArrayList<String> destinations = new ArrayList<>();
 		for (String dest : allPortalsNet.get(network.toLowerCase())) {
 			Portal portal = getByName(dest, network);
 			if (portal == null) continue;
@@ -685,7 +685,7 @@ public class Portal {
 			activate = true;
 		}
 
-		if (destinations.size() == 0) {
+		if (destinations.isEmpty()) {
 			Stargate.sendMessage(player, Stargate.getString("destEmpty"));
 			return;
 		}
