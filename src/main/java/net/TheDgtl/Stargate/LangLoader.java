@@ -50,7 +50,7 @@ public class LangLoader {
 
 		strList = load(lang);
 		// We have a default hashMap used for when new text is added.
-		InputStream is = Stargate.class.getResourceAsStream(lang + ".txt");
+		InputStream is = Stargate.class.getResourceAsStream("/"+ lang + ".txt");
 		if (is != null) {
 			defList = load("en", is);
 		} else {
@@ -86,7 +86,7 @@ public class LangLoader {
 
 		HashMap<String, String> curLang = load(lang);
 
-		InputStream is = Stargate.class.getResourceAsStream(lang + ".txt");
+		InputStream is = Stargate.class.getResourceAsStream("/" + lang + ".txt");
 		if (is == null) return;
 
 		boolean updated = false;
