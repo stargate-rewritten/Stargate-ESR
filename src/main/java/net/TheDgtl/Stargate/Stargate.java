@@ -921,7 +921,7 @@ public class Stargate extends JavaPlugin {
 				}
 
 				// Implement right-click to toggle a stargate, gets around spawn protection problem.
-				if ((block.getType() == Material.STONE_BUTTON)) {
+				if (block.getType() == Material.STONE_BUTTON) {
 					Portal portal = Portal.getByBlock(block);
 					if (portal == null) return;
 					
@@ -943,7 +943,29 @@ public class Stargate extends JavaPlugin {
 					if (portal.isOpenFor(player)) {
 						event.setUseInteractedBlock(Result.ALLOW);
 					}
-				}
+				} else if (block.getType() == Material.DEAD_TUBE_CORAL_WALL_FAN) {
+                                        Portal portal = Portal.getByBlock(block);
+					if (portal == null) return;
+					
+					// Cancel item use
+					event.setUseItemInHand(Result.DENY);
+					event.setUseInteractedBlock(Result.DENY);
+					
+					boolean deny = false;
+					if (!Stargate.canAccessNetwork(player, portal.getNetwork())) {
+						deny = true;
+					}
+					
+					if (!Stargate.canAccessPortal(player, portal, deny)) {
+						Stargate.sendMessage(player, Stargate.getString("denyMsg"));
+						return;
+					}
+					
+					openPortal(player, portal);
+					if (portal.isOpenFor(player)) {
+						event.setUseInteractedBlock(Result.ALLOW);
+					}
+                                }
 				return;
 			}
 			
@@ -1068,6 +1090,8 @@ public class Stargate extends JavaPlugin {
 			if (block.getType() == Material.NETHER_PORTAL) {
 				portal = Portal.getByEntrance(block);
 			} else if (block.getType() == Material.STONE_BUTTON) {
+				portal = Portal.getByControl(block);
+			} else if (block.getType() == Material.STONE_PRESSURE_PLATE) {
 				portal = Portal.getByControl(block);
 			}
 			if (portal != null) event.setCancelled(true);
