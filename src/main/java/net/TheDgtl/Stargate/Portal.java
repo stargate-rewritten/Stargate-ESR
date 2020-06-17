@@ -279,7 +279,9 @@ public class Portal {
 			if (destinations.isEmpty()) {
 				return null;
 			}
-            randomize = randomNumber.nextInt(destinations.size()) + 1;
+            if (!destinations.isEmpty()) {
+                randomize = randomNumber.nextInt(destinations.size()+1);
+            }
 			String dest = destinations.get(randomize);
 			destinations.clear();
 			return Portal.getByName(dest, getNetwork());
@@ -1094,7 +1096,7 @@ public class Portal {
 				return null;
 			}
 		}
-		
+
 		Blox button = null;
 		Portal portal = null;
 		portal = new Portal(topleft, modX, modZ, rotX, id, button, destName, name, false, network, gate, player.getUniqueId(), player.getName(), hidden, alwaysOn, priv, free, backwards, show, noNetwork, random, bungee);
