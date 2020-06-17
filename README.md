@@ -3,13 +3,15 @@ Create gates that allow for instant-teleportation between large distances. Gates
 
 - Player permissions -- let players build their own networks.
 - Vault economy support -- can add costs for create, destroy and use.
-- Multiple custom gate configurations
+- Capacity to add custom gates, as well as some pre-set examples
 - Message customization
+- Gate options
+- Underwater portal support
 
 ## Background
-This was originally TheDgtl's Bukkit port of the Stargate plugin for hMod by Dinnerbone.
+This plugin was originally TheDgtl's Bukkit port of the Stargate plugin for hMod by Dinnerbone.
 After this plugin was dropped by TheDgtl, PseudoKnight began maintaining it for modern versions of Spigot.
-This is a niche fork made by the LCLO to address some minor issues in Pseudo's current versions.
+This is a niche fork of that made by the LCLO to address some minor issues in Pseudo's current versions.
 
 # Permissions
 ```
@@ -66,8 +68,8 @@ stargate.admin -- Op
 This is the default gate configuration. See the Custom Gate Layout section on how to change this.
 ```
     OO 
-   O  O - These are Obsidian blocks. You need 10.
-   O  O - Place a sign on either of these two blocks of Obsidian.
+   O  O - These are Obsidian blocks (use Sea Lanterns if underwater). You need 10.
+   ■  ■ - Place a sign on either of these two blocks.
    O  O
     OO
 ```
@@ -78,14 +80,14 @@ This is the default gate configuration. See the Custom Gate Layout section on ho
 - Line 2: Destination Name [Optional] (Max 12 characters, used for fixed-gates only)
 - Line 3: Network name [Optional] (Max 12 characters)
 - Line 4: Options [Optional] :
-  - 'A' for always-on fixed gate
-  - 'H' for hidden networked gate
-  - 'P' for a private gate
-  - 'F' for a free gate
-  - 'B' is for a backwards facing gate (You will exit the back)
-  - 'S' is for showing an always-on gate in the network list
-  - 'N' is for hiding the network name
-  - ''BROKEN'' 'R' is for random gates. These follow standard permissions of gates, but have a random exit location every time a player enters.
+  - 'A' for Always-on fixed gate
+  - 'H' for Hidden networked gate
+  - 'P' for a Private gate
+  - 'F' for a Free gate
+  - 'B' is for a Backwards facing gate (which exit you at the back)
+  - 'S' is for Showing an always-on gate in the network list
+  - 'N' is for hiding the Network name
+  - 'R' is for always-on detached (Random) gates.
 
 The options are the single letter, not the word. So to make a private hidden gate, your 4th line would be 'PH'.
 
@@ -106,9 +108,17 @@ The options are the single letter, not the word. So to make a private hidden gat
  - A hidden gate is only visible to the creator of the gate, or somebody with the stargate.hidden permission.
  - Set the 4th line of the stargate sign to 'H' to make it a hidden gate.
 
+#### Detached (Random) Gates:
+ - Always-on detached gates are similar to always-on fixed gates, but do not have a fixed exit;
+   They instead randomly select an exit from the list of gates on their network.
+ - Marking a gate as 'R' will automatically make that gate always-on.
+ - 'R' gates ignore any gate with the 'R', 'A', and/or 'S' flag(s) when choosing their exit.
+
 ## Using a gate:
- - Right click the sign to choose a destination.
- - Right click the button to open up a portal.
+ - Right click the sign to choose a destination (not needed for Fixed gates, undefined gates).
+ - Right click the activator to open up a portal.
+  - Normally, the activator is a button
+  - If the gate is underwater, the activator will be a dead coral fan
  - Step through.
  
 ## Economy Support:
@@ -121,6 +131,7 @@ toowner=true
 ```
 
 # Custom Gate Layout
+## Normal Portals
 You can create as many gate formats as you want, the gate layouts are stored in plugins/Stargate/gates/.  
 The .gate file must be laid out a specific way, the first lines will be config information, and after a blank line you will lay out the gate format. Here is the default nether.gate file:
 ```
@@ -140,6 +151,7 @@ portal-open/closed are used to define the material in the gate when it is open o
 In the gate format, you can see we use "X" to show where obsidian must be, "-" where the controls (Button/sign) are.  
 You will also notice a "*" in the gate layout, this is the "exit point" of the gate, the block at which the player will teleport in front of.
 
+## Underwater Portals
 By default, all portals do not function properly when waterlogged (built underwater).
 To make an underwater gate, set the portal-closed value to WATER.
 
@@ -222,10 +234,11 @@ createWorldDeny=You do not have access to that world
 createConflict=Gate conflicts with existing gate
 ```
 # Changes
-#### [Version 0.9.1.0]
-### WARNING; THIS VERSION IS UNSTABLE. DO NOT USE IT
- - Groundwork to fix a bug preventing random teleportation
+#### [Version 0.9.2.0]
+ - Fixed some bugs that prevented random teleportation
  - Added support for underwater portals
+#### [Version 0.9.1.0]
+ - Minor changes
 #### [Version 0.9.0.0] LCLO Fork
  - Updated to 1.15 compatibility
 #### [Version 0.8.0.0] PseudoKnight fork
