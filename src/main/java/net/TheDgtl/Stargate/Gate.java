@@ -382,7 +382,7 @@ public class Gate {
 		gate.useCost = readConfig(config, gate, file, "usecost", -1);
 		gate.destroyCost = readConfig(config, gate, file, "destroycost", -1);
 		gate.createCost = readConfig(config, gate, file, "createcost", -1);
-		gate.toOwner = (config.containsKey("toowner") ? Boolean.valueOf(config.get("toowner")) : EconomyHandler.toOwner);
+		gate.toOwner = (config.containsKey("toowner") ? Boolean.parseBoolean(config.get("toowner")) : EconomyHandler.toOwner);
 
 		if (gate.getControls().length != 2) {
 			Stargate.log.log(Level.SEVERE, "Could not load Gate " + file.getName() + " - Gates must have exactly 2 control points.");
@@ -416,6 +416,7 @@ public class Gate {
 			}
 			Stargate.log.log(Level.WARNING, String.format("Error reading %s: %s is not a material", file, key));
 		}
+
 		return def;
 	}
 

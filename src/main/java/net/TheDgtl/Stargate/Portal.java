@@ -91,22 +91,22 @@ public class Portal {
 	private String lastDest = "";
 	private String network;
 	private Gate gate;
-	private String ownerName = "";
-	private UUID ownerUUID = null;
+	private String ownerName;
+	private UUID ownerUUID;
 	private World world;
 	private boolean verified;
 	private boolean fixed;
 
 	// Options
-	private boolean hidden = false;
-	private boolean alwaysOn = false;
-	private boolean priv = false;
-	private boolean free = false;
-	private boolean backwards = false;
-	private boolean show = false;
-	private boolean noNetwork = false;
-	private boolean random = false;
-	private boolean bungee = false;
+	private boolean hidden;
+	private boolean alwaysOn;
+	private boolean priv;
+	private boolean free;
+	private boolean backwards;
+	private boolean show;
+	private boolean noNetwork;
+	private boolean random;
+	private boolean bungee;
 
 	// In-use information
 	private Player player;
@@ -115,11 +115,14 @@ public class Portal {
 	private boolean isOpen = false;
 	private long openTime;
 
+	// todo Woh
+
 	private Portal(Blox topLeft, int modX, int modZ,
 				float rotX, Blox id, Blox button,
 				String dest, String name,
 				boolean verified, String network, Gate gate, UUID ownerUUID, String ownerName,
 				boolean hidden, boolean alwaysOn, boolean priv, boolean free, boolean backwards, boolean show, boolean noNetwork, boolean random, boolean bungee) {
+
 		this.topLeft = topLeft;
 		this.modX = modX;
 		this.modZ = modZ;
@@ -274,19 +277,22 @@ public class Portal {
 	}
 
 	public Portal getDestination(Player player) {
-		if (isRandom()) {
-			destinations = getDestinations(player, getNetwork());
-			if (destinations.isEmpty()) {
-				return null;
-			}
-            if (!destinations.isEmpty()) {
-                randomize = randomNumber.nextInt(destinations.size());
-            }
-			String dest = destinations.get(randomize);
-			destinations.clear();
-			return Portal.getByName(dest, getNetwork());
+		if (!isRandom()) {
+			return Portal.getByName(destination, getNetwork());
 		}
-		return Portal.getByName(destination, getNetwork());
+
+		destinations = getDestinations(player, getNetwork());
+
+		if (destinations.isEmpty()) {
+			return null;
+		}
+
+		randomize = randomNumber.nextInt(destinations.size());
+
+		String dest = destinations.get(randomize);
+		destinations.clear();
+
+		return Portal.getByName(dest, getNetwork());
 	}
 
 	public Portal getDestination() {
@@ -322,7 +328,7 @@ public class Portal {
 	}
 
 	public boolean isOwner(Player player) {
-		if(this.ownerUUID != null) {
+		if (this.ownerUUID != null) {
 			return player.getUniqueId().compareTo(this.ownerUUID) == 0;
 		} else {
 			return player.getName().equalsIgnoreCase(this.ownerName);
@@ -339,6 +345,7 @@ public class Portal {
 				entrances[i++] = getBlockAt(vector);
 			}
 		}
+
 		return entrances;
 	}
 
@@ -346,8 +353,8 @@ public class Portal {
 		if (frame == null) {
 			RelativeBlockVector[] border = gate.getBorder();
 			frame = new Blox[border.length];
-			int i = 0;
 
+			int i = 0;
 			for (RelativeBlockVector vector : border) {
 				frame[i++] = getBlockAt(vector);
 			}

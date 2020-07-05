@@ -41,60 +41,58 @@ public class EconomyHandler {
 	public static boolean freeGatesGreen = false;
 	
 	public static double getBalance(Player player) {
-		if (!economyEnabled) return 0;
-		return economy.getBalance(player);
+		return !economyEnabled ? 0 : economy.getBalance(player);
 	}
-	
+
+	@Deprecated
 	public static boolean chargePlayer(Player player, String target, double amount) {
-		if (!economyEnabled) return true;
-		if(player.getName().equals(target)) return true;
-		if(economy != null) {
-			if(!economy.has(player, amount)) return false;
-			economy.withdrawPlayer(player, amount);
-			economy.depositPlayer(target, amount);
-		}
+		if (!economyEnabled || player.getName().equals(target)) return true;
+		if (economy == null || !economy.has(player, amount)) return false;
+
+		economy.withdrawPlayer(player, amount);
+		economy.depositPlayer(target, amount);
+
 		return false;
 	}
 
 	public static boolean chargePlayer(Player player, UUID target, double amount) {
-		if (!economyEnabled) return true;
-		if(player.getUniqueId().compareTo(target) == 0) return true;
-		if(economy != null) {
-			if(!economy.has(player, amount)) return false;
-			economy.withdrawPlayer(player, amount);
-			economy.depositPlayer(Bukkit.getOfflinePlayer(target), amount);
-		}
+		if (!economyEnabled || player.getUniqueId().compareTo(target) == 0) return true;
+		if (economy == null || !economy.has(player, amount)) return false;
+
+		economy.withdrawPlayer(player, amount);
+		economy.depositPlayer(Bukkit.getOfflinePlayer(target), amount);
+
 		return false;
 	}
 
 	public static boolean chargePlayer(Player player, double amount) {
 		if (!economyEnabled) return true;
-		if(economy != null) {
-			if(!economy.has(player, amount)) return false;
-			economy.withdrawPlayer(player, amount);
-		}
+		if (economy == null || !economy.has(player, amount)) return false;
+
+		economy.withdrawPlayer(player, amount);
 		return false;
 	}
 	
 	public static String format(int amt) {
-		if (economyEnabled) {
-			return economy.format(amt);
-		}
-		return "";
+		return economyEnabled ? economy.format(amt) : "";
 	}
 	
 	public static boolean setupEconomy(PluginManager pm) {
 		if (!economyEnabled) return false;
+
 		// Check for Vault
 		Plugin p = pm.getPlugin("Vault");
 		if (p != null && p.isEnabled()) {
 			RegisteredServiceProvider<Economy> economyProvider = Stargate.server.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+
 			if (economyProvider != null) {
 				economy = economyProvider.getProvider();
 				vault = p;
+
 				return true;
 			}
 		}
+
 		economyEnabled = false;
 		return false;
 	}

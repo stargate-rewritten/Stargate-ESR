@@ -21,9 +21,9 @@ package net.TheDgtl.Stargate;
  */
 
 public class RelativeBlockVector {
-	private int right = 0;
-	private int depth = 0;
-	private int distance = 0;
+	private int right;
+	private int depth;
+	private int distance;
 
 	public RelativeBlockVector(int right, int depth, int distance) {
 		this.right = right;
