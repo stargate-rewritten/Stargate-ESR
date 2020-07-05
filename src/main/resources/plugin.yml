@@ -1,10 +1,10 @@
 name: Stargate
 main: net.TheDgtl.Stargate.Stargate
-version: maven-version-number
+version: @version@
 description: Stargate mod for Bukkit
 authors: [Drakia, PseudoKnight, Frostalf, InteriorCamping]
 website: http://www.thedgtl.net
-api-version: 1.15.2
+api-version: @spigot-version@
 commands:
   sg:
     description: Used to reload the plugin. Console use only.
