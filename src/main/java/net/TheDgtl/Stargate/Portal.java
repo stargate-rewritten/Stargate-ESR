@@ -678,7 +678,7 @@ public class Portal {
 		int curIndex = destinations.indexOf(destination);
 		int i = Math.min(max, Math.max(0, curIndex - (curIndex == max ? 2 : 1)));
 
-		while (lines.size() < 3) {
+		while (lines.size() < 3 && i <= max) {
 			String drawDestination = destinations.get(i);
 			String msg = drawDestination;
 
@@ -693,8 +693,7 @@ public class Portal {
 				msg = " >" + msg + "< ";
 
 			lines.add(msg);
-
-			if (i++ > max) break;
+			i++;
 		}
 
 		return lines;
@@ -813,7 +812,7 @@ public class Portal {
 			String line = "";
 
 			try {
-				line = lines.get(i);
+				line = lines.get(i - 1);
 			} catch (IndexOutOfBoundsException ignored) { }
 
 			Stargate.setLine(sign, i, line);
