@@ -36,6 +36,7 @@ import org.bukkit.block.Block;
  */
  
 public class Gate {
+
 	private static final Character ANYTHING = ' ';
 	private static final Character ENTRANCE = '.';
 	private static final Character EXIT = '*';
@@ -80,19 +81,25 @@ public class Gate {
 		for (int y = 0; y < layout.length; y++) {
 			for (int x = 0; x < layout[y].length; x++) {
 				Character key = layout[y][x];
+
 				if (key.equals('-')) {
 					controlList.add(new RelativeBlockVector(x, y, 0));
 				}
 
+				if (key.equals(ANYTHING)) continue;
+
 				if (key.equals(ENTRANCE) || key.equals(EXIT)) {
 					entranceList.add(new RelativeBlockVector(x, y, 0));
 					exitDepths[x] = y;
+
 					if (key.equals(EXIT)) {
 						this.exitBlock = new RelativeBlockVector(x, y, 0);
 					}
-				} else if (!key.equals(ANYTHING)) {
-					borderList.add(new RelativeBlockVector(x, y, 0));
+
+					continue;
 				}
+
+				borderList.add(new RelativeBlockVector(x, y, 0));
 			}
 		}
 
@@ -132,6 +139,7 @@ public class Gate {
 			for (Map.Entry<Character, Material> entry : types.entrySet()) {
 				Character type = entry.getKey();
 				Material value = entry.getValue();
+
 				// Skip control values
 				if (type.equals(ANYTHING) || type.equals(ENTRANCE) || type.equals(EXIT)) {
 					continue;
@@ -530,4 +538,5 @@ public class Gate {
 		controlBlocks.clear();
 		frameBlocks.clear();
 	}
+
 }

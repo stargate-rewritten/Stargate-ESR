@@ -27,6 +27,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.EndGateway;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Orientable;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
@@ -919,12 +920,19 @@ public class Stargate extends JavaPlugin {
 		public void onPlayerInteract(PlayerInteractEvent event) {
 			Player player = event.getPlayer();
 			Block block = event.getClickedBlock();
+			if (block == null) return;
 
-			// Right click
+			BlockData blockData = block.getBlockData();
+
 			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				if (block.getBlockData() instanceof WallSign) {
+				Material blockMat = block.getType();
+
+				if (blockData instanceof WallSign
+						|| blockMat == Material.STONE_BUTTON || blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN) {
+
 					Portal portal = Portal.getByBlock(block);
 					if (portal == null) return;
+
 					// Cancel item use
 					event.setUseItemInHand(Result.DENY);
 					event.setUseInteractedBlock(Result.DENY);
@@ -939,87 +947,38 @@ public class Stargate extends JavaPlugin {
 						return;
 					}
 
-					if ((!portal.isOpen()) && (!portal.isFixed())) {
-						portal.cycleDestination(player);
+					openPortal(player, portal);
+					if (portal.isOpenFor(player)) {
+						event.setUseInteractedBlock(Result.ALLOW);
 					}
-					return;
 				}
 
-				// Implement right-click to toggle a stargate, gets around spawn protection problem.
-				if (block.getType() == Material.STONE_BUTTON) {
-					Portal portal = Portal.getByBlock(block);
-					if (portal == null) return;
-
-					// Cancel item use
-					event.setUseItemInHand(Result.DENY);
-					event.setUseInteractedBlock(Result.DENY);
-
-					boolean deny = false;
-					if (!Stargate.canAccessNetwork(player, portal.getNetwork())) {
-						deny = true;
-					}
-
-					if (!Stargate.canAccessPortal(player, portal, deny)) {
-						Stargate.sendMessage(player, Stargate.getString("denyMsg"));
-						return;
-					}
-
-					openPortal(player, portal);
-					if (portal.isOpenFor(player)) {
-						event.setUseInteractedBlock(Result.ALLOW);
-					}
-				} else if (block.getType() == Material.DEAD_TUBE_CORAL_WALL_FAN) {
-                                        Portal portal = Portal.getByBlock(block);
-					if (portal == null) return;
-
-					// Cancel item use
-					event.setUseItemInHand(Result.DENY);
-					event.setUseInteractedBlock(Result.DENY);
-
-					boolean deny = false;
-					if (!Stargate.canAccessNetwork(player, portal.getNetwork())) {
-						deny = true;
-					}
-
-					if (!Stargate.canAccessPortal(player, portal, deny)) {
-						Stargate.sendMessage(player, Stargate.getString("denyMsg"));
-						return;
-					}
-
-					openPortal(player, portal);
-					if (portal.isOpenFor(player)) {
-						event.setUseInteractedBlock(Result.ALLOW);
-					}
-                                }
 				return;
 			}
 
-			// Left click
-			if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-				// Check if we're scrolling a sign
-				if (block.getBlockData() instanceof WallSign) {
-					Portal portal = Portal.getByBlock(block);
-					if (portal == null) return;
+			if (event.getAction() == Action.LEFT_CLICK_BLOCK && blockData instanceof WallSign) {
+				Portal portal = Portal.getByBlock(block);
+				if (portal == null) return;
 
-					event.setUseInteractedBlock(Result.DENY);
-					// Only cancel event in creative mode
-					if (player.getGameMode().equals(GameMode.CREATIVE)) {
-						event.setCancelled(true);
-					}
+				event.setUseInteractedBlock(Result.DENY);
 
-					boolean deny = false;
-					if (!Stargate.canAccessNetwork(player, portal.getNetwork())) {
-						deny = true;
-					}
+				// Only cancel event in creative mode
+				if (player.getGameMode().equals(GameMode.CREATIVE)) {
+					event.setCancelled(true);
+				}
 
-					if (!Stargate.canAccessPortal(player, portal, deny)) {
-						Stargate.sendMessage(player, Stargate.getString("denyMsg"));
-						return;
-					}
+				boolean deny = false;
+				if (!Stargate.canAccessNetwork(player, portal.getNetwork())) {
+					deny = true;
+				}
 
-					if ((!portal.isOpen()) && (!portal.isFixed())) {
-						portal.cycleDestination(player, -1);
-					}
+				if (!Stargate.canAccessPortal(player, portal, deny)) {
+					Stargate.sendMessage(player, Stargate.getString("denyMsg"));
+					return;
+				}
+
+				if ((!portal.isOpen()) && (!portal.isFixed())) {
+					portal.cycleDestination(player, -1);
 				}
 			}
 		}
