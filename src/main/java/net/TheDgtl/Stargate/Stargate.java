@@ -926,35 +926,32 @@ public class Stargate extends JavaPlugin {
 			Player player = event.getPlayer();
 			BlockData blockData = block.getBlockData();
 			Action action = event.getAction();
+			Material blockMat = block.getType();
 
-			if (action == Action.RIGHT_CLICK_BLOCK) {
-				Material blockMat = block.getType();
+			if (action == Action.RIGHT_CLICK_BLOCK
+					&& (blockMat == Material.STONE_BUTTON || blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN)) {
 
-				if (blockMat == Material.STONE_BUTTON || blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN) {
-					Portal portal = Portal.getByBlock(block);
-					if (portal == null) return;
+				Portal portal = Portal.getByBlock(block);
+				if (portal == null) return;
 
-					// Cancel item use
-					event.setUseItemInHand(Result.DENY);
-					event.setUseInteractedBlock(Result.DENY);
+				// Cancel item use
+				event.setUseItemInHand(Result.DENY);
+				event.setUseInteractedBlock(Result.DENY);
 
-					boolean deny = false;
-					if (!Stargate.canAccessNetwork(player, portal.getNetwork())) {
-						deny = true;
-					}
-
-					if (!Stargate.canAccessPortal(player, portal, deny)) {
-						Stargate.sendMessage(player, Stargate.getString("denyMsg"));
-						return;
-					}
-
-					openPortal(player, portal);
-					if (portal.isOpenFor(player)) {
-						event.setUseInteractedBlock(Result.ALLOW);
-					}
+				boolean deny = false;
+				if (!Stargate.canAccessNetwork(player, portal.getNetwork())) {
+					deny = true;
 				}
 
-				return;
+				if (!Stargate.canAccessPortal(player, portal, deny)) {
+					Stargate.sendMessage(player, Stargate.getString("denyMsg"));
+					return;
+				}
+
+				openPortal(player, portal);
+				if (portal.isOpenFor(player)) {
+					event.setUseInteractedBlock(Result.ALLOW);
+				}
 			}
 
 			if (blockData instanceof WallSign

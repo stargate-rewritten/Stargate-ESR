@@ -676,7 +676,7 @@ public class Portal {
 		}
 
 		int curIndex = destinations.indexOf(destination);
-		int i = Math.max(curIndex - (curIndex == max ? 2 : 1), 0);
+		int i = Math.min(max, Math.max(0, curIndex - (curIndex == max ? 2 : 1)));
 
 		while (lines.size() < 3) {
 			String drawDestination = destinations.get(i);
