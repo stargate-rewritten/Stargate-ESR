@@ -292,7 +292,9 @@ public class Stargate extends JavaPlugin {
 
 	public static void sendMessage(CommandSender player, String message, boolean error) {
 		if (message.isEmpty()) return;
+
 		message = message.replaceAll("(&([a-f0-9]))", "\u00A7$2");
+
 		if (error)
 			player.sendMessage(ChatColor.RED + Stargate.getString("prefix") + ChatColor.WHITE + message);
 		else
@@ -918,18 +920,17 @@ public class Stargate extends JavaPlugin {
 
 		@EventHandler
 		public void onPlayerInteract(PlayerInteractEvent event) {
-			Player player = event.getPlayer();
 			Block block = event.getClickedBlock();
 			if (block == null) return;
 
+			Player player = event.getPlayer();
 			BlockData blockData = block.getBlockData();
+			Action action = event.getAction();
 
-			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			if (action == Action.RIGHT_CLICK_BLOCK) {
 				Material blockMat = block.getType();
 
-				if (blockData instanceof WallSign
-						|| blockMat == Material.STONE_BUTTON || blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN) {
-
+				if (blockMat == Material.STONE_BUTTON || blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN) {
 					Portal portal = Portal.getByBlock(block);
 					if (portal == null) return;
 
@@ -956,7 +957,10 @@ public class Stargate extends JavaPlugin {
 				return;
 			}
 
-			if (event.getAction() == Action.LEFT_CLICK_BLOCK && blockData instanceof WallSign) {
+			if (blockData instanceof WallSign
+					&& (action == Action.LEFT_CLICK_BLOCK
+					||  action == Action.RIGHT_CLICK_BLOCK)) {
+
 				Portal portal = Portal.getByBlock(block);
 				if (portal == null) return;
 
@@ -978,7 +982,7 @@ public class Stargate extends JavaPlugin {
 				}
 
 				if ((!portal.isOpen()) && (!portal.isFixed())) {
-					portal.cycleDestination(player, -1);
+					portal.cycleDestination(player, action == Action.RIGHT_CLICK_BLOCK ? 1 : -1);
 				}
 			}
 		}
