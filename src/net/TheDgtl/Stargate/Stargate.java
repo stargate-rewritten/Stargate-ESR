@@ -895,6 +895,8 @@ public class Stargate extends JavaPlugin {
 			Player player = event.getPlayer();
 			Block block = event.getClickedBlock();
 
+			if(block == null) return;
+
 			// Right click
 			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 				if (block.getBlockData() instanceof WallSign) {
