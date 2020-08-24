@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
@@ -638,7 +639,7 @@ public class Stargate extends JavaPlugin {
 		@EventHandler
 		public void onVehicleMove(VehicleMoveEvent event) {
 			if (!handleVehicles) return;
-			Entity passenger = event.getVehicle().getPassenger();
+			List<Entity> passengers = event.getVehicle().getPassengers();
 			Vehicle vehicle = event.getVehicle();
 			
 			Portal portal = Portal.getByEntrance(event.getTo());
@@ -647,8 +648,9 @@ public class Stargate extends JavaPlugin {
 			// We don't support vehicles in Bungee portals
 			if (portal.isBungee()) return;
 			
-			if (passenger instanceof Player) {
-				Player player = (Player)passenger;
+			if (!passengers.isEmpty() && passengers.get(0) instanceof Player) {
+				/*
+				Player player = (Player) passengers.get(0);
 				if (!portal.isOpenFor(player)) {
 					Stargate.sendMessage(player, Stargate.getString("denyMsg"));
 					return;
@@ -712,6 +714,7 @@ public class Stargate extends JavaPlugin {
 				Stargate.sendMessage(player, Stargate.getString("teleportMsg"), false);
 				dest.teleport(vehicle);
 				portal.close(false);
+				 */
 			} else {
 				Portal dest = portal.getDestination();
 				if (dest == null) return;

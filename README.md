@@ -203,6 +203,9 @@ createWorldDeny=You do not have access to that world
 createConflict=Gate conflicts with existing gate
 ```
 # Changes
+#### [Version 0.8.0.1] PseudoKnight fork
+ - Fix slab check for portal exits
+ - Improve material checks for gate configuration
 #### [Version 0.8.0.0] PseudoKnight fork
  - Update for 1.13/1.14 compatibility. This changes gate layouts to use new material names instead of numeric ids. You need to update your gate layout configs.
  - Adds "verifyPortals" config option, which sets whether an old stargate's blocks are verified when loaded.
