@@ -39,18 +39,18 @@ public class Gate {
 	private static final Character ANYTHING = ' ';
 	private static final Character ENTRANCE = '.';
 	private static final Character EXIT = '*';
-	private static HashMap<String, Gate> gates = new HashMap<>();
-	private static HashMap<Material, ArrayList<Gate>> controlBlocks = new HashMap<>();
-	private static HashSet<Material> frameBlocks = new HashSet<>();
+	private static final HashMap<String, Gate> gates = new HashMap<>();
+	private static final HashMap<Material, ArrayList<Gate>> controlBlocks = new HashMap<>();
+	private static final HashSet<Material> frameBlocks = new HashSet<>();
 
-	private String filename;
-	private Character[][] layout;
-	private HashMap<Character, Material> types;
+	private final String filename;
+	private final Character[][] layout;
+	private final HashMap<Character, Material> types;
 	private RelativeBlockVector[] entrances = new RelativeBlockVector[0];
 	private RelativeBlockVector[] border = new RelativeBlockVector[0];
 	private RelativeBlockVector[] controls = new RelativeBlockVector[0];
 	private RelativeBlockVector exitBlock = null;
-	private HashMap<RelativeBlockVector, Integer> exits = new HashMap<>();
+	private final HashMap<RelativeBlockVector, Integer> exits = new HashMap<>();
 	private Material portalBlockOpen = Material.NETHER_PORTAL;
 	private Material portalBlockClosed = Material.AIR;
 	

@@ -26,7 +26,7 @@ import net.TheDgtl.Stargate.Portal;
  */
 
 public class StargateActivateEvent extends StargateEvent {
-	private Player player;
+	private final Player player;
 	private ArrayList<String> destinations;
 	private String destination;
 	

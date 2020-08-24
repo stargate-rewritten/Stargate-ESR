@@ -23,10 +23,10 @@ import org.bukkit.event.HandlerList;
  */
 
 public class StargateCreateEvent extends StargateEvent {
-	private Player player;
+	private final Player player;
 	private boolean deny;
 	private String denyReason;
-	private String[] lines;
+	private final String[] lines;
 	private int cost;
 	
 	private static final HandlerList handlers = new HandlerList();

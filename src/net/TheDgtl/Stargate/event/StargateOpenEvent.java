@@ -24,7 +24,7 @@ import org.bukkit.event.HandlerList;
  */
 
 public class StargateOpenEvent extends StargateEvent {
-	private Player player;
+	private final Player player;
 	private boolean force;
 	
 	private static final HandlerList handlers = new HandlerList();
