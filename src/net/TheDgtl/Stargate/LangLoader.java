@@ -1,5 +1,7 @@
 package net.TheDgtl.Stargate;
 
+import org.bukkit.ChatColor;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -120,7 +122,7 @@ public class LangLoader {
 					updated = true;
 				} else {
 					keyList.add(key);
-					valList.add("=" + curLang.get(key));
+					valList.add("=" + curLang.get(key).replace('\u00A7', '&'));
 					curLang.remove(key);
 				}
 				line = br.readLine();
@@ -187,8 +189,8 @@ public class LangLoader {
 					continue;
 				}
 				String key = line.substring(0, eq);
-				String val = line.substring(eq + 1);
-				strings.put(key,  val);
+				String val = ChatColor.translateAlternateColorCodes('&', line.substring(eq + 1));
+				strings.put(key, val);
 				line = br.readLine();
 			}
 		} catch (Exception ex) {
