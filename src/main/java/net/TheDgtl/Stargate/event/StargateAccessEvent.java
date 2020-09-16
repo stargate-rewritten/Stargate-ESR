@@ -24,7 +24,7 @@ import net.TheDgtl.Stargate.Portal;
  */
 
 public class StargateAccessEvent extends StargateEvent {
-	private Player player;
+	private final Player player;
 	private boolean deny;
 	
 	private static final HandlerList handlers = new HandlerList();

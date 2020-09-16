@@ -25,8 +25,8 @@ import org.bukkit.event.HandlerList;
  */
 
 public class StargatePortalEvent extends StargateEvent {
-	private Player player;
-	private Portal destination;
+	private final Player player;
+	private final Portal destination;
 	private Location exit;
 	
 	private static final HandlerList handlers = new HandlerList();

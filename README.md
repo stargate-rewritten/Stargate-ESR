@@ -11,7 +11,9 @@ Create gates that allow for instant-teleportation between large distances. Gates
 ## Background
 - This plugin was originally TheDgtl's Bukkit port of the Stargate plugin for hMod by Dinnerbone.
 - After this plugin was dropped by TheDgtl, PseudoKnight began maintaining it for modern versions of Spigot.
-- This is a niche fork of that made by the LCLO to address some minor issues in Pseudo's current versions.
+- LockedCraft forked that to fix some issues in the PseudoKnight version, and I forked this to clean up code & build
+- LittleBigBug forked that to clean up the project; meanwhile, PseudoKnight made some upstream changes.
+- Version 10 a is fork (with LBB & PK's changes merged) made to update to 1.16 and resolve some underwater issues.
 
 # Permissions
 ```
@@ -232,7 +234,18 @@ createFull=This network is full
 createWorldDeny=You do not have access to that world
 createConflict=Gate conflicts with existing gate
 ```
+
 # Changes
+#### [Version 0.10.1.0] LCLO Fork
+ - Merged LittleBigBug changes
+ - Merged PseudoKnight Changes
+#### [Version 0.9.4.0] PseudoKnight Fork
+(Packaged as 0.8.0.2)
+ - Fixed player relative yaw when exiting portal
+ - Add color code support in lang files
+#### [Version 0.9.3.0] LittleBigBug Fork
+(Packaged as 0.9.2.8)
+ - Major code cleanup
 #### [Version 0.9.2.0]
  - Fixed some bugs that prevented random teleportation
  - Added support for underwater portals

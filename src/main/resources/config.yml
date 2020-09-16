@@ -1,4 +1,4 @@
-# Stargate Configuration File
+# Stargate Configuration File  v. @version@
 # Main Stargate config
 #
 # portal-folder -  The folder for storing portals
@@ -51,4 +51,4 @@ freegatesgreen: false
 debug: false
 permdebug: false
 enableBungee: false
-verifyPortals: true
+verifyPortals: false
