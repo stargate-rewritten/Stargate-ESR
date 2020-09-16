@@ -99,8 +99,8 @@ public class Stargate extends JavaPlugin {
 	private static boolean destroyExplosion = false;
 	public static int maxGates = 0;
 	private static String langName = "en";
-	private static int activeTime = 10;
-	private static int openTime = 10;
+	private static final int activeTime = 10;
+	private static final int openTime = 10;
 	public static boolean destMemory = false;
 	public static boolean handleVehicles = true;
 	public static boolean sortLists = false;

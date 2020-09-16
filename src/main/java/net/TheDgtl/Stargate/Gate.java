@@ -41,9 +41,9 @@ public class Gate {
 	private static final Character ENTRANCE = '.';
 	private static final Character EXIT = '*';
 
-	private static HashMap<String, Gate> gates = new HashMap<>();
-	private static HashMap<Material, ArrayList<Gate>> controlBlocks = new HashMap<>();
-	private static HashSet<Material> frameBlocks = new HashSet<>();
+	private static final HashMap<String, Gate> gates = new HashMap<>();
+	private static final HashMap<Material, ArrayList<Gate>> controlBlocks = new HashMap<>();
+	private static final HashSet<Material> frameBlocks = new HashSet<>();
 
 	private String filename;
 	private Character[][] layout;

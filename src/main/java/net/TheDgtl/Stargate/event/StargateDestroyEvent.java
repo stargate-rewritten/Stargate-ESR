@@ -23,7 +23,7 @@ import org.bukkit.event.HandlerList;
  */
 
 public class StargateDestroyEvent extends StargateEvent {
-	private Player player;
+	private final Player player;
 	private boolean deny;
 	private String denyReason;
 	private int cost;

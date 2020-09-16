@@ -31,12 +31,12 @@ import java.util.Set;
  */
 
 public class LangLoader {
-	private String UTF8_BOM = "\uFEFF";
+	private final String UTF8_BOM = "\uFEFF";
 	// Variables
-	private String dataFolder;
+	private final String dataFolder;
 	private String lang;
 	private HashMap<String, String> strList;
-	private HashMap<String, String> defList;
+	private final HashMap<String, String> defList;
 
 	public LangLoader(String datFolder, String lang) {
 		this.lang = lang;

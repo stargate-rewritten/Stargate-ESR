@@ -74,14 +74,14 @@ public class Portal {
 	private static final HashMap<String, Portal> bungeePortals = new HashMap<>();
 
 	// Gate location block info
-	private Blox topLeft;
-	private int modX;
-	private int modZ;
-	private float rotX;
-	private Axis rot;
+	private final Blox topLeft;
+	private final int modX;
+	private final int modZ;
+	private final float rotX;
+	private final Axis rot;
 
 	// Block references
-	private Blox id;
+	private final Blox id;
 	private Blox button;
 	private Blox[] frame;
 	private Blox[] entrances;
@@ -91,10 +91,10 @@ public class Portal {
 	private String destination;
 	private String lastDest = "";
 	private String network;
-	private Gate gate;
+	private final Gate gate;
 	private String ownerName;
 	private UUID ownerUUID;
-	private World world;
+	private final World world;
 	private boolean verified;
 	private boolean fixed;
 
