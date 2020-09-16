@@ -11,7 +11,7 @@ Create gates that allow for instant-teleportation between large distances. Gates
 ## Background
 - This plugin was originally TheDgtl's Bukkit port of the Stargate plugin for hMod by Dinnerbone.
 - After this plugin was dropped by TheDgtl, PseudoKnight began maintaining it for modern versions of Spigot.
-- This is a niche fork of that made by the LCLO to address some minor issues in Pseudo's current versions.
+- LockedCraft forked that to fix some issues in the PseudoKnight version, and I forked this to clean up code & build
 
 # Permissions
 ```

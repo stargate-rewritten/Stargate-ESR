@@ -36,9 +36,11 @@ import org.bukkit.block.Block;
  */
  
 public class Gate {
+
 	private static final Character ANYTHING = ' ';
 	private static final Character ENTRANCE = '.';
 	private static final Character EXIT = '*';
+
 	private static HashMap<String, Gate> gates = new HashMap<>();
 	private static HashMap<Material, ArrayList<Gate>> controlBlocks = new HashMap<>();
 	private static HashSet<Material> frameBlocks = new HashSet<>();
@@ -79,19 +81,25 @@ public class Gate {
 		for (int y = 0; y < layout.length; y++) {
 			for (int x = 0; x < layout[y].length; x++) {
 				Character key = layout[y][x];
+
 				if (key.equals('-')) {
 					controlList.add(new RelativeBlockVector(x, y, 0));
 				}
 
+				if (key.equals(ANYTHING)) continue;
+
 				if (key.equals(ENTRANCE) || key.equals(EXIT)) {
 					entranceList.add(new RelativeBlockVector(x, y, 0));
 					exitDepths[x] = y;
+
 					if (key.equals(EXIT)) {
 						this.exitBlock = new RelativeBlockVector(x, y, 0);
 					}
-				} else if (!key.equals(ANYTHING)) {
-					borderList.add(new RelativeBlockVector(x, y, 0));
+
+					continue;
 				}
+
+				borderList.add(new RelativeBlockVector(x, y, 0));
 			}
 		}
 
@@ -131,6 +139,7 @@ public class Gate {
 			for (Map.Entry<Character, Material> entry : types.entrySet()) {
 				Character type = entry.getKey();
 				Material value = entry.getValue();
+
 				// Skip control values
 				if (type.equals(ANYTHING) || type.equals(ENTRANCE) || type.equals(EXIT)) {
 					continue;
@@ -138,9 +147,11 @@ public class Gate {
 
 				bw.append(type);
 				bw.append('=');
+
 				if(value != null) {
 					bw.append(value.toString());
 				}
+
 				bw.newLine();
 			}
 
@@ -150,6 +161,7 @@ public class Gate {
 				for(Character symbol : aLayout) {
 					bw.append(symbol);
 				}
+
 				bw.newLine();
 			}
 
@@ -250,9 +262,14 @@ public class Gate {
 
 	public boolean matches(Blox topleft, int modX, int modZ, boolean onCreate) {
 		HashMap<Character, Material> portalTypes = new HashMap<>(types);
+
 		for (int y = 0; y < layout.length; y++) {
 			for (int x = 0; x < layout[y].length; x++) {
 				Character key = layout[y][x];
+
+				if (key.equals(ANYTHING)) {
+					continue;
+				}
 
 				if (key.equals(ENTRANCE) || key.equals(EXIT)) {
 					if (Stargate.ignoreEntrance) continue;
@@ -266,14 +283,35 @@ public class Gate {
 						Stargate.debug("Gate::Matches", "Entrance/Exit Material Mismatch: " + type);
 						return false;
 					}
-				} else if (!key.equals(ANYTHING)) {
-					Material id = portalTypes.get(key);
-					if(id == null) {
-						portalTypes.put(key, topleft.modRelative(x, y, 0, modX, 1, modZ).getType());
-					} else if(topleft.modRelative(x, y, 0, modX, 1, modZ).getType() != id) {
-						Stargate.debug("Gate::Matches", "Block Type Mismatch: " + topleft.modRelative(x, y, 0, modX, 1, modZ).getType() + " != " + id);
-						return false;
-					}
+
+					continue;
+				}
+
+				Material id = portalTypes.get(key);
+
+				if (id == null) {
+					portalTypes.put(key, topleft.modRelative(x, y, 0, modX, 1, modZ).getType());
+					continue;
+				}
+
+				Material blockType = topleft.modRelative(x, y, 0, modX, 1, modZ).getType();
+
+				String idString = id.toString();
+				String blockString = blockType.toString();
+
+				boolean matches = blockType == id;
+
+				// Hack 7/5/2020
+				// using LEGACY_* as a wildcard
+				// Using LEGACY_CONCRETE will match ALL concrete colours
+				if (idString.contains("LEGACY") && !matches) {
+					String noLegacy = idString.replace("LEGACY_", "");
+					matches = blockString.contains(noLegacy);
+				}
+
+				if (!matches) {
+					Stargate.debug("Gate::Matches", "Block Type Mismatch: " + topleft.modRelative(x, y, 0, modX, 1, modZ).getType() + " != " + id);
+					return false;
 				}
 			}
 		}
@@ -325,31 +363,37 @@ public class Gate {
 							Stargate.log.log(Level.SEVERE, "Could not load Gate " + file.getName() + " - Unknown symbol '" + symbol + "' in diagram");
 							return null;
 						}
+
 						row.add(symbol);
 					}
 
 					design.add(row);
-				} else {
-					if ((line.isEmpty()) || (!line.contains("="))) {
-						designing = true;
-					} else {
-						String[] split = line.split("=");
-						String key = split[0].trim();
-						String value = split[1].trim();
-
-						if (key.length() == 1) {
-							Character symbol = key.charAt(0);
-							Material id = Material.getMaterial(value);
-							if(id == null) {
-								throw new Exception("Invalid material in line: " + line);
-							}
-							types.put(symbol, id);
-							frameTypes.add(id);
-						} else {
-							config.put(key, value);
-						}
-					}
+					continue;
 				}
+
+				if ((line.isEmpty()) || (!line.contains("="))) {
+					designing = true;
+					continue;
+				}
+
+				String[] split = line.split("=");
+				String key = split[0].trim();
+				String value = split[1].trim();
+
+				if (key.length() != 1) {
+					config.put(key, value);
+					continue;
+				}
+
+				Character symbol = key.charAt(0);
+				Material id = Material.getMaterial(value);
+
+				if (id == null) {
+					throw new Exception("Invalid material in line: " + line);
+				}
+
+				types.put(symbol, id);
+				frameTypes.add(id);
 			}
 		} catch (Exception ex) {
 			Stargate.log.log(Level.SEVERE, "Could not load Gate " + file.getName() + " - " + ex.getMessage());
@@ -364,12 +408,10 @@ public class Gate {
 			ArrayList<Character> row = design.get(y);
 			Character[] result = new Character[cols];
 
+			int rowSize = row.size();
+
 			for (int x = 0; x < cols; x++) {
-				if (x < row.size()) {
-					result[x] = row.get(x);
-				} else {
-					result[x] = ' ';
-				}
+				result[x] = (x < rowSize) ? row.get(x) : ' ';
 			}
 
 			layout[y] = result;
@@ -382,7 +424,7 @@ public class Gate {
 		gate.useCost = readConfig(config, gate, file, "usecost", -1);
 		gate.destroyCost = readConfig(config, gate, file, "destroycost", -1);
 		gate.createCost = readConfig(config, gate, file, "createcost", -1);
-		gate.toOwner = (config.containsKey("toowner") ? Boolean.valueOf(config.get("toowner")) : EconomyHandler.toOwner);
+		gate.toOwner = (config.containsKey("toowner") ? Boolean.parseBoolean(config.get("toowner")) : EconomyHandler.toOwner);
 
 		if (gate.getControls().length != 2) {
 			Stargate.log.log(Level.SEVERE, "Could not load Gate " + file.getName() + " - Gates must have exactly 2 control points.");
@@ -411,33 +453,28 @@ public class Gate {
 	private static Material readConfig(HashMap<String, String> config, Gate gate, File file, String key, Material def) {
 		if (config.containsKey(key)) {
 			Material mat = Material.getMaterial(config.get(key));
-			if(mat != null) {
-				return mat;
-			}
+			if (mat != null) return mat;
 			Stargate.log.log(Level.WARNING, String.format("Error reading %s: %s is not a material", file, key));
 		}
+
 		return def;
 	}
 
 	public static void loadGates(String gateFolder) {
 		File dir = new File(gateFolder);
-		File[] files;
-
-		if (dir.exists()) {
-			files = dir.listFiles(new StargateFilenameFilter());
-		} else {
-			files = new File[0];
-		}
+		File[] files = dir.exists() ? dir.listFiles(new StargateFilenameFilter()) : new File[0];
 
 		if (files == null || files.length == 0) {
 			if (dir.mkdir()) {
 				populateDefaults(gateFolder);
 			}
-		} else {
-			for (File file : files) {
-				Gate gate = loadGate(file);
-				if (gate != null) registerGate(gate);
-			}
+
+			return;
+		}
+
+		for (File file : files) {
+			Gate gate = loadGate(file);
+			if (gate != null) registerGate(gate);
 		}
 	}
 	
@@ -449,15 +486,19 @@ public class Gate {
 			{'X', '*', '.', 'X'},
 			{' ', 'X', 'X', ' '},
 		};
+
 		HashMap<Character, Material> types = new HashMap<>();
+
 		types.put(ENTRANCE, Material.AIR);
 		types.put(EXIT, Material.AIR);
 		types.put(ANYTHING, Material.AIR);
+
 		types.put('X', Material.OBSIDIAN);
 		types.put('-', Material.OBSIDIAN);
 
 		Gate gate = new Gate("nethergate.gate", layout, types);
 		gate.save(gateFolder);
+
 		registerGate(gate);
 	}
 
@@ -497,4 +538,5 @@ public class Gate {
 		controlBlocks.clear();
 		frameBlocks.clear();
 	}
+
 }
