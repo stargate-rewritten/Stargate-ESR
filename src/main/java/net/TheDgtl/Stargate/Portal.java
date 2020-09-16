@@ -490,11 +490,9 @@ public class Portal {
 
 		// Handle backwards gates
 		int adjust = 180;
-		if (isBackwards() || origin.isBackwards())
+		if (isBackwards() != origin.isBackwards())
 			adjust = 0;
-		if (isBackwards() && origin.isBackwards())
-			adjust = 180;
-		exit.setYaw(origin.getRotation() - traveller.getYaw() + this.getRotation() + adjust);
+                exit.setYaw(traveller.getYaw() - origin.getRotation() + this.getRotation() + adjust);
 
 		// Call the StargatePortalEvent to allow plugins to change destination
 		if (!origin.equals(this)) {
