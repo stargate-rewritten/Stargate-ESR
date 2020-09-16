@@ -1527,6 +1527,9 @@ public class Portal {
 	}
 
 	public static String filterName(String input) {
+                if (input==null) {
+                    return "";
+                }
 		return input.replaceAll("[|:#]", "").trim();
 	}
 

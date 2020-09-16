@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -129,7 +130,7 @@ public class LangLoader {
 			// Save file
             File langFile = new File(dataFolder, lang +".txt");
 			fos = new FileOutputStream(langFile);
-			OutputStreamWriter out = new OutputStreamWriter(fos, "UTF8");
+			OutputStreamWriter out = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
 			BufferedWriter bw = new BufferedWriter(out);
 
 			// Output normal Language data
@@ -170,9 +171,9 @@ public class LangLoader {
 			if (is == null) {
                 File langFile = new File(dataFolder, lang +".txt");
 				fis = new FileInputStream(langFile);
-				isr = new InputStreamReader(fis, "UTF8");
+				isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
 			} else {
-				isr = new InputStreamReader(is, "UTF8");
+				isr = new InputStreamReader(is, StandardCharsets.UTF_8);
 			}
 			BufferedReader br = new BufferedReader(isr);
 			String line = br.readLine();
