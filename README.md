@@ -13,7 +13,7 @@ Create gates that allow for instant-teleportation between large distances. Gates
 - After this plugin was dropped by TheDgtl, PseudoKnight began maintaining it for modern versions of Spigot.
 - LockedCraft forked that to fix some issues in the PseudoKnight version, and I forked this to clean up code & build
 - LittleBigBug forked that to clean up the project; meanwhile, PseudoKnight made some upstream changes.
-- Version 10 is fork (with LBB & PK's changes merged) made to update to 1.16 and resolve some underwater issues.
+- Version 10 a is fork (with LBB & PK's changes merged) made to update to 1.16 and resolve some underwater issues.
 
 # Permissions
 ```
