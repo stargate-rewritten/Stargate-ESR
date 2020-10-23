@@ -236,11 +236,13 @@ createConflict=Gate conflicts with existing gate
 ```
 
 # Changes
+#### [Version 0.10.3.0] LCLO Fork
+ - Merged PseudoKnight upstream changes.
 #### [Version 0.10.2.0] LCLO Fork
  - Updated to 1.16.3
 #### [Version 0.10.1.0] LCLO Fork
- - Merged LittleBigBug changes
- - Merged PseudoKnight Changes
+ - Merged LittleBigBug downstream changes
+ - Merged PseudoKnight upstream Changes
 #### [Version 0.9.4.0] PseudoKnight Fork
 (Packaged as 0.8.0.2)
  - Fixed player relative yaw when exiting portal
