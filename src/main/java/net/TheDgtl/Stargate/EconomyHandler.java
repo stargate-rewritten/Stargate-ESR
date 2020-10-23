@@ -52,7 +52,7 @@ public class EconomyHandler {
 		economy.withdrawPlayer(player, amount);
 		economy.depositPlayer(target, amount);
 
-		return false;
+		return true;
 	}
 
 	public static boolean chargePlayer(Player player, UUID target, double amount) {
@@ -62,7 +62,7 @@ public class EconomyHandler {
 		economy.withdrawPlayer(player, amount);
 		economy.depositPlayer(Bukkit.getOfflinePlayer(target), amount);
 
-		return false;
+		return true;
 	}
 
 	public static boolean chargePlayer(Player player, double amount) {
@@ -70,7 +70,7 @@ public class EconomyHandler {
 		if (economy == null || !economy.has(player, amount)) return false;
 
 		economy.withdrawPlayer(player, amount);
-		return false;
+		return true;
 	}
 	
 	public static String format(int amt) {
