@@ -13,12 +13,12 @@ import java.util.UUID;
 /**
  * Stargate - A portal plugin for Bukkit
  * Copyright (C) 2011, 2012 Steven "Drakia" Scott <Contact@TheDgtl.net>
- *
+ * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -65,7 +65,7 @@ public class EconomyHandler {
 		return true;
 	}
 
-	public boolean chargePlayer(Player player, double amount) {
+	public static boolean chargePlayer(Player player, double amount) {
 		if (!economyEnabled) return true;
 		if (economy == null || !economy.has(player, amount)) return false;
 
@@ -76,8 +76,8 @@ public class EconomyHandler {
 	public static String format(int amt) {
 		return economyEnabled ? economy.format(amt) : "";
 	}
-
-	public boolean setupEconomy(PluginManager pm) {
+	
+	public static boolean setupEconomy(PluginManager pm) {
 		if (!economyEnabled) return false;
 
 		// Check for Vault
@@ -97,7 +97,7 @@ public class EconomyHandler {
 		return false;
 	}
 
-	public boolean useEconomy() {
+	public static boolean useEconomy() {
 		return economyEnabled && economy != null;
 	}
 
