@@ -30,9 +30,9 @@ import org.bukkit.block.data.type.WallSign;
  */
 
 public class Blox {
-	private int x;
-	private int y;
-	private int z;
+	private final int x;
+	private final int y;
+	private final int z;
 	private World world;
 	private Blox parent = null;
 

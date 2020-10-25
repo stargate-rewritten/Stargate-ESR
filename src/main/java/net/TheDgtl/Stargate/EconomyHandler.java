@@ -29,79 +29,70 @@ import java.util.UUID;
  */
 
 public class EconomyHandler {
-
-    private Stargate plugin;
-
-    public EconomyHandler(Stargate plugin) {
-        this.plugin = plugin;
-    }
-
-	public boolean economyEnabled = false;
-	public Economy economy = null;
-	public Plugin vault = null;
-
-	public int useCost = 0;
-	public int createCost = 0;
-	public int destroyCost = 0;
-	public boolean toOwner = false;
-	public boolean chargeFreeDestination = true;
-	public boolean freeGatesGreen = false;
-
-	public double getBalance(Player player) {
-		if (!economyEnabled) return 0;
-		return economy.getBalance(player);
+	public static boolean economyEnabled = false;
+	public static Economy economy = null;
+	public static Plugin vault = null;
+	
+	public static int useCost = 0;
+	public static int createCost = 0;
+	public static int destroyCost = 0;
+	public static boolean toOwner = false;
+	public static boolean chargeFreeDestination = true;
+	public static boolean freeGatesGreen = false;
+	
+	public static double getBalance(Player player) {
+		return !economyEnabled ? 0 : economy.getBalance(player);
 	}
 
-	public boolean chargePlayer(Player player, String target, double amount) {
-		if (!economyEnabled) return true;
-		if(player.getName().equals(target)) return true;
-		if(economy != null) {
-			if(!economy.has(player, amount)) return false;
-			economy.withdrawPlayer(player, amount);
-			economy.depositPlayer(target, amount);
-		}
-		return false;
+	@Deprecated
+	public static boolean chargePlayer(Player player, String target, double amount) {
+		if (!economyEnabled || player.getName().equals(target)) return true;
+		if (economy == null || !economy.has(player, amount)) return false;
+
+		economy.withdrawPlayer(player, amount);
+		economy.depositPlayer(target, amount);
+
+		return true;
 	}
 
-	public boolean chargePlayer(Player player, UUID target, double amount) {
-		if (!economyEnabled) return true;
-		if(player.getUniqueId().compareTo(target) == 0) return true;
-		if(economy != null) {
-			if(!economy.has(player, amount)) return false;
-			economy.withdrawPlayer(player, amount);
-			economy.depositPlayer(Bukkit.getOfflinePlayer(target), amount);
-		}
-		return false;
+	public static boolean chargePlayer(Player player, UUID target, double amount) {
+		if (!economyEnabled || player.getUniqueId().compareTo(target) == 0) return true;
+		if (economy == null || !economy.has(player, amount)) return false;
+
+		economy.withdrawPlayer(player, amount);
+		economy.depositPlayer(Bukkit.getOfflinePlayer(target), amount);
+
+		return true;
 	}
 
 	public boolean chargePlayer(Player player, double amount) {
 		if (!economyEnabled) return true;
-		if(economy != null) {
-			if(!economy.has(player, amount)) return false;
-			economy.withdrawPlayer(player, amount);
-		}
-		return false;
-	}
+		if (economy == null || !economy.has(player, amount)) return false;
 
-	public String format(int amt) {
-		if (economyEnabled) {
-			return economy.format(amt);
-		}
-		return "";
+		economy.withdrawPlayer(player, amount);
+		return true;
+	}
+	
+	public static String format(int amt) {
+		return economyEnabled ? economy.format(amt) : "";
 	}
 
 	public boolean setupEconomy(PluginManager pm) {
 		if (!economyEnabled) return false;
+
 		// Check for Vault
 		Plugin p = pm.getPlugin("Vault");
 		if (p != null && p.isEnabled()) {
-			RegisteredServiceProvider<Economy> economyProvider = plugin.server.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+			RegisteredServiceProvider<Economy> economyProvider = Stargate.server.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+
 			if (economyProvider != null) {
 				economy = economyProvider.getProvider();
 				vault = p;
+
 				return true;
 			}
 		}
+
 		economyEnabled = false;
 		return false;
 	}

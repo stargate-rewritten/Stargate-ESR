@@ -1,5 +1,7 @@
 package net.TheDgtl.Stargate;
 
+import org.bukkit.ChatColor;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -31,18 +34,14 @@ import java.util.Set;
  */
 
 public class LangLoader {
-
-    private Stargate plugin;
-
-	private String UTF8_BOM = "\uFEFF";
+	private final String UTF8_BOM = "\uFEFF";
 	// Variables
-	private String dataFolder;
+	private final String dataFolder;
 	private String lang;
 	private HashMap<String, String> strList;
-	private HashMap<String, String> defList;
+	private final HashMap<String, String> defList;
 
-	public LangLoader(String datFolder, String lang, Stargate plugin) {
-        this.plugin = plugin;
+	public LangLoader(String datFolder, String lang) {
 		this.lang = lang;
 		this.dataFolder = datFolder;
 
@@ -123,7 +122,7 @@ public class LangLoader {
 					updated = true;
 				} else {
 					keyList.add(key);
-					valList.add("=" + curLang.get(key));
+					valList.add("=" + curLang.get(key).replace('\u00A7', '&'));
 					curLang.remove(key);
 				}
 				line = br.readLine();
@@ -133,7 +132,7 @@ public class LangLoader {
 			// Save file
             File langFile = new File(dataFolder, lang +".txt");
 			fos = new FileOutputStream(langFile);
-			OutputStreamWriter out = new OutputStreamWriter(fos, "UTF8");
+			OutputStreamWriter out = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
 			BufferedWriter bw = new BufferedWriter(out);
 
 			// Output normal Language data
@@ -174,9 +173,9 @@ public class LangLoader {
 			if (is == null) {
                 File langFile = new File(dataFolder, lang +".txt");
 				fis = new FileInputStream(langFile);
-				isr = new InputStreamReader(fis, "UTF8");
+				isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
 			} else {
-				isr = new InputStreamReader(is, "UTF8");
+				isr = new InputStreamReader(is, StandardCharsets.UTF_8);
 			}
 			BufferedReader br = new BufferedReader(isr);
 			String line = br.readLine();
@@ -192,8 +191,8 @@ public class LangLoader {
 					continue;
 				}
 				String key = line.substring(0, eq);
-				String val = line.substring(eq + 1);
-				strings.put(key,  val);
+				String val = ChatColor.translateAlternateColorCodes('&', line.substring(eq + 1));
+				strings.put(key, val);
 				line = br.readLine();
 			}
 		} catch (Exception ex) {
@@ -211,12 +210,12 @@ public class LangLoader {
 	public void debug() {
 		Set<String> keys = strList.keySet();
 		for (String key : keys) {
-			plugin.debug("LangLoader::Debug::strList", key + " => " + strList.get(key));
+			Stargate.debug("LangLoader::Debug::strList", key + " => " + strList.get(key));
 		}
 		if (defList == null) return;
 		keys = defList.keySet();
 		for (String key : keys) {
-			plugin.debug("LangLoader::Debug::defList", key + " => " + defList.get(key));
+			Stargate.debug("LangLoader::Debug::defList", key + " => " + defList.get(key));
 		}
 	}
 
