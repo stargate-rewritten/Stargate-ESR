@@ -31,6 +31,9 @@ import java.util.Set;
  */
 
 public class LangLoader {
+
+    private Stargate plugin;
+
 	private String UTF8_BOM = "\uFEFF";
 	// Variables
 	private String dataFolder;
@@ -38,7 +41,8 @@ public class LangLoader {
 	private HashMap<String, String> strList;
 	private HashMap<String, String> defList;
 
-	public LangLoader(String datFolder, String lang) {
+	public LangLoader(String datFolder, String lang, Stargate plugin) {
+        this.plugin = plugin;
 		this.lang = lang;
 		this.dataFolder = datFolder;
 
@@ -207,12 +211,12 @@ public class LangLoader {
 	public void debug() {
 		Set<String> keys = strList.keySet();
 		for (String key : keys) {
-			Stargate.debug("LangLoader::Debug::strList", key + " => " + strList.get(key));
+			plugin.debug("LangLoader::Debug::strList", key + " => " + strList.get(key));
 		}
 		if (defList == null) return;
 		keys = defList.keySet();
 		for (String key : keys) {
-			Stargate.debug("LangLoader::Debug::defList", key + " => " + defList.get(key));
+			plugin.debug("LangLoader::Debug::defList", key + " => " + defList.get(key));
 		}
 	}
 
