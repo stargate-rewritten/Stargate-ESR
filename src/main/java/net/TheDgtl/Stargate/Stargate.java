@@ -98,6 +98,11 @@ public class Stargate extends JavaPlugin {
     private PluginManager pm;
 
     @Override
+    public void onLoad() {
+        economyHandler = new EconomyHandler(this);
+    }
+
+    @Override
     public void onDisable() {
         Portal.closeAllGates(this);
         Portal.clearGates();
@@ -149,8 +154,6 @@ public class Stargate extends JavaPlugin {
         this.migrate();
         this.loadGates();
         this.loadAllPortals();
-
-        economyHandler = new EconomyHandler(this);
 
         // Check to see if Economy is loaded yet.
         if (economyHandler.setupEconomy(pm) && economyHandler.getEconomy() != null) {
