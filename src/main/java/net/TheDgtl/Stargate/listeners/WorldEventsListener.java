@@ -7,27 +7,33 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.jetbrains.annotations.NotNull;
 
-public class WorldEventsListener implements Listener {
+public class WorldEventsListener extends StargateListener {
+
+    public WorldEventsListener(@NotNull Stargate stargate) {
+        super(stargate);
+    }
+
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
-        if (!Stargate.managedWorlds.contains(event.getWorld().getName())
-                && Portal.loadAllGates(event.getWorld())) {
-            Stargate.managedWorlds.add(event.getWorld().getName());
+        if (!stargate.getManagedWorlds().contains(event.getWorld().getName())
+                && Portal.loadAllGates(stargate, event.getWorld())) {
+            stargate.getManagedWorlds().add(event.getWorld().getName());
         }
     }
 
     // We need to reload all gates on world unload, boo
     @EventHandler
     public void onWorldUnload(WorldUnloadEvent event) {
-        Stargate.debug("onWorldUnload", "Reloading all Stargates");
+        stargate.debug("onWorldUnload", "Reloading all Stargates");
         World w = event.getWorld();
-        if (Stargate.managedWorlds.contains(w.getName())) {
-            Stargate.managedWorlds.remove(w.getName());
+        if (stargate.getManagedWorlds().contains(w.getName())) {
+            stargate.getManagedWorlds().remove(w.getName());
             Portal.clearGates();
-            for (World world : Stargate.server.getWorlds()) {
-                if (Stargate.managedWorlds.contains(world.getName())) {
-                    Portal.loadAllGates(world);
+            for (World world : stargate.getServer().getWorlds()) {
+                if (stargate.getManagedWorlds().contains(world.getName())) {
+                    Portal.loadAllGates(stargate, world);
                 }
             }
         }

@@ -17,16 +17,18 @@
  */
 package net.TheDgtl.Stargate.event;
 
+import java.util.Objects;
 import net.TheDgtl.Stargate.Portal;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class StargateEvent extends Event implements Cancellable {
     protected Portal portal;
     protected boolean cancelled;
 
-    public StargateEvent(Portal portal) {
-        this.portal = portal;
+    public StargateEvent(@NotNull Portal portal) {
+        this.portal = Objects.requireNonNull(portal);
         this.cancelled = false;
     }
 

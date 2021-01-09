@@ -39,8 +39,12 @@ public class LangLoader {
     private HashMap<String, String> strList;
     private final HashMap<String, String> defList;
 
+    // di
+    private final Stargate stargate;
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public LangLoader(String datFolder, String lang) {
+    public LangLoader(Stargate stargate, String datFolder, String lang) {
+        this.stargate = stargate;
         this.lang = lang;
         this.dataFolder = datFolder;
 
@@ -57,7 +61,7 @@ public class LangLoader {
             defList = load("en", is);
         } else {
             defList = null;
-            Stargate.log.severe("[Stargate] Error loading backup language. There may be missing text ingame");
+            stargate.getStargateLogger().severe("[Stargate] Error loading backup language. There may be missing text ingame");
         }
     }
 
@@ -160,7 +164,7 @@ public class LangLoader {
             }
         }
         if (updated)
-            Stargate.log.info("[Stargate] Your language file (" + lang + ".txt) has been updated");
+            stargate.getStargateLogger().info("[Stargate] Your language file (" + lang + ".txt) has been updated");
     }
 
     private HashMap<String, String> load(String lang) {
@@ -213,12 +217,12 @@ public class LangLoader {
     public void debug() {
         Set<String> keys = strList.keySet();
         for (String key : keys) {
-            Stargate.debug("LangLoader::Debug::strList", key + " => " + strList.get(key));
+            stargate.debug("LangLoader::Debug::strList", key + " => " + strList.get(key));
         }
         if (defList == null) return;
         keys = defList.keySet();
         for (String key : keys) {
-            Stargate.debug("LangLoader::Debug::defList", key + " => " + defList.get(key));
+            stargate.debug("LangLoader::Debug::defList", key + " => " + defList.get(key));
         }
     }
 

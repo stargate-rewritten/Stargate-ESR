@@ -22,12 +22,19 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.jetbrains.annotations.NotNull;
 
-public class pmListener implements PluginMessageListener {
+public class StargateBungeePluginMessageListener implements PluginMessageListener {
+
+    private final Stargate stargate;
+
+    public StargateBungeePluginMessageListener(@NotNull Stargate stargate) {
+        this.stargate = stargate;
+    }
 
     @Override
-    public void onPluginMessageReceived(String channel, Player unused, byte[] message) {
-        if (!Stargate.enableBungee || !channel.equals("BungeeCord")) return;
+    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player unused, byte[] message) {
+        if (!stargate.isEnableBungee() || !channel.equals("BungeeCord")) return;
 
         // Get data from message
         String inChannel;
@@ -39,7 +46,7 @@ public class pmListener implements PluginMessageListener {
             data = new byte[len];
             in.readFully(data);
         } catch (IOException ex) {
-            Stargate.log.severe("[Stargate] Error receiving BungeeCord message");
+            stargate.getStargateLogger().severe("[Stargate] Error receiving BungeeCord message");
             ex.printStackTrace();
             return;
         }
@@ -57,14 +64,14 @@ public class pmListener implements PluginMessageListener {
         String destination = parts[1];
 
         // Check if the player is online, if so, teleport, otherwise, queue
-        Player player = Stargate.server.getPlayer(playerName);
+        Player player = stargate.getServer().getPlayer(playerName);
         if (player == null) {
-            Stargate.bungeeQueue.put(playerName.toLowerCase(), destination);
+            stargate.getBungeeQueue().put(playerName.toLowerCase(), destination);
         } else {
             Portal dest = Portal.getBungeeGate(destination);
             // Specified an invalid gate. For now we'll just let them connect at their current location
             if (dest == null) {
-                Stargate.log.info("[Stargate] Bungee gate " + destination + " does not exist");
+                stargate.getStargateLogger().info("[Stargate] Bungee gate " + destination + " does not exist");
                 return;
             }
             dest.teleport(player, dest, null);

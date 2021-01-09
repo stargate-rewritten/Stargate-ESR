@@ -7,14 +7,19 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.EndGateway;
 import org.bukkit.block.data.Orientable;
+import org.jetbrains.annotations.NotNull;
 
-public class BlockPopulatorThread implements Runnable {
+public class BlockPopulatorThread extends StargateRunnable {
+
+    public BlockPopulatorThread(@NotNull Stargate stargate) {
+        super(stargate);
+    }
 
     public void run() {
         long sTime = System.nanoTime();
 
         while (System.nanoTime() - sTime < 25000000) {
-            BloxPopulator b = Stargate.blockPopulatorQueue.poll();
+            BloxPopulator b = stargate.getBlockPopulatorQueue().poll();
             if (b == null) return;
 
             Block blk = b.getBlox().getBlock();

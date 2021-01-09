@@ -49,7 +49,7 @@ public class Gate {
     private RelativeBlockVector[] border = new RelativeBlockVector[0];
     private RelativeBlockVector[] controls = new RelativeBlockVector[0];
     private RelativeBlockVector exitBlock = null;
-    private HashMap<RelativeBlockVector, Integer> exits = new HashMap<>();
+    private final HashMap<RelativeBlockVector, Integer> exits = new HashMap<>();
     private Material portalBlockOpen = Material.NETHER_PORTAL;
     private Material portalBlockClosed = Material.AIR;
 
@@ -59,7 +59,11 @@ public class Gate {
     private int destroyCost = -1;
     private boolean toOwner = false;
 
-    public Gate(String filename, Character[][] layout, HashMap<Character, Material> types) {
+    // di
+    private final Stargate stargate;
+
+    public Gate(Stargate stargate, String filename, Character[][] layout, HashMap<Character, Material> types) {
+        this.stargate = stargate;
         this.filename = filename;
         this.layout = layout;
         this.types = types;
@@ -164,7 +168,7 @@ public class Gate {
 
             bw.close();
         } catch (IOException ex) {
-            Stargate.log.log(Level.SEVERE, "Could not save Gate " + filename + " - " + ex.getMessage());
+            stargate.getStargateLogger().log(Level.SEVERE, "Could not save Gate " + filename + " - " + ex.getMessage());
         }
     }
 
@@ -236,17 +240,17 @@ public class Gate {
     }
 
     public int getUseCost() {
-        if (useCost < 0) return EconomyHandler.useCost;
+        if (useCost < 0) return stargate.getEconomyHandler().getUseCost();
         return useCost;
     }
 
     public Integer getCreateCost() {
-        if (createCost < 0) return EconomyHandler.createCost;
+        if (createCost < 0) return stargate.getEconomyHandler().getCreateCost();
         return createCost;
     }
 
     public Integer getDestroyCost() {
-        if (destroyCost < 0) return EconomyHandler.destroyCost;
+        if (destroyCost < 0) return stargate.getEconomyHandler().getDestroyCost();
         return destroyCost;
     }
 
@@ -270,7 +274,7 @@ public class Gate {
                 }
 
                 if (key.equals(ENTRANCE) || key.equals(EXIT)) {
-                    if (Stargate.ignoreEntrance) continue;
+                    if (stargate.isIgnoreEntrance()) continue;
 
                     Material type = topleft.modRelative(x, y, 0, modX, 1, modZ).getType();
 
@@ -278,7 +282,7 @@ public class Gate {
                     if (onCreate && type == Material.AIR) continue;
 
                     if (type != portalBlockClosed && type != portalBlockOpen) {
-                        Stargate.debug("Gate::Matches", "Entrance/Exit Material Mismatch: " + type);
+                        stargate.debug("Gate::Matches", "Entrance/Exit Material Mismatch: " + type);
                         return false;
                     }
 
@@ -308,7 +312,7 @@ public class Gate {
                 }
 
                 if (!matches) {
-                    Stargate.debug("Gate::Matches", "Block Type Mismatch: " + topleft.modRelative(x, y, 0, modX, 1, modZ).getType() + " != " + id);
+                    stargate.debug("Gate::Matches", "Block Type Mismatch: " + topleft.modRelative(x, y, 0, modX, 1, modZ).getType() + " != " + id);
                     return false;
                 }
             }
@@ -329,7 +333,7 @@ public class Gate {
         controlBlocks.get(blockID).add(gate);
     }
 
-    public static Gate loadGate(File file) {
+    public static Gate loadGate(Stargate stargate, File file) {
         Scanner scanner = null;
         boolean designing = false;
         ArrayList<ArrayList<Character>> design = new ArrayList<>();
@@ -358,7 +362,7 @@ public class Gate {
 
                     for (Character symbol : line.toCharArray()) {
                         if ((symbol.equals('?')) || (!types.containsKey(symbol))) {
-                            Stargate.log.log(Level.SEVERE, "Could not load Gate " + file.getName() + " - Unknown symbol '" + symbol + "' in diagram");
+                            stargate.getStargateLogger().log(Level.SEVERE, "Could not load Gate " + file.getName() + " - Unknown symbol '" + symbol + "' in diagram");
                             return null;
                         }
 
@@ -394,7 +398,7 @@ public class Gate {
                 frameTypes.add(id);
             }
         } catch (Exception ex) {
-            Stargate.log.log(Level.SEVERE, "Could not load Gate " + file.getName() + " - " + ex.getMessage());
+            stargate.getStargateLogger().log(Level.SEVERE, "Could not load Gate " + file.getName() + " - " + ex.getMessage());
             return null;
         } finally {
             if (scanner != null) scanner.close();
@@ -415,17 +419,17 @@ public class Gate {
             layout[y] = result;
         }
 
-        Gate gate = new Gate(file.getName(), layout, types);
+        Gate gate = new Gate(stargate, file.getName(), layout, types);
 
-        gate.portalBlockOpen = readConfig(config, gate, file, "portal-open", gate.portalBlockOpen);
-        gate.portalBlockClosed = readConfig(config, gate, file, "portal-closed", gate.portalBlockClosed);
-        gate.useCost = readConfig(config, gate, file, "usecost", -1);
-        gate.destroyCost = readConfig(config, gate, file, "destroycost", -1);
-        gate.createCost = readConfig(config, gate, file, "createcost", -1);
-        gate.toOwner = (config.containsKey("toowner") ? Boolean.parseBoolean(config.get("toowner")) : EconomyHandler.toOwner);
+        gate.portalBlockOpen = readConfig(stargate, config, file, "portal-open", gate.portalBlockOpen);
+        gate.portalBlockClosed = readConfig(stargate, config, file, "portal-closed", gate.portalBlockClosed);
+        gate.useCost = readConfig(stargate, config, file, "usecost", -1);
+        gate.destroyCost = readConfig(stargate, config, file, "destroycost", -1);
+        gate.createCost = readConfig(stargate, config, file, "createcost", -1);
+        gate.toOwner = (config.containsKey("toowner") ? Boolean.parseBoolean(config.get("toowner")) : stargate.getEconomyHandler().isToOwner());
 
         if (gate.getControls().length != 2) {
-            Stargate.log.log(Level.SEVERE, "Could not load Gate " + file.getName() + " - Gates must have exactly 2 control points.");
+            stargate.getStargateLogger().log(Level.SEVERE, "Could not load Gate " + file.getName() + " - Gates must have exactly 2 control points.");
             return null;
         }
 
@@ -436,47 +440,47 @@ public class Gate {
         return gate;
     }
 
-    private static int readConfig(HashMap<String, String> config, Gate gate, File file, String key, int def) {
+    private static int readConfig(Stargate stargate, HashMap<String, String> config, File file, String key, int def) {
         if (config.containsKey(key)) {
             try {
                 return Integer.parseInt(config.get(key));
             } catch (NumberFormatException ex) {
-                Stargate.log.log(Level.WARNING, String.format("%s reading %s: %s is not numeric", ex.getClass().getName(), file, key));
+                stargate.getStargateLogger().log(Level.WARNING, String.format("%s reading %s: %s is not numeric", ex.getClass().getName(), file, key));
             }
         }
 
         return def;
     }
 
-    private static Material readConfig(HashMap<String, String> config, Gate gate, File file, String key, Material def) {
+    private static Material readConfig(Stargate stargate, HashMap<String, String> config, File file, String key, Material def) {
         if (config.containsKey(key)) {
             Material mat = Material.getMaterial(config.get(key));
             if (mat != null) return mat;
-            Stargate.log.log(Level.WARNING, String.format("Error reading %s: %s is not a material", file, key));
+            stargate.getStargateLogger().log(Level.WARNING, String.format("Error reading %s: %s is not a material", file, key));
         }
 
         return def;
     }
 
-    public static void loadGates(String gateFolder) {
+    public static void loadGates(Stargate stargate, String gateFolder) {
         File dir = new File(gateFolder);
         File[] files = dir.exists() ? dir.listFiles(new StargateFilenameFilter()) : new File[0];
 
         if (files == null || files.length == 0) {
             if (dir.mkdir()) {
-                populateDefaults(gateFolder);
+                populateDefaults(stargate, gateFolder);
             }
 
             return;
         }
 
         for (File file : files) {
-            Gate gate = loadGate(file);
+            Gate gate = loadGate(stargate, file);
             if (gate != null) registerGate(gate);
         }
     }
 
-    public static void populateDefaults(String gateFolder) {
+    public static void populateDefaults(Stargate stargate, String gateFolder) {
         Character[][] layout = new Character[][]{
                 {' ', 'X', 'X', ' '},
                 {'X', '.', '.', 'X'},
@@ -494,7 +498,7 @@ public class Gate {
         types.put('X', Material.OBSIDIAN);
         types.put('-', Material.OBSIDIAN);
 
-        Gate gate = new Gate("nethergate.gate", layout, types);
+        Gate gate = new Gate(stargate, "nethergate.gate", layout, types);
         gate.save(gateFolder);
 
         registerGate(gate);

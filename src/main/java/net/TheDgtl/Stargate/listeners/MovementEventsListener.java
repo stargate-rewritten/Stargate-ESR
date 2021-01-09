@@ -9,11 +9,17 @@ import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.jetbrains.annotations.NotNull;
 
-public class MovementEventsListener implements Listener {
+public class MovementEventsListener extends StargateListener {
+
+    public MovementEventsListener(@NotNull Stargate stargate) {
+        super(stargate);
+    }
+
     @EventHandler
     public void onVehicleMove(VehicleMoveEvent event) {
-        if (!Stargate.handleVehicles) return;
+        if (!stargate.isHandleVehicles()) return;
         List<Entity> passengers = event.getVehicle().getPassengers();
         Vehicle vehicle = event.getVehicle();
 

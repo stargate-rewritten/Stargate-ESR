@@ -18,9 +18,11 @@
 
 package net.TheDgtl.Stargate.event;
 
+import java.util.Objects;
 import net.TheDgtl.Stargate.Portal;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class StargateOpenEvent extends StargateEvent {
     private final Player player;
@@ -28,18 +30,19 @@ public class StargateOpenEvent extends StargateEvent {
 
     private static final HandlerList handlers = new HandlerList();
 
+    @NotNull
     public HandlerList getHandlers() {
         return handlers;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
-    public StargateOpenEvent(Player player, Portal portal, boolean force) {
-        super(portal);
-
-        this.player = player;
+    public StargateOpenEvent(@NotNull Player player, @NotNull Portal portal, boolean force) {
+        super(Objects.requireNonNull(portal));
+        this.player = Objects.requireNonNull(player);
         this.force = force;
     }
 
@@ -48,6 +51,7 @@ public class StargateOpenEvent extends StargateEvent {
      *
      * @return player than opened the gate
      */
+    @NotNull
     public Player getPlayer() {
         return player;
     }

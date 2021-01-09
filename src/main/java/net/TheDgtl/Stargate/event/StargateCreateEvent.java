@@ -18,9 +18,11 @@
 
 package net.TheDgtl.Stargate.event;
 
+import java.util.Objects;
 import net.TheDgtl.Stargate.Portal;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class StargateCreateEvent extends StargateEvent {
     private final Player player;
@@ -31,27 +33,31 @@ public class StargateCreateEvent extends StargateEvent {
 
     private static final HandlerList handlers = new HandlerList();
 
+    @NotNull
     public HandlerList getHandlers() {
         return handlers;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
-    public StargateCreateEvent(Player player, Portal portal, String[] lines, boolean deny, String denyReason, int cost) {
-        super(portal);
-        this.player = player;
-        this.lines = lines;
+    public StargateCreateEvent(@NotNull Player player, @NotNull Portal portal, @NotNull String[] lines, boolean deny, @NotNull String denyReason, int cost) {
+        super(Objects.requireNonNull(portal));
+        this.player = Objects.requireNonNull(player);
+        this.lines = Objects.requireNonNull(lines);
         this.deny = deny;
-        this.denyReason = denyReason;
+        this.denyReason = Objects.requireNonNull(denyReason);
         this.cost = cost;
     }
 
+    @NotNull
     public Player getPlayer() {
         return player;
     }
 
+    @NotNull
     public String getLine(int index) throws IndexOutOfBoundsException {
         return lines[index];
     }
@@ -64,12 +70,13 @@ public class StargateCreateEvent extends StargateEvent {
         this.deny = deny;
     }
 
+    @NotNull
     public String getDenyReason() {
         return denyReason;
     }
 
-    public void setDenyReason(String denyReason) {
-        this.denyReason = denyReason;
+    public void setDenyReason(@NotNull String denyReason) {
+        this.denyReason = Objects.requireNonNull(denyReason);
     }
 
     public int getCost() {

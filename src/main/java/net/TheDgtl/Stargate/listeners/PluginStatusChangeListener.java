@@ -1,31 +1,31 @@
 package net.TheDgtl.Stargate.listeners;
 
+import java.util.Objects;
 import net.TheDgtl.Stargate.EconomyHandler;
 import net.TheDgtl.Stargate.Stargate;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
+import org.jetbrains.annotations.NotNull;
 
-public class PluginStatusChangeListener implements Listener {
+public class PluginStatusChangeListener extends StargateListener {
 
-    private final Stargate stargate;
-
-    public PluginStatusChangeListener(Stargate stargate) {
-        this.stargate = stargate;
+    public PluginStatusChangeListener(@NotNull Stargate stargate) {
+        super(stargate);
     }
 
     @EventHandler
     public void onPluginEnable(PluginEnableEvent event) {
-        if (EconomyHandler.setupEconomy(stargate.getServer().getPluginManager())) {
-            Stargate.log.info("[Stargate] Vault v" + EconomyHandler.vault.getDescription().getVersion() + " found");
+        EconomyHandler economyHandler = stargate.getEconomyHandler();
+        if (economyHandler.setupEconomy(stargate.getServer().getPluginManager())) {
+            stargate.getStargateLogger().info("[Stargate] Vault v" + Objects.requireNonNull(economyHandler.getVault()).getDescription().getVersion() + " found");
         }
     }
 
     @EventHandler
     public void onPluginDisable(PluginDisableEvent event) {
-        if (event.getPlugin().equals(EconomyHandler.vault)) {
-            Stargate.log.info("[Stargate] Vault plugin lost.");
+        if (event.getPlugin().equals(stargate.getEconomyHandler().getVault())) {
+            stargate.getStargateLogger().info("[Stargate] Vault plugin lost.");
         }
     }
 

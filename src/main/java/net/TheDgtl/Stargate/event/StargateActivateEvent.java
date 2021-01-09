@@ -18,50 +18,57 @@
 
 package net.TheDgtl.Stargate.event;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import net.TheDgtl.Stargate.Portal;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class StargateActivateEvent extends StargateEvent {
     private final Player player;
-    private ArrayList<String> destinations;
+    private List<String> destinations;
     private String destination;
 
     private static final HandlerList handlers = new HandlerList();
 
+    @NotNull
     public HandlerList getHandlers() {
         return handlers;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
-    public StargateActivateEvent(Portal portal, Player player, ArrayList<String> destinations, String destination) {
-        super(portal);
-        this.player = player;
-        this.destinations = destinations;
-        this.destination = destination;
+    public StargateActivateEvent(@NotNull Portal portal, @NotNull Player player, @NotNull List<String> destinations, @NotNull String destination) {
+        super(Objects.requireNonNull(portal));
+        this.player = Objects.requireNonNull(player);
+        this.destinations = Objects.requireNonNull(destinations);
+        this.destination = Objects.requireNonNull(destination);
     }
 
+    @NotNull
     public Player getPlayer() {
         return player;
     }
 
-    public ArrayList<String> getDestinations() {
+    @NotNull
+    public List<String> getDestinations() {
         return destinations;
     }
 
-    public void setDestinations(ArrayList<String> destinations) {
-        this.destinations = destinations;
+    public void setDestinations(@NotNull List<String> destinations) {
+        this.destinations = Objects.requireNonNull(destinations);
     }
 
+    @NotNull
     public String getDestination() {
         return destination;
     }
 
-    public void setDestination(String destination) {
-        this.destination = destination;
+    public void setDestination(@NotNull String destination) {
+        this.destination = Objects.requireNonNull(destination);
     }
 }

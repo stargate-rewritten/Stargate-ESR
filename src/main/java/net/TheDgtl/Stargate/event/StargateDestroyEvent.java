@@ -17,9 +17,11 @@
  */
 package net.TheDgtl.Stargate.event;
 
+import java.util.Objects;
 import net.TheDgtl.Stargate.Portal;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Stargate - A portal plugin for Bukkit
@@ -47,22 +49,25 @@ public class StargateDestroyEvent extends StargateEvent {
 
     private static final HandlerList handlers = new HandlerList();
 
+    @NotNull
     public HandlerList getHandlers() {
         return handlers;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
-    public StargateDestroyEvent(Portal portal, Player player, boolean deny, String denyMsg, int cost) {
-        super(portal);
-        this.player = player;
+    public StargateDestroyEvent(@NotNull Portal portal, @NotNull Player player, boolean deny, @NotNull String denyMsg, int cost) {
+        super(Objects.requireNonNull(portal));
+        this.player = Objects.requireNonNull(player);
         this.deny = deny;
-        this.denyReason = denyMsg;
+        this.denyReason = Objects.requireNonNull(denyMsg);
         this.cost = cost;
     }
 
+    @NotNull
     public Player getPlayer() {
         return player;
     }
@@ -75,12 +80,13 @@ public class StargateDestroyEvent extends StargateEvent {
         this.deny = deny;
     }
 
+    @NotNull
     public String getDenyReason() {
         return denyReason;
     }
 
-    public void setDenyReason(String denyReason) {
-        this.denyReason = denyReason;
+    public void setDenyReason(@NotNull String denyReason) {
+        this.denyReason = Objects.requireNonNull(denyReason);
     }
 
     public int getCost() {

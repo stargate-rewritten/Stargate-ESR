@@ -18,10 +18,12 @@
 
 package net.TheDgtl.Stargate.event;
 
+import java.util.Objects;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
 import net.TheDgtl.Stargate.Portal;
+import org.jetbrains.annotations.NotNull;
 
 public class StargateAccessEvent extends StargateEvent {
     private final Player player;
@@ -29,18 +31,18 @@ public class StargateAccessEvent extends StargateEvent {
 
     private static final HandlerList handlers = new HandlerList();
 
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return handlers;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
-    public StargateAccessEvent(Player player, Portal portal, boolean deny) {
-        super(portal);
-
-        this.player = player;
+    public StargateAccessEvent(@NotNull Player player, @NotNull Portal portal, boolean deny) {
+        super(Objects.requireNonNull(portal));
+        this.player = Objects.requireNonNull(player);
         this.deny = deny;
     }
 
@@ -52,6 +54,7 @@ public class StargateAccessEvent extends StargateEvent {
         this.deny = deny;
     }
 
+    @NotNull
     public Player getPlayer() {
         return this.player;
     }

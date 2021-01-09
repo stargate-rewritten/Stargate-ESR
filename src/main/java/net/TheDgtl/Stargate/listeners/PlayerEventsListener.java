@@ -7,6 +7,7 @@ import net.TheDgtl.Stargate.EconomyHandler;
 import net.TheDgtl.Stargate.Portal;
 import net.TheDgtl.Stargate.Stargate;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -21,26 +22,32 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.NotNull;
 
-public class PlayerEventsListener implements Listener {
+public class PlayerEventsListener extends StargateListener {
+
+    public PlayerEventsListener(@NotNull Stargate stargate) {
+        super(stargate);
+    }
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (!Stargate.enableBungee) return;
+        if (!stargate.isEnableBungee()) return;
 
         Player player = event.getPlayer();
-        String destination = Stargate.bungeeQueue.remove(player.getName().toLowerCase());
+        String destination = stargate.getBungeeQueue().remove(player.getName().toLowerCase());
         if (destination == null) return;
 
         Portal portal = Portal.getBungeeGate(destination);
         if (portal == null) {
-            Stargate.debug("PlayerJoin", "Error fetching destination portal: " + destination);
+            stargate.debug("PlayerJoin", "Error fetching destination portal: " + destination);
             return;
         }
         portal.teleport(player, portal, null);
     }
 
     @EventHandler
-    public void onPlayerTeleport(PlayerTeleportEvent event) {
+    public void onPlayerTeleport(@NotNull PlayerTeleportEvent event) {
         // cancel portal and endgateway teleportation if it's from a Stargate entrance
         PlayerTeleportEvent.TeleportCause cause = event.getCause();
         if (!event.isCancelled()
@@ -52,11 +59,19 @@ public class PlayerEventsListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerMove(PlayerMoveEvent event) {
-        if (event.isCancelled()) return;
+    public void onPlayerMove(@NotNull PlayerMoveEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
 
+        Location from = event.getFrom();
+        Location to = event.getTo();
+
+        if (to == null) {
+            return;
+        }
         // Check to see if the player actually moved
-        if (event.getFrom().getBlockX() == event.getTo().getBlockX() && event.getFrom().getBlockY() == event.getTo().getBlockY() && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
+        if (from.getBlockX() == to.getBlockX() && from.getBlockY() == to.getBlockY() && from.getBlockZ() == to.getBlockZ()) {
             return;
         }
 
@@ -67,7 +82,7 @@ public class PlayerEventsListener implements Listener {
 
         // Not open for this player
         if (!portal.isOpenFor(player)) {
-            Stargate.sendMessage(player, Stargate.getString("denyMsg"));
+            stargate.sendMessage(player, stargate.getString("denyMsg"));
             portal.teleport(player, portal, event);
             return;
         }
@@ -78,70 +93,72 @@ public class PlayerEventsListener implements Listener {
         boolean deny = false;
         // Check if player has access to this server for Bungee gates
         if (portal.isBungee()) {
-            if (!Stargate.canAccessServer(player, portal.getNetwork())) {
+            if (!stargate.canAccessServer(player, portal.getNetwork())) {
                 deny = true;
             }
         } else {
             // Check if player has access to this network
-            if (!Stargate.canAccessNetwork(player, portal.getNetwork())) {
+            if (!stargate.canAccessNetwork(player, portal.getNetwork())) {
                 deny = true;
             }
 
             // Check if player has access to destination world
-            if (!Stargate.canAccessWorld(player, destination.getWorld().getName())) {
+            if (!stargate.canAccessWorld(player, destination.getWorld().getName())) {
                 deny = true;
             }
         }
 
-        if (!Stargate.canAccessPortal(player, portal, deny)) {
-            Stargate.sendMessage(player, Stargate.getString("denyMsg"));
+        if (!stargate.canAccessPortal(player, portal, deny)) {
+            stargate.sendMessage(player, stargate.getString("denyMsg"));
             portal.teleport(player, portal, event);
             portal.close(false);
             return;
         }
 
-        int cost = Stargate.getUseCost(player, portal, destination);
+        int cost = stargate.getUseCost(player, portal, destination);
         if (cost > 0) {
             boolean success;
             if (portal.getGate().getToOwner()) {
                 if (portal.getOwnerUUID() == null) {
-                    success = Stargate.chargePlayer(player, portal.getOwnerUUID(), cost);
+                    success = stargate.chargePlayer(player, portal.getOwnerUUID(), cost);
                 } else {
-                    success = Stargate.chargePlayer(player, portal.getOwnerName(), cost);
+                    success = stargate.chargePlayer(player, portal.getOwnerName(), cost);
                 }
             } else {
-                success = Stargate.chargePlayer(player, cost);
+                success = stargate.chargePlayer(player, cost);
             }
             if (!success) {
                 // Insufficient Funds
-                Stargate.sendMessage(player, Stargate.getString("inFunds"));
+                stargate.sendMessage(player, stargate.getString("inFunds"));
                 portal.close(false);
                 return;
             }
-            String deductMsg = Stargate.getString("ecoDeduct");
-            deductMsg = Stargate.replaceVars(deductMsg, new String[]{"%cost%", "%portal%"}, new String[]{EconomyHandler.format(cost), portal.getName()});
-            Stargate.sendMessage(player, deductMsg, false);
+
+            String deductMsg = stargate.getString("ecoDeduct");
+            deductMsg = stargate.replaceVars(deductMsg, new String[]{"%cost%", "%portal%"}, new String[]{stargate.getEconomyHandler().format(cost), portal.getName()});
+            stargate.sendMessage(player, deductMsg, false);
+
             if (portal.getGate().getToOwner() && portal.getOwnerUUID() != null) {
                 Player p;
                 if (portal.getOwnerUUID() != null) {
-                    p = Stargate.server.getPlayer(portal.getOwnerUUID());
+                    p = stargate.getServer().getPlayer(portal.getOwnerUUID());
                 } else {
-                    p = Stargate.server.getPlayer(portal.getOwnerName());
+                    p = stargate.getServer().getPlayer(portal.getOwnerName());
                 }
                 if (p != null) {
-                    String obtainedMsg = Stargate.getString("ecoObtain");
-                    obtainedMsg = Stargate.replaceVars(obtainedMsg, new String[]{"%cost%", "%portal%"}, new String[]{EconomyHandler.format(cost), portal.getName()});
-                    Stargate.sendMessage(p, obtainedMsg, false);
+                    String obtainedMsg = stargate.getString("ecoObtain");
+                    obtainedMsg = stargate.replaceVars(obtainedMsg, new String[]{"%cost%", "%portal%"}, new String[]{stargate.getEconomyHandler().format(cost), portal.getName()});
+                    stargate.sendMessage(p, obtainedMsg, false);
                 }
             }
         }
 
-        Stargate.sendMessage(player, Stargate.getString("teleportMsg"), false);
+        stargate.sendMessage(player, stargate.getString("teleportMsg"), false);
 
         // BungeeCord Support
         if (portal.isBungee()) {
-            if (!Stargate.enableBungee) {
-                player.sendMessage(Stargate.getString("bungeeDisabled"));
+            if (!stargate.isEnableBungee()) {
+                player.sendMessage(stargate.getString("bungeeDisabled"));
                 portal.close(false);
                 return;
             }
@@ -161,9 +178,9 @@ public class PlayerEventsListener implements Listener {
                 msgData.writeUTF("SGBungee");            // Channel
                 msgData.writeShort(msg.length());    // Data Length
                 msgData.writeBytes(msg);            // Data
-                player.sendPluginMessage(Stargate.stargate, "BungeeCord", bao.toByteArray());
+                player.sendPluginMessage(stargate, "BungeeCord", bao.toByteArray());
             } catch (IOException ex) {
-                Stargate.log.severe("[Stargate] Error sending BungeeCord teleport packet");
+                stargate.getStargateLogger().severe("[Stargate] Error sending BungeeCord teleport packet");
                 ex.printStackTrace();
                 return;
             }
@@ -175,10 +192,10 @@ public class PlayerEventsListener implements Listener {
                 msgData.writeUTF("Connect");
                 msgData.writeUTF(portal.getNetwork());
 
-                player.sendPluginMessage(Stargate.stargate, "BungeeCord", bao.toByteArray());
+                player.sendPluginMessage(stargate, "BungeeCord", bao.toByteArray());
                 bao.reset();
             } catch (IOException ex) {
-                Stargate.log.severe("[Stargate] Error sending BungeeCord connect packet");
+                stargate.getStargateLogger().severe("[Stargate] Error sending BungeeCord connect packet");
                 ex.printStackTrace();
                 return;
             }
@@ -213,16 +230,16 @@ public class PlayerEventsListener implements Listener {
             event.setUseInteractedBlock(Event.Result.DENY);
 
             boolean deny = false;
-            if (!Stargate.canAccessNetwork(player, portal.getNetwork())) {
+            if (!stargate.canAccessNetwork(player, portal.getNetwork())) {
                 deny = true;
             }
 
-            if (!Stargate.canAccessPortal(player, portal, deny)) {
-                Stargate.sendMessage(player, Stargate.getString("denyMsg"));
+            if (!stargate.canAccessPortal(player, portal, deny)) {
+                stargate.sendMessage(player, stargate.getString("denyMsg"));
                 return;
             }
 
-            Stargate.openPortal(player, portal);
+            stargate.openPortal(player, portal);
             if (portal.isOpenFor(player)) {
                 event.setUseInteractedBlock(Event.Result.ALLOW);
             }
@@ -243,12 +260,12 @@ public class PlayerEventsListener implements Listener {
             }
 
             boolean deny = false;
-            if (!Stargate.canAccessNetwork(player, portal.getNetwork())) {
+            if (!stargate.canAccessNetwork(player, portal.getNetwork())) {
                 deny = true;
             }
 
-            if (!Stargate.canAccessPortal(player, portal, deny)) {
-                Stargate.sendMessage(player, Stargate.getString("denyMsg"));
+            if (!stargate.canAccessPortal(player, portal, deny)) {
+                stargate.sendMessage(player, stargate.getString("denyMsg"));
                 return;
             }
 

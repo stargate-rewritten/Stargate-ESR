@@ -9,15 +9,20 @@ import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.jetbrains.annotations.NotNull;
 
-public class BlockEventsListener implements Listener {
+public class BlockEventsListener extends StargateListener {
+
+    public BlockEventsListener(@NotNull Stargate stargate) {
+        super(stargate);
+    }
+
     @EventHandler
     public void onSignChange(SignChangeEvent event) {
         if (event.isCancelled()) return;
@@ -25,17 +30,13 @@ public class BlockEventsListener implements Listener {
         Block block = event.getBlock();
         if (!(block.getBlockData() instanceof WallSign)) return;
 
-        final Portal portal = Portal.createPortal(event, player);
+        final Portal portal = Portal.createPortal(stargate, event, player);
         // Not creating a gate, just placing a sign
         if (portal == null) return;
 
-        Stargate.sendMessage(player, Stargate.getString("createMsg"), false);
-        Stargate.debug("onSignChange", "Initialized stargate: " + portal.getName());
-        Stargate.server.getScheduler().scheduleSyncDelayedTask(Stargate.stargate, new Runnable() {
-            public void run() {
-                portal.drawSign();
-            }
-        }, 1);
+        stargate.sendMessage(player, stargate.getString("createMsg"), false);
+        stargate.debug("onSignChange", "Initialized stargate: " + portal.getName());
+        stargate.getServer().getScheduler().scheduleSyncDelayedTask(stargate, portal::drawSign, 1L);
     }
 
     // Switch to HIGHEST priority so as to come after block protection plugins (Hopefully)
@@ -47,30 +48,30 @@ public class BlockEventsListener implements Listener {
         Player player = event.getPlayer();
         Portal portal = Portal.getByBlock(block);
 
-        if (portal == null && Stargate.protectEntrance)
+        if (portal == null && stargate.isProtectEntrance())
             portal = Portal.getByEntrance(block);
         if (portal == null) return;
 
         boolean deny = false;
         String denyMsg = "";
 
-        if (!Stargate.canDestroy(player, portal)) {
-            denyMsg = "Permission Denied"; // TODO: Change to Stargate.getString()
+        if (!stargate.canDestroy(player, portal)) {
+            denyMsg = "Permission Denied"; // TODO: Change to stargate.getString()
             deny = true;
-            Stargate.log.info("[Stargate] " + player.getName() + " tried to destroy gate");
+            stargate.getStargateLogger().info("[Stargate] " + player.getName() + " tried to destroy gate");
         }
 
-        int cost = Stargate.getDestroyCost(player, portal.getGate());
+        int cost = stargate.getDestroyCost(player, portal.getGate());
 
         StargateDestroyEvent dEvent = new StargateDestroyEvent(portal, player, deny, denyMsg, cost);
-        Stargate.server.getPluginManager().callEvent(dEvent);
+        stargate.getServer().getPluginManager().callEvent(dEvent);
 
         boolean denied = dEvent.getDeny();
         boolean cancelled = denied || dEvent.isCancelled();
 
         if (cancelled) {
             if (denied) {
-                Stargate.sendMessage(player, dEvent.getDenyReason());
+                stargate.sendMessage(player, dEvent.getDenyReason());
             }
 
             event.setCancelled(true);
@@ -80,9 +81,9 @@ public class BlockEventsListener implements Listener {
         cost = dEvent.getCost();
 
         if (cost != 0) {
-            if (!Stargate.chargePlayer(player, cost)) {
-                Stargate.debug("onBlockBreak", "Insufficient Funds");
-                Stargate.sendMessage(player, Stargate.getString("inFunds"));
+            if (!stargate.chargePlayer(player, cost)) {
+                stargate.debug("onBlockBreak", "Insufficient Funds");
+                stargate.sendMessage(player, stargate.getString("inFunds"));
 
                 event.setCancelled(true);
                 return;
@@ -91,14 +92,14 @@ public class BlockEventsListener implements Listener {
             boolean deduct = cost > 0;
             int fCost = deduct ? cost : -cost;
 
-            String msg = deduct ? Stargate.getString("ecoDeduct") : Stargate.getString("ecoRefund");
-            msg = Stargate.replaceVars(msg, new String[]{"%cost%", "%portal%"}, new String[]{EconomyHandler.format(fCost), portal.getName()});
+            String msg = deduct ? stargate.getString("ecoDeduct") : stargate.getString("ecoRefund");
+            msg = stargate.replaceVars(msg, new String[]{"%cost%", "%portal%"}, new String[]{stargate.getEconomyHandler().format(fCost), portal.getName()});
 
-            Stargate.sendMessage(player, msg, false);
+            stargate.sendMessage(player, msg, false);
         }
 
         portal.unregister(true);
-        Stargate.sendMessage(player, Stargate.getString("destroyMsg"), false);
+        stargate.sendMessage(player, stargate.getString("destroyMsg"), false);
     }
 
     @EventHandler
