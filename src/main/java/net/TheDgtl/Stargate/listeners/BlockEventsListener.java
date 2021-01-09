@@ -1,6 +1,5 @@
 package net.TheDgtl.Stargate.listeners;
 
-import net.TheDgtl.Stargate.EconomyHandler;
 import net.TheDgtl.Stargate.Portal;
 import net.TheDgtl.Stargate.Stargate;
 import net.TheDgtl.Stargate.event.StargateDestroyEvent;

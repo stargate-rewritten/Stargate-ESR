@@ -3,7 +3,6 @@ package net.TheDgtl.Stargate.listeners;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import net.TheDgtl.Stargate.EconomyHandler;
 import net.TheDgtl.Stargate.Portal;
 import net.TheDgtl.Stargate.Stargate;
 import org.bukkit.GameMode;
@@ -16,7 +15,6 @@ import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -122,6 +120,7 @@ public class PlayerEventsListener extends StargateListener {
                 if (portal.getOwnerUUID() == null) {
                     success = stargate.chargePlayer(player, portal.getOwnerUUID(), cost);
                 } else {
+                    //noinspection deprecation
                     success = stargate.chargePlayer(player, portal.getOwnerName(), cost);
                 }
             } else {

@@ -3,7 +3,6 @@ package net.TheDgtl.Stargate;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -58,6 +57,7 @@ import org.bukkit.util.Vector;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@SuppressWarnings("UnusedReturnValue")
 public class Portal {
 
     // Static variables used to store portal lists
@@ -92,7 +92,7 @@ public class Portal {
     private String lastDest = "";
     private String network;
     private final Gate gate;
-    private String ownerName;
+    private final String ownerName;
     private UUID ownerUUID;
     private final World world;
     private boolean verified;
@@ -107,7 +107,7 @@ public class Portal {
     private boolean show;
     private boolean noNetwork;
     private boolean random;
-    private boolean bungee;
+    private final boolean bungee;
 
     // In-use information
     private Player player;
@@ -1137,7 +1137,7 @@ public class Portal {
         }
 
         Blox button = null;
-        Portal portal = null;
+        Portal portal;
         portal = new Portal(stargate, topleft, modX, modZ, rotX, id, button, destName, name, false, network, gate, player.getUniqueId(), player.getName(), hidden, alwaysOn, priv, free, backwards, show, noNetwork, random, bungee);
 
         int cost = stargate.getCreateCost(player, gate);

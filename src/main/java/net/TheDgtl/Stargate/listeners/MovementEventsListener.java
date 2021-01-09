@@ -7,7 +7,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,73 +28,8 @@ public class MovementEventsListener extends StargateListener {
         // We don't support vehicles in Bungee portals
         if (portal.isBungee()) return;
 
+        //noinspection StatementWithEmptyBody
         if (!passengers.isEmpty() && passengers.get(0) instanceof Player) {
-            /*
-                            Player player = (Player) passengers.get(0);
-            if (!portal.isOpenFor(player)) {
-                Stargate.sendMessage(player, Stargate.getString("denyMsg"));
-                return;
-            }
-
-            Portal dest = portal.getDestination(player);
-            if (dest == null) return;
-            boolean deny = false;
-            // Check if player has access to this network
-            if (!canAccessNetwork(player, portal.getNetwork())) {
-                deny = true;
-            }
-
-            // Check if player has access to destination world
-            if (!canAccessWorld(player, dest.getWorld().getName())) {
-                deny = true;
-            }
-
-            if (!canAccessPortal(player, portal, deny)) {
-                Stargate.sendMessage(player, Stargate.getString("denyMsg"));
-                portal.close(false);
-                return;
-            }
-
-            int cost = Stargate.getUseCost(player, portal, dest);
-            if (cost > 0) {
-                boolean success;
-                if(portal.getGate().getToOwner()) {
-                    if(portal.getOwnerUUID() == null) {
-                        success = Stargate.chargePlayer(player, portal.getOwnerUUID(), cost);
-                    } else {
-                        success = Stargate.chargePlayer(player, portal.getOwnerName(), cost);
-                    }
-                } else {
-                    success = Stargate.chargePlayer(player, cost);
-                }
-                if(!success) {
-                    // Insufficient Funds
-                    Stargate.sendMessage(player, Stargate.getString("inFunds"));
-                    portal.close(false);
-                    return;
-                }
-                String deductMsg = Stargate.getString("ecoDeduct");
-                deductMsg = Stargate.replaceVars(deductMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(cost), portal.getName()});
-                sendMessage(player, deductMsg, false);
-                if (portal.getGate().getToOwner()) {
-                    Player p;
-                    if(portal.getOwnerUUID() != null) {
-                        p = server.getPlayer(portal.getOwnerUUID());
-                    } else {
-                        p = server.getPlayer(portal.getOwnerName());
-                    }
-                    if (p != null) {
-                        String obtainedMsg = Stargate.getString("ecoObtain");
-                        obtainedMsg = Stargate.replaceVars(obtainedMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(cost), portal.getName()});
-                        Stargate.sendMessage(p, obtainedMsg, false);
-                    }
-                }
-            }
-
-            Stargate.sendMessage(player, Stargate.getString("teleportMsg"), false);
-            dest.teleport(vehicle);
-            portal.close(false);
-                            */
         } else {
             Portal dest = portal.getDestination();
             if (dest == null) return;

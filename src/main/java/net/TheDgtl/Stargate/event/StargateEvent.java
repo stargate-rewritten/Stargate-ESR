@@ -24,7 +24,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class StargateEvent extends Event implements Cancellable {
-    protected Portal portal;
+    protected final Portal portal;
     protected boolean cancelled;
 
     public StargateEvent(@NotNull Portal portal) {

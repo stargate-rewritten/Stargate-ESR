@@ -53,6 +53,7 @@ import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class Stargate extends JavaPlugin {
     private Logger log;
     private Server server;
@@ -525,6 +526,7 @@ public class Stargate extends JavaPlugin {
     /*
      * Charge player for {action} if required, true on success, false if can't afford
      */
+    @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
     public boolean chargePlayer(Player player, String target, int cost) {
         // If cost is 0

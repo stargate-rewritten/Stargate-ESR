@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Set;
 import org.bukkit.ChatColor;
 
+@SuppressWarnings({"UnusedReturnValue", "CatchMayIgnoreException"})
 public class LangLoader {
     private static final String UTF8_BOM = "\uFEFF";
     // Variables
@@ -174,7 +175,7 @@ public class LangLoader {
     private HashMap<String, String> load(String lang, InputStream is) {
         HashMap<String, String> strings = new HashMap<>();
         FileInputStream fis = null;
-        InputStreamReader isr = null;
+        InputStreamReader isr;
         try {
             if (is == null) {
                 File langFile = new File(dataFolder, lang + ".txt");
