@@ -112,7 +112,8 @@ public class Stargate extends JavaPlugin {
 
 	// Temp workaround for snowmen, don't check gate entrance
 	public static boolean ignoreEntrance = false;
-
+	// Temp fix for underwater networked gates, this might cause issues later
+	private static boolean antiDoubleActivate = false;
 	// Used for debug
 	public static boolean debug = false;
 	public static boolean permDebug = false;
@@ -933,6 +934,15 @@ public class Stargate extends JavaPlugin {
 
 			if (action == Action.RIGHT_CLICK_BLOCK
 					&& (blockMat == Material.STONE_BUTTON || blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN)) {
+
+				// A temporary solution against a spigot bug where this event triggers twice
+				if(blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN){
+					if( antiDoubleActivate == true){
+						antiDoubleActivate = false
+						return;
+					}
+					antiDoubleActivate = true;
+				}
 
 				Portal portal = Portal.getByBlock(block);
 				if (portal == null) return;
