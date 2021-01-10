@@ -938,7 +938,7 @@ public class Stargate extends JavaPlugin {
 				// A temporary solution against a spigot bug where this event triggers twice
 				if(blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN){
 					if( antiDoubleActivate == true){
-						antiDoubleActivate = false
+						antiDoubleActivate = false;
 						return;
 					}
 					antiDoubleActivate = true;
