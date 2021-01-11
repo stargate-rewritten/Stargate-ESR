@@ -620,7 +620,8 @@ public class Portal {
             if (dest.equalsIgnoreCase(getName())) continue;
 
             // Check if dest is a fixed gate not pointing to this gate
-            if (portal.isFixed() && !portal.getDestinationName().equalsIgnoreCase(getName())) continue;
+            // Removed per issue 7
+            //if (portal.isFixed() && !portal.getDestinationName().equalsIgnoreCase(getName())) continue;
 
             // Allow random use by non-players (Minecarts)
             if (player == null) {
