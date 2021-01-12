@@ -1015,7 +1015,7 @@ public class Portal {
             rotX = 0f;
             buttonfacing = BlockFace.SOUTH;
         }
-
+        stargate.debug("manualDebug","Point 1 blockFace: " + buttonfacing.getFacing()toString());
         Gate[] possibleGates = Gate.getGatesByControlBlock(idParent);
         Gate gate = null;
         RelativeBlockVector buttonVector = null;
@@ -1047,7 +1047,7 @@ public class Portal {
                 otherControl = vector;
             }
         }
-
+        stargate.debug("manualDebug","Point 2:  Computed possible gates");
         if (gate == null || buttonVector == null) {
             stargate.debug("createPortal", "Could not find matching gate layout");
             return null;
@@ -1097,7 +1097,6 @@ public class Portal {
                 denyMsg = stargate.getString("createNetDeny");
             }
         }
-
         // Check if the player can create this gate layout
         String gateName = gate.getFilename();
         gateName = gateName.substring(0, gateName.indexOf('.'));
@@ -1125,6 +1124,7 @@ public class Portal {
                 }
             }
         }
+        stargate.debug("manualDebug","Point 3:  Checked perms");
 
         // Bleh, gotta check to make sure none of this gate belongs to another gate. Boo slow.
         for (RelativeBlockVector v : gate.getBorder()) {
@@ -1136,6 +1136,7 @@ public class Portal {
                 return null;
             }
         }
+        stargate.debug("manualDebug","Point 4:  Checked for surounding portals");
 
         Blox button = null;
         Portal portal;
@@ -1143,6 +1144,7 @@ public class Portal {
 
         int cost = stargate.getCreateCost(player, gate);
 
+        stargate.debug("manualDebug","Point 5:  Initizialised an instance of portal class");
         // Call StargateCreateEvent
         StargateCreateEvent cEvent = new StargateCreateEvent(player, portal, event.getLines(), deny, denyMsg, cost);
         stargate.getServer().getPluginManager().callEvent(cEvent);
@@ -1158,6 +1160,7 @@ public class Portal {
 
         cost = cEvent.getCost();
 
+        stargate.debug("manualDebug","Point 6:  Checked if event was cancelled");
         // Name & Network can be changed in the event, so do these checks here.
         if (portal.getName().length() < 1 || portal.getName().length() > 11) {
             stargate.debug("createPortal", "Name length error");
@@ -1210,13 +1213,13 @@ public class Portal {
             if (gate.getPortalBlockClosed() == Material.WATER) {
                 buttonMat = Material.DEAD_TUBE_CORAL_WALL_FAN;
             }
-
+            stargate.debug("manualDebug","Point 7: ");
             button = topleft.modRelative(buttonVector.getRight(), buttonVector.getDepth(), buttonVector.getDistance() + 1, modX, 1, modZ);
             button.setType(buttonMat);
 
             Directional buttonData = (Directional) button.getBlock().getBlockData();
             buttonData.setFacing(buttonfacing);
-            stargate.debug("manualDebug","Point 1: " + buttonData.getAsString());
+            stargate.debug("manualDebug","Point 8: " + buttonData.getAsString());
             button.getBlock().setBlockData(buttonData);
 
             portal.setButton(button);
