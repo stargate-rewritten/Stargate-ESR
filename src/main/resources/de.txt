@@ -1,4 +1,4 @@
-author=EduardBaer
+author=EduardBaer & Matriarch
 prefix=[Stargate] 
 teleportMsg=Du wurdest Teleportiert.
 destroyMsg=Gate zerstört
@@ -22,7 +22,12 @@ createFull=Dieses Netzwerk ist voll.
 createWorldDeny=Du hast keinen Zugriff auf diese Welt.
 createConflict=Dieses Gate steht im Konflikt mit einem bereits existierenden.
 
-signRightClick=Right click
-signToUse=to use gate
-signRandom=Random
-signDisconnected=Disconnected
+signRightClick=Rechtsklick
+signToUse=tor benutzen
+signRandom=Zufällig
+signDisconnected=Getrennt
+
+bungeeDisabled=Die BungeeCord-Unterstützung ist deaktiviert
+bungeeDeny=Du hast keine Genehmigung zum Erstellen von BungeeCord-Gates.
+bungeeEmpty=BungeeCord-Gates erfordern sowohl ein Ziel als auch ein Netzwerk.
+bungeeSign=Teleportiere nach

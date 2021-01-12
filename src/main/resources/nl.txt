@@ -1,4 +1,4 @@
-author=Grovert11
+author=Grovert11 & Matriarch
 prefix=[Stargate] 
 teleportMsg=Je bent geteleporteerd.
 destroyMsg=Gate kapot gemaakt
@@ -22,7 +22,12 @@ createFull=Dit netwerk is vol.
 createWorldDeny=Je mag niet in die wereld komen.
 createConflict=Gate maakt een conflict met een bestaande gate.
 
-signRightClick=Right click
-signToUse=to use gate
-signRandom=Random
-signDisconnected=Disconnected
+signRightClick=Rechtsklik
+signToUse=Portaal gebruiken
+signRandom=Willekeurig
+signDisconnected=Losgekoppeld
+
+bungeeDisabled=Bungeeuitgeschakeld
+bungeeDeny=Bungeeweigeren
+bungeeEmpty=Bungeeleeg
+bungeeSign=bungeeBord
