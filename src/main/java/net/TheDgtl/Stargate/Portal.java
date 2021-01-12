@@ -1216,7 +1216,7 @@ public class Portal {
 
             Directional buttonData = (Directional) button.getBlock().getBlockData();
             buttonData.setFacing(buttonfacing);
-            stargate.debug("createPortal","buttonData: " + buttonData.getAsString());
+            stargate.debug("manualDebug","Point 1: " + buttonData.getAsString());
             button.getBlock().setBlockData(buttonData);
 
             portal.setButton(button);
