@@ -23,11 +23,14 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class PlayerEventsListener extends StargateListener {
-
+    //Var used for temp workaround for a spigot bug.
+    private static boolean antiDoubleActivate;
     public PlayerEventsListener(@NotNull Stargate stargate) {
         super(stargate);
+        //Var used for temp workaround for a spigot bug.
+        this.antiDoubleActivate = false;
     }
-
+    
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (!stargate.isEnableBungee()) return;
@@ -220,6 +223,15 @@ public class PlayerEventsListener extends StargateListener {
 
         if (action == Action.RIGHT_CLICK_BLOCK
                 && (blockMat == Material.STONE_BUTTON || blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN)) {
+            
+            if (blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN) {
+                if (antiDoubleActivate == true) {
+                    antiDoubleActivate = false;
+                    //stargate.debug("Debug", "Correcting for an issue with underwater portals.");
+                    return;
+                }
+                antiDoubleActivate = true;
+            }
 
             Portal portal = Portal.getByBlock(block);
             if (portal == null) return;
@@ -243,11 +255,11 @@ public class PlayerEventsListener extends StargateListener {
                 event.setUseInteractedBlock(Event.Result.ALLOW);
             }
         }
-
+        
         if (blockData instanceof WallSign
                 && (action == Action.LEFT_CLICK_BLOCK
                 || action == Action.RIGHT_CLICK_BLOCK)) {
-
+                
             Portal portal = Portal.getByBlock(block);
             if (portal == null) return;
 
