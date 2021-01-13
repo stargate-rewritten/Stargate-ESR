@@ -22,7 +22,12 @@ createFull=Questa rete e' piena
 createWorldDeny=Non hai accesso a questo mondo
 createConflict=Il portale crea conflitti con uno gia' esistente
 
-signRightClick=Right click
-signToUse=to use gate
-signRandom=Random
-signDisconnected=Disconnected
+signRightClick=Clic destro
+signToUse=per usare
+signRandom=Casuale
+signDisconnected=Disconnessa
+
+bungeeDisabled=Traduzione necessaria
+bungeeDeny=Traduzione necessaria
+bungeeEmpty=Traduzione necessaria
+bungeeSign=Traduzione necessaria

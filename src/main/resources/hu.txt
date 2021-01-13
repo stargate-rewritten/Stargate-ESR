@@ -26,3 +26,8 @@ signRightClick=Jobb katt a
 signToUse=használathoz
 signRandom=Random
 signDisconnected=Szétkapcsolva
+
+bungeeDisabled=Fordítás szükséges
+bungeeDeny=Fordítás szükséges
+bungeeEmpty=Fordítás szükséges
+bungeeSign=Fordítás szükséges

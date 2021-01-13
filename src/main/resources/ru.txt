@@ -22,7 +22,12 @@ createFull=Эта сеть порталов заполнена
 createWorldDeny=У вас нет доступа к этому миру
 createConflict=Портал конфликтует с уже существующим порталом
 
-signRightClick=Right click
-signToUse=to use gate
-signRandom=Random
-signDisconnected=Disconnected
+signRightClick=правый клик
+signToUse=использовать ворота
+signRandom=Случайный
+signDisconnected=Отключен
+
+bungeeDisabled=Требуется перевод
+bungeeDeny=Требуется перевод
+bungeeEmpty=Требуется перевод
+bungeeSign=Требуется перевод
