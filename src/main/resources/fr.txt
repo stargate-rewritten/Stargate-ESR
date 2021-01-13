@@ -1,4 +1,4 @@
-﻿author=Dauphin14
+﻿author=Dauphin14 & InteriorCamping
 prefix=[Stargate] 
 teleportMsg=Téléportation Réussie.
 destroyMsg=Portail detruit.
@@ -22,7 +22,12 @@ createFull=Le reseau est plein.
 createWorldDeny=Vous n'avez pas accès à ce monde.
 createConflict=Ce portail entre en conflit avec un portail déjà existant.
 
-signRightClick=Right click
-signToUse=to use gate
-signRandom=Random
-signDisconnected=Disconnected
+signRightClick=Clic-droit
+signToUse=pour utiliser
+signRandom=Aléatoire
+signDisconnected=Débranché
+
+bungeeDisabled=Vous avez BungeeCord désactivés
+bungeeDeny=Vous n'avez pas la permission d'utiliser BungeeCord
+bungeeEmpty=Vous avez besoin d'une destination ET d'un réseau pour les portes de ce type (BungeeCord)
+bungeeSign=Téléportation au

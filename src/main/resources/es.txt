@@ -1,15 +1,15 @@
-author=Manuestaire
+author=Manuestaire & matrix033
 prefix=[Stargate] 
 teleportMsg=Teletransportado
 destroyMsg=Portal Destruído
-invalidMsg=Elige Destino
+invalidMsg=Destino no Valido
 blockMsg=Destino Bloqueado
-destEmpty=La lista de destinos está vacía
-denyMsg=Acceso denegado
+destEmpty=Lista de Destinos Vacía
+denyMsg=Acceso Denegado
 
-ecoDeduct=Pagaste %cost%
+ecoDeduct=Descontado %cost%
 ecoRefund=Reembolsado %cost%
-ecoObtain=Obtenido %cost% del Portal %portal%
+ecoObtain=Obtenido %cost% del portal %portal%
 ecoInFunds=No tienes suficiente dinero
 
 createMsg=Portal creado
@@ -26,3 +26,8 @@ signRightClick=Click derecho
 signToUse=para usar
 signRandom=Aleatorio
 signDisconnected=Desconectado
+
+bungeeDisabled=Soporte de BungeeCord desactivado.
+bungeeDeny=No tienes permiso para crear porteles de BungeeCord.
+bungeeEmpty=Portales de BungeeCord requieren ambos una red y un destino.
+bungeeSign=Teletransportado a
