@@ -40,7 +40,7 @@ public class StargateOpenEvent extends StargateEvent {
         return handlers;
     }
 
-    public StargateOpenEvent(@NotNull Player player, @NotNull Portal portal, boolean force) {
+    public StargateOpenEvent(Player player, @NotNull Portal portal, boolean force) {
         super(Objects.requireNonNull(portal));
         this.player = player;
         this.force = force;
