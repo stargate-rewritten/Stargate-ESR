@@ -1211,16 +1211,11 @@ public class Portal {
             
             button = topleft.modRelative(buttonVector.getRight(), buttonVector.getDepth(), buttonVector.getDistance() + 1, modX, 1, modZ);
             
-            //Generate a string with the right format such that 
-            String genBlkData = 
-            		buttonMat.toString() 
-            		+ "[facing=" + buttonfacing.toString()
-            		+ ",waterlogged=" + Boolean.toString(gate.getPortalBlockClosed() == Material.WATER) 
-            		+ "]";
-            stargate.debug("manualDebug","Point 1: " + genBlkData);
             
-            //Gives the blockdata from the string
-            BlockData buttonData = Bukkit.createBlockData(genBlkData.toLowerCase());
+            //generates a Blockdata
+            Directional buttonData = (Directional) Bukkit.createBlockData(buttonMat);
+            //manipulate the data
+            buttonData.setFacing(buttonfacing);
             stargate.debug("manualDebug","Point 2: " + buttonData.getAsString());
             
             //Sets the blockdata into the world
