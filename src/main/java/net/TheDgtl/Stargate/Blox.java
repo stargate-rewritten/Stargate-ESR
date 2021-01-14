@@ -89,7 +89,7 @@ public class Blox {
     public Block getBlock() {
         return world.getBlockAt(x, y, z);
     }
-
+    
     public Location getLocation() {
         return new Location(world, x, y, z);
     }
