@@ -2,7 +2,7 @@ name: Stargate
 main: net.TheDgtl.Stargate.Stargate
 version: @version@
 description: Stargate mod for Bukkit
-authors: [Drakia, PseudoKnight, Frostalf, InteriorCamping, LittleBigBug, TheViperShow]
+authors: [Drakia, PseudoKnight, Frostalf, InteriorCamping, LittleBigBug, TheViperShow, Thorinwasher]
 website: http://www.thedgtl.net
 api-version: @spigot-version@
 commands:
