@@ -1216,7 +1216,6 @@ public class Portal {
             Directional buttonData = (Directional) Bukkit.createBlockData(buttonMat);
             //manipulate the data
             buttonData.setFacing(buttonfacing);
-            stargate.debug("manualDebug","Point 2: " + buttonData.getAsString());
             
             //Sets the blockdata into the world
             button.getBlock().setBlockData(buttonData);
