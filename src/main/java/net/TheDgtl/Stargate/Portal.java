@@ -1015,7 +1015,6 @@ public class Portal {
             rotX = 0f;
             buttonfacing = BlockFace.SOUTH;
         }
-
         Gate[] possibleGates = Gate.getGatesByControlBlock(idParent);
         Gate gate = null;
         RelativeBlockVector buttonVector = null;
@@ -1047,7 +1046,6 @@ public class Portal {
                 otherControl = vector;
             }
         }
-
         if (gate == null || buttonVector == null) {
             stargate.debug("createPortal", "Could not find matching gate layout");
             return null;
@@ -1097,7 +1095,6 @@ public class Portal {
                 denyMsg = stargate.getString("createNetDeny");
             }
         }
-
         // Check if the player can create this gate layout
         String gateName = gate.getFilename();
         gateName = gateName.substring(0, gateName.indexOf('.'));
@@ -1210,12 +1207,18 @@ public class Portal {
             if (gate.getPortalBlockClosed() == Material.WATER) {
                 buttonMat = Material.DEAD_TUBE_CORAL_WALL_FAN;
             }
-
+            
+            
             button = topleft.modRelative(buttonVector.getRight(), buttonVector.getDepth(), buttonVector.getDistance() + 1, modX, 1, modZ);
-            button.setType(buttonMat);
-
-            Directional buttonData = (Directional) button.getBlock().getBlockData();
+            
+            
+            //generates a Blockdata
+            Directional buttonData = (Directional) Bukkit.createBlockData(buttonMat);
+            //manipulate the data
             buttonData.setFacing(buttonfacing);
+            stargate.debug("manualDebug","Point 2: " + buttonData.getAsString());
+            
+            //Sets the blockdata into the world
             button.getBlock().setBlockData(buttonData);
 
             portal.setButton(button);

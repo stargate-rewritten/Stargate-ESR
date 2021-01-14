@@ -563,7 +563,7 @@ public class Stargate extends JavaPlugin {
         // Charge player
         return economyHandler.chargePlayer(player, cost);
     }
-
+    
     /*
      * Determine the cost of a gate
      */
