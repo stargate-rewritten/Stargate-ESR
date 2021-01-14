@@ -236,6 +236,17 @@ createConflict=Gate conflicts with existing gate
 ```
 
 # Changes
+#### [Version 0.10.4.0] LCLO Fork
+ - Majorly refactored the code.
+ - Fixed a bug with underwater networked portals
+ - Allowed networked portals to target fixed portals
+ - Fixed an issue with permissions
+ - Fixed an incompatibility with RestrictedCreative
+ - Fixed a possible null pointer
+ - Updated translation footers to account for Bungee support
+ - Renamed Portugese for uniform compliance with ISO-639-1
+ - Updated translations for French, Dutch, Spanish, and German for Bungee support
+ - Added a new Swedish translation.
 #### [Version 0.10.3.0] LCLO Fork
  - Merged PseudoKnight upstream changes.
 #### [Version 0.10.2.0] LCLO Fork
