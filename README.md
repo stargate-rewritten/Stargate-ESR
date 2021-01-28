@@ -1,3 +1,4 @@
+> **Note that improved documentation can now be found** [here](https://www.spigotmc.org/resources/stargate.87978/)
 # Description
 Create gates that allow for instant-teleportation between large distances. Gates can be always-open or triggered; they can share a network or be split into clusters; they can be hidden on a network or accessible to everybody.
 
