@@ -255,9 +255,9 @@ public class Stargate extends JavaPlugin {
 
     public void debug(String rout, String msg) {
         if (debug) {
-            log.info("[Stargate::" + rout + "] " + msg);
+            log.info("[" + rout + "] " + msg);
         } else {
-            log.log(Level.FINEST, "[Stargate::" + rout + "] " + msg);
+            log.log(Level.FINEST, "[" + rout + "] " + msg);
         }
     }
 
