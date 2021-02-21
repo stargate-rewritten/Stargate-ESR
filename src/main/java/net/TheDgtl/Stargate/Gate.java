@@ -261,7 +261,15 @@ public class Gate {
     public boolean matches(Blox topleft, int modX, int modZ) {
         return matches(topleft, modX, modZ, false);
     }
-
+    
+    /**
+     * Checks if this gate layout matches with its surrounding
+     * @param topleft 
+     * @param modX identifier which gives the direction of the portal
+     * @param modZ identifier which gives the direction of the portal
+     * @param onCreate
+     * @return true if it matched
+     */
     public boolean matches(Blox topleft, int modX, int modZ, boolean onCreate) {
         HashMap<Character, Material> portalTypes = new HashMap<>(types);
 
@@ -277,9 +285,9 @@ public class Gate {
                     if (stargate.isIgnoreEntrance()) continue;
 
                     Material type = topleft.modRelative(x, y, 0, modX, 1, modZ).getType();
-
-                    // Ignore entrance if it's air and we're creating a new gate
-                    if (onCreate && type == Material.AIR) continue;
+                    
+                    if(type.isAir())
+                    	type = Material.AIR;
 
                     if (type != portalBlockClosed && type != portalBlockOpen) {
                         stargate.debug("Gate::Matches", "Entrance/Exit Material Mismatch: " + type);
@@ -494,14 +502,26 @@ public class Gate {
         types.put(ENTRANCE, Material.AIR);
         types.put(EXIT, Material.AIR);
         types.put(ANYTHING, Material.AIR);
-
         types.put('X', Material.OBSIDIAN);
         types.put('-', Material.OBSIDIAN);
 
-        Gate gate = new Gate(stargate, "nethergate.gate", layout, types);
-        gate.save(gateFolder);
+        Gate netherGate = new Gate(stargate, "nethergate.gate", layout, types);
+        netherGate.save(gateFolder);
+        registerGate(netherGate);
+        stargate.debug("Gate.populateDefaults"," created a nether gate");
+        
+        types.put(ENTRANCE, Material.WATER);
+        types.put(EXIT, Material.WATER);
+        types.put(ANYTHING, Material.WATER);
+        types.put('X', Material.SEA_LANTERN);
+        types.put('-', Material.SEA_LANTERN);
 
-        registerGate(gate);
+        Gate waterGate = new Gate(stargate, "water.gate", layout, types);
+        waterGate.setPortalBlockClosed(Material.WATER);
+        waterGate.setPortalBlockOpen(Material.KELP_PLANT);
+        waterGate.save(gateFolder);
+        registerGate(waterGate);
+        stargate.debug("Gate.populateDefaults"," created a water gate");
     }
 
     public static Gate[] getGatesByControlBlock(Block block) {
