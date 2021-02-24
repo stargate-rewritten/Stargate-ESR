@@ -36,6 +36,8 @@ import net.TheDgtl.Stargate.listeners.PluginStatusChangeListener;
 import net.TheDgtl.Stargate.listeners.WorldEventsListener;
 import net.TheDgtl.Stargate.threads.BlockPopulatorThread;
 import net.TheDgtl.Stargate.threads.SGThread;
+
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -112,6 +114,14 @@ public class Stargate extends JavaPlugin {
 
     @Override
     public void onEnable() {
+    	// All you have to do is adding the following two lines in your onEnable method.
+        // You can find the plugin ids of your plugins on the page https://bstats.org/what-is-my-plugin-id
+        int pluginId = 10452; // <-- Replace with the id of your plugin!
+        Metrics metrics = new Metrics(this, pluginId);
+        
+        
+        
+        
         PluginDescriptionFile pdfFile = this.getDescription();
 
         pm = getServer().getPluginManager();

@@ -4,7 +4,7 @@
 
     <groupId>org.TheDgtl</groupId>
     <artifactId>Stargate</artifactId>
-    <version>0.10.5.0</version>
+    <version>0.10.5.1</version>
     <name>StarGate</name>
     <description>Spigot plugin to create and manage networks of Stargates.</description>
 
@@ -23,7 +23,7 @@
             <url>http://nexus.hc.to/content/repositories/pub_releases</url>
         </repository>
     </repositories>
-
+	
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -43,11 +43,15 @@
             <version>20.1.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+	    <groupId>org.bstats</groupId>
+		    <artifactId>bstats-bukkit</artifactId>
+		    <version>2.2.1</version>
+		    <scope>compile</scope>
+	    </dependency>
     </dependencies>
-
     <build>
         <finalName>Stargate-${project.version}</finalName>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -58,8 +62,31 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <relocations>
+                                <relocation>
+					            	<pattern>org.bstats</pattern>
+					            	<shadedPattern>com.mcsmp.bstats</shadedPattern>
+					          	</relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
-
         <resources>
             <resource>
                 <directory>src/main/resources/</directory>
