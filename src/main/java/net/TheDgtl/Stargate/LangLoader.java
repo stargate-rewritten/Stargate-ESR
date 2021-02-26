@@ -111,10 +111,10 @@ public class LangLoader {
         boolean updated = false;
         FileOutputStream fos = null;
         try {
-            // Input stuff
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
+            BufferedReader br = new BufferedReader( new InputStreamReader(is) );
 
+            
+            
             String line = br.readLine();
             line = removeUTF8BOM(line);
             while (line != null) {
@@ -162,17 +162,10 @@ public class LangLoader {
                 }
             }
 
-            bw.close();
+            bw.close(); fos.close();
         } catch (Exception ex) {
             ex.printStackTrace();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (Exception ex) {
-                }
-            }
-        }
+        } 
         if (updated)
             stargate.getStargateLogger().info("[Stargate] Your language file (" + language + ".txt) has been updated");
     }
