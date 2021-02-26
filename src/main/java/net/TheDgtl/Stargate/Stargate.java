@@ -114,10 +114,9 @@ public class Stargate extends JavaPlugin {
 
     @Override
     public void onEnable() {
-    	// All you have to do is adding the following two lines in your onEnable method.
-        // You can find the plugin ids of your plugins on the page https://bstats.org/what-is-my-plugin-id
-        int pluginId = 10452; // <-- Replace with the id of your plugin!
-        Metrics metrics = new Metrics(this, pluginId);
+    	//registers bstats metrics
+        int pluginId = 10451;
+        new Metrics(this, pluginId);
         
         
         
