@@ -98,14 +98,14 @@ public class LangLoader {
      * with missing lines from the in-JAR files
      * @param lang
      */
-    private void updateLanguage(String lang) {
+    private void updateLanguage(String language) {
         // Load the current language file
         ArrayList<String> keyList = new ArrayList<>();
         ArrayList<String> valList = new ArrayList<>();
 
-        HashMap<String, String> curLang = load(lang);
+        HashMap<String, String> curLang = load(language);
 
-        InputStream is = Stargate.class.getResourceAsStream("/" + lang + ".txt");
+        InputStream is = Stargate.class.getResourceAsStream("/" + language + ".txt");
         if (is == null) return;
 
         boolean updated = false;
@@ -146,7 +146,7 @@ public class LangLoader {
             br.close();
 
             // Save file
-            File langFile = new File(dataFolder, lang + ".txt");
+            File langFile = new File(dataFolder, language + ".txt");
             fos = new FileOutputStream(langFile);
             OutputStreamWriter out = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
             BufferedWriter bw = new BufferedWriter(out);
@@ -177,7 +177,7 @@ public class LangLoader {
             }
         }
         if (updated)
-            stargate.getStargateLogger().info("[Stargate] Your language file (" + lang + ".txt) has been updated");
+            stargate.getStargateLogger().info("[Stargate] Your language file (" + language + ".txt) has been updated");
     }
     
     /**
@@ -208,11 +208,8 @@ public class LangLoader {
             
             BufferedReader br = new BufferedReader(isr);
             String line = br.readLine();
-            boolean firstLine = true;
+            line = removeUTF8BOM(line);
             while (line != null) {
-                // Strip UTF BOM
-                if (firstLine) line = removeUTF8BOM(line);
-                firstLine = false;
                 // Split at first "="
                 int eq = line.indexOf('=');
                 if (eq == -1) {
@@ -224,7 +221,7 @@ public class LangLoader {
                 strings.put(key, val);
                 line = br.readLine();
             }
-            isr.close();
+            br.close(); isr.close();
         } catch (Exception ex) {
             return null;
         }
