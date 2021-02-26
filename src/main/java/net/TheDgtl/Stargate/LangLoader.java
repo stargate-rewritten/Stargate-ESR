@@ -116,11 +116,8 @@ public class LangLoader {
             BufferedReader br = new BufferedReader(isr);
 
             String line = br.readLine();
-            boolean firstLine = true;
+            line = removeUTF8BOM(line);
             while (line != null) {
-                // Strip UTF BOM
-                if (firstLine) line = removeUTF8BOM(line);
-                firstLine = false;
                 // Split at first "="
                 int eq = line.indexOf('=');
                 if (eq == -1) {
