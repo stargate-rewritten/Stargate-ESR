@@ -198,15 +198,13 @@ public class LangLoader {
     }
     /**
      * Creates a more usable hashmap from the lang file
-     * @param language
      * @param is
      * @return A hashmap with a text identifier as a key and the text to display as values
      */
     private HashMap<String, String> load(InputStream is) {
         HashMap<String, String> strings = new HashMap<>();
-        InputStreamReader isr = null;
         try {
-            isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+        	InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
             
             BufferedReader br = new BufferedReader(isr);
             String line = br.readLine();
