@@ -64,10 +64,10 @@ public class Stargate extends JavaPlugin {
     private LangLoader lang;
     private String portalFolder;
     private String gateFolder;
-    private String defNetwork = "central";
+    private String defNetwork;
     private boolean destroyExplosion = false;
     private int maxGates = 0;
-    private String langName = "en";
+    private String langName;
     private final int activeTime = 10;
     private final int openTime = 10;
     private boolean destMemory = false;

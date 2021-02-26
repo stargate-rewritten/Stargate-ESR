@@ -21,7 +21,9 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -31,12 +33,19 @@ import java.util.HashMap;
 import java.util.Set;
 import org.bukkit.ChatColor;
 
+/**
+ * Enables multi lingual support for Stargate
+ * @author Thorin
+ * @author Someone who don't know what a comment is
+ *
+ */
 @SuppressWarnings({"UnusedReturnValue", "CatchMayIgnoreException"})
 public class LangLoader {
     private static final String UTF8_BOM = "\uFEFF";
-    // Variables
+    
     private final String dataFolder;
     private String lang;
+    
     private HashMap<String, String> strList;
     private final HashMap<String, String> defList;
 
@@ -57,9 +66,9 @@ public class LangLoader {
 
         strList = load(lang);
         // We have a default hashMap used for when new text is added.
-        InputStream is = Stargate.class.getResourceAsStream("/" + lang + ".txt");
+        InputStream is = Stargate.class.getResourceAsStream("/"+lang+".txt");
         if (is != null) {
-            defList = load("en", is);
+            defList = load(is);
         } else {
             defList = null;
             stargate.getStargateLogger().severe("[Stargate] Error loading backup language. There may be missing text ingame");
@@ -83,9 +92,12 @@ public class LangLoader {
     public void setLang(String lang) {
         this.lang = lang;
     }
-
-    // This function updates on-disk language files
-    // with missing lines from the in-JAR files
+    
+    /**
+     * This function updates on-disk language files
+     * with missing lines from the in-JAR files
+     * @param lang
+     */
     private void updateLanguage(String lang) {
         // Load the current language file
         ArrayList<String> keyList = new ArrayList<>();
@@ -167,23 +179,35 @@ public class LangLoader {
         if (updated)
             stargate.getStargateLogger().info("[Stargate] Your language file (" + lang + ".txt) has been updated");
     }
-
-    private HashMap<String, String> load(String lang) {
-        return load(lang, null);
+    
+    /**
+     * Creates a more usable hashmap from the lang file
+     * @param language
+     * @return A hashmap with a text identifier as a key and the text to display as values
+     */
+    private HashMap<String, String> load(String language) {
+    	
+    	File langFile = new File(dataFolder, language + ".txt");
+    	InputStream fis = null;
+    	try {
+    		 fis = new FileInputStream(langFile);
+    	}catch(FileNotFoundException e) {return null;}
+    	
+    	
+        return load( fis );
     }
-
-    private HashMap<String, String> load(String lang, InputStream is) {
+    /**
+     * Creates a more usable hashmap from the lang file
+     * @param language
+     * @param is
+     * @return A hashmap with a text identifier as a key and the text to display as values
+     */
+    private HashMap<String, String> load(InputStream is) {
         HashMap<String, String> strings = new HashMap<>();
-        FileInputStream fis = null;
-        InputStreamReader isr;
+        InputStreamReader isr = null;
         try {
-            if (is == null) {
-                File langFile = new File(dataFolder, lang + ".txt");
-                fis = new FileInputStream(langFile);
-                isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-            } else {
-                isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-            }
+            isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+            
             BufferedReader br = new BufferedReader(isr);
             String line = br.readLine();
             boolean firstLine = true;
@@ -202,16 +226,11 @@ public class LangLoader {
                 strings.put(key, val);
                 line = br.readLine();
             }
+            isr.close();
         } catch (Exception ex) {
             return null;
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (Exception ex) {
-                }
-            }
         }
+        
         return strings;
     }
 
@@ -226,11 +245,14 @@ public class LangLoader {
             stargate.debug("LangLoader::Debug::defList", key + " => " + defList.get(key));
         }
     }
-
-    private String removeUTF8BOM(String s) {
-        if (s.startsWith(UTF8_BOM)) {
-            s = s.substring(1);
+    /**
+     * @param text
+     * @return text without utfBOM
+     */
+    private String removeUTF8BOM(String text) {
+        if (text.startsWith(UTF8_BOM)) {
+        	text = text.substring(1);
         }
-        return s;
+        return text;
     }
 }
