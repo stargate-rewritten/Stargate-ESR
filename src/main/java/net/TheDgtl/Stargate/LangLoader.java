@@ -99,27 +99,27 @@ public class LangLoader {
      * @param lang
      */
     private void updateLanguage(String language) {
-        // Load the current language file
         ArrayList<String> keyList = new ArrayList<>();
         ArrayList<String> valList = new ArrayList<>();
-
-        HashMap<String, String> curLang = load(language);
-
+        
+        // Load the current language file
+        HashMap<String, String> currentLang = load(language);
+        
+        //get inputstream from resource folder
         InputStream is = Stargate.class.getResourceAsStream("/" + language + ".txt");
         if (is == null) return;
 
         boolean updated = false;
-        FileOutputStream fos = null;
         try {
-            BufferedReader br = new BufferedReader( new InputStreamReader(is) );
+            BufferedReader br = new BufferedReader(   new InputStreamReader(is)   );
 
-            
-            
             String line = br.readLine();
             line = removeUTF8BOM(line);
             while (line != null) {
-                // Split at first "="
+                // Position of "="
                 int eq = line.indexOf('=');
+                
+                //No '=' was found from resources
                 if (eq == -1) {
                     keyList.add("");
                     valList.add("");
@@ -128,41 +128,39 @@ public class LangLoader {
                 }
                 String key = line.substring(0, eq);
                 String val = line.substring(eq);
-
-                if (curLang == null || curLang.get(key) == null) {
+                //checks if key does not exist in currentlang
+                if (currentLang == null || currentLang.get(key) == null) {
                     keyList.add(key);
                     valList.add(val);
                     updated = true;
-                } else {
+                }else {
                     keyList.add(key);
-                    valList.add("=" + curLang.get(key).replace('\u00A7', '&'));
-                    curLang.remove(key);
+                    valList.add("=" + currentLang.get(key).replace('\u00A7', '&'));
+                    currentLang.remove(key);
                 }
                 line = br.readLine();
             }
             br.close();
 
-            // Save file
+            // Establishes connection to file
             File langFile = new File(dataFolder, language + ".txt");
-            fos = new FileOutputStream(langFile);
-            OutputStreamWriter out = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            BufferedWriter bw = new BufferedWriter(out);
+            BufferedWriter bw = new BufferedWriter(   new OutputStreamWriter(  new FileOutputStream(langFile)  , StandardCharsets.UTF_8)   );
 
-            // Output normal Language data
+            // Write normal Language data
             for (int i = 0; i < keyList.size(); i++) {
                 bw.write(keyList.get(i) + valList.get(i));
                 bw.newLine();
             }
             bw.newLine();
-            // Output any custom language strings the user had
-            if (curLang != null) {
-                for (String key : curLang.keySet()) {
-                    bw.write(key + "=" + curLang.get(key));
+            // Write any custom language strings the user had
+            if (currentLang != null) {
+                for (String key : currentLang.keySet()) {
+                    bw.write(key + "=" + currentLang.get(key));
                     bw.newLine();
                 }
             }
 
-            bw.close(); fos.close();
+            bw.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         } 
