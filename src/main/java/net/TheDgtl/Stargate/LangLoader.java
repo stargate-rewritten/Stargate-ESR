@@ -55,7 +55,7 @@ public class LangLoader {
         this.lang = lang;
         this.dataFolder = datFolder;
         
-        //checks if the language file exist
+        //checks if the language file exist, if not creates it
         File tmp = new File(datFolder, lang + ".txt");
         if (!tmp.exists()) {
             tmp.getParentFile().mkdirs();
@@ -92,8 +92,13 @@ public class LangLoader {
     }
     
     /**
-     * This function updates on-disk language files
-     * with missing lines from the in-JAR files
+     * This could most probably be replaced with 1 line of code:
+     * Reads all the lines from the lang.txt file, checks for issues with it
+     * then modifies it using the resource file.
+     * 
+     * This could in essence be replaced by creating a new lang.txt file from
+     * resources if not exists (one line of code).
+     * 
      * @param lang
      */
     private void updateLanguage(String language) {
@@ -126,6 +131,7 @@ public class LangLoader {
                 }
                 String key = line.substring(0, eq);
                 String val = line.substring(eq);
+                
                 //checks if key does not exist in currentlang
                 if (currentLang == null || currentLang.get(key) == null) {
                     keyList.add(key);
