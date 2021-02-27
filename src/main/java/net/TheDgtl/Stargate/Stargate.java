@@ -249,7 +249,6 @@ public class Stargate extends JavaPlugin {
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void migrate() {
         // Only migrate if new file doesn't exist.
         File newPortalDir = new File(portalFolder);
@@ -538,7 +537,6 @@ public class Stargate extends JavaPlugin {
     /*
      * Charge player for {action} if required, true on success, false if can't afford
      */
-    @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
     public boolean chargePlayer(Player player, String target, int cost) {
         // If cost is 0

@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -39,7 +38,6 @@ import org.bukkit.ChatColor;
  * @author Someone who don't know what a comment is
  *
  */
-@SuppressWarnings({"UnusedReturnValue", "CatchMayIgnoreException"})
 public class LangLoader {
     private static final String UTF8_BOM = "\uFEFF";
     
@@ -52,12 +50,12 @@ public class LangLoader {
     // di
     private final Stargate stargate;
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public LangLoader(Stargate stargate, String datFolder, String lang) {
         this.stargate = stargate;
         this.lang = lang;
         this.dataFolder = datFolder;
-
+        
+        //checks if the language file exist
         File tmp = new File(datFolder, lang + ".txt");
         if (!tmp.exists()) {
             tmp.getParentFile().mkdirs();
@@ -111,7 +109,7 @@ public class LangLoader {
 
         boolean updated = false;
         try {
-            BufferedReader br = new BufferedReader(   new InputStreamReader(is)   );
+            BufferedReader br = new BufferedReader(   new InputStreamReader(is, StandardCharsets.UTF_8)  );
 
             String line = br.readLine();
             line = removeUTF8BOM(line);
