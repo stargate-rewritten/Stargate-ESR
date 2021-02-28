@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,24 +32,30 @@ import java.util.HashMap;
 import java.util.Set;
 import org.bukkit.ChatColor;
 
-@SuppressWarnings({"UnusedReturnValue", "CatchMayIgnoreException"})
+/**
+ * Enables multi lingual support for Stargate
+ * @author Thorin
+ * @author Someone who don't know what a comment is
+ *
+ */
 public class LangLoader {
     private static final String UTF8_BOM = "\uFEFF";
-    // Variables
+    
     private final String dataFolder;
     private String lang;
+    
     private HashMap<String, String> strList;
     private final HashMap<String, String> defList;
 
     // di
     private final Stargate stargate;
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public LangLoader(Stargate stargate, String datFolder, String lang) {
         this.stargate = stargate;
         this.lang = lang;
         this.dataFolder = datFolder;
-
+        
+        //checks if the language file exist, if not creates it
         File tmp = new File(datFolder, lang + ".txt");
         if (!tmp.exists()) {
             tmp.getParentFile().mkdirs();
@@ -57,9 +64,9 @@ public class LangLoader {
 
         strList = load(lang);
         // We have a default hashMap used for when new text is added.
-        InputStream is = Stargate.class.getResourceAsStream("/" + lang + ".txt");
+        InputStream is = Stargate.class.getResourceAsStream("/"+lang+".txt");
         if (is != null) {
-            defList = load("en", is);
+            defList = load(is);
         } else {
             defList = null;
             stargate.getStargateLogger().severe("[Stargate] Error loading backup language. There may be missing text ingame");
@@ -83,34 +90,38 @@ public class LangLoader {
     public void setLang(String lang) {
         this.lang = lang;
     }
-
-    // This function updates on-disk language files
-    // with missing lines from the in-JAR files
-    private void updateLanguage(String lang) {
-        // Load the current language file
+    
+    /**
+     * Reads all the lines from the lang.txt file, checks for issues with it
+     * then modifies it using the resource file.
+     * 
+     * This could in essence be replaced by creating a new lang.txt file from
+     * resources if not exists (one line of code). 
+     * 
+     * @param lang
+     */
+    private void updateLanguage(String language) {
         ArrayList<String> keyList = new ArrayList<>();
         ArrayList<String> valList = new ArrayList<>();
-
-        HashMap<String, String> curLang = load(lang);
-
-        InputStream is = Stargate.class.getResourceAsStream("/" + lang + ".txt");
+        
+        // Load the current language file
+        HashMap<String, String> currentLang = load(language);
+        
+        //get inputstream from resource folder
+        InputStream is = Stargate.class.getResourceAsStream("/" + language + ".txt");
         if (is == null) return;
 
         boolean updated = false;
-        FileOutputStream fos = null;
         try {
-            // Input stuff
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
+            BufferedReader br = new BufferedReader(   new InputStreamReader(is, StandardCharsets.UTF_8)  );
 
             String line = br.readLine();
-            boolean firstLine = true;
+            line = removeUTF8BOM(line);
             while (line != null) {
-                // Strip UTF BOM
-                if (firstLine) line = removeUTF8BOM(line);
-                firstLine = false;
-                // Split at first "="
+                // Position of "="
                 int eq = line.indexOf('=');
+                
+                //No '=' was found from resources
                 if (eq == -1) {
                     keyList.add("");
                     valList.add("");
@@ -119,36 +130,35 @@ public class LangLoader {
                 }
                 String key = line.substring(0, eq);
                 String val = line.substring(eq);
-
-                if (curLang == null || curLang.get(key) == null) {
+                
+                //checks if key does not exist in currentlang
+                if (currentLang == null || currentLang.get(key) == null) {
                     keyList.add(key);
                     valList.add(val);
                     updated = true;
-                } else {
+                }else {
                     keyList.add(key);
-                    valList.add("=" + curLang.get(key).replace('\u00A7', '&'));
-                    curLang.remove(key);
+                    valList.add("=" + currentLang.get(key).replace('\u00A7', '&'));
+                    currentLang.remove(key);
                 }
                 line = br.readLine();
             }
             br.close();
 
-            // Save file
-            File langFile = new File(dataFolder, lang + ".txt");
-            fos = new FileOutputStream(langFile);
-            OutputStreamWriter out = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            BufferedWriter bw = new BufferedWriter(out);
+            // Establishes connection to file
+            File langFile = new File(dataFolder, language + ".txt");
+            BufferedWriter bw = new BufferedWriter(   new OutputStreamWriter(  new FileOutputStream(langFile)  , StandardCharsets.UTF_8)   );
 
-            // Output normal Language data
+            // Write normal Language data
             for (int i = 0; i < keyList.size(); i++) {
                 bw.write(keyList.get(i) + valList.get(i));
                 bw.newLine();
             }
             bw.newLine();
-            // Output any custom language strings the user had
-            if (curLang != null) {
-                for (String key : curLang.keySet()) {
-                    bw.write(key + "=" + curLang.get(key));
+            // Write any custom language strings the user had
+            if (currentLang != null) {
+                for (String key : currentLang.keySet()) {
+                    bw.write(key + "=" + currentLang.get(key));
                     bw.newLine();
                 }
             }
@@ -156,41 +166,41 @@ public class LangLoader {
             bw.close();
         } catch (Exception ex) {
             ex.printStackTrace();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (Exception ex) {
-                }
-            }
-        }
+        } 
         if (updated)
-            stargate.getStargateLogger().info("[Stargate] Your language file (" + lang + ".txt) has been updated");
+            stargate.getStargateLogger().info("[Stargate] Your language file (" + language + ".txt) has been updated");
     }
-
-    private HashMap<String, String> load(String lang) {
-        return load(lang, null);
+    
+    /**
+     * Creates a more usable hashmap from the lang file
+     * @param language
+     * @return A hashmap with a text identifier as a key and the text to display as values
+     */
+    private HashMap<String, String> load(String language) {
+    	
+    	File langFile = new File(dataFolder, language + ".txt");
+    	InputStream fis = null;
+    	try {
+    		 fis = new FileInputStream(langFile);
+    	}catch(FileNotFoundException e) {return null;}
+    	
+    	
+        return load( fis );
     }
-
-    private HashMap<String, String> load(String lang, InputStream is) {
+    /**
+     * Creates a more usable hashmap from the lang file
+     * @param is
+     * @return A hashmap with a text identifier as a key and the text to display as values
+     */
+    private HashMap<String, String> load(InputStream is) {
         HashMap<String, String> strings = new HashMap<>();
-        FileInputStream fis = null;
-        InputStreamReader isr;
         try {
-            if (is == null) {
-                File langFile = new File(dataFolder, lang + ".txt");
-                fis = new FileInputStream(langFile);
-                isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-            } else {
-                isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-            }
+        	InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+            
             BufferedReader br = new BufferedReader(isr);
             String line = br.readLine();
-            boolean firstLine = true;
+            line = removeUTF8BOM(line);
             while (line != null) {
-                // Strip UTF BOM
-                if (firstLine) line = removeUTF8BOM(line);
-                firstLine = false;
                 // Split at first "="
                 int eq = line.indexOf('=');
                 if (eq == -1) {
@@ -202,16 +212,11 @@ public class LangLoader {
                 strings.put(key, val);
                 line = br.readLine();
             }
+            br.close(); isr.close();
         } catch (Exception ex) {
             return null;
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (Exception ex) {
-                }
-            }
         }
+        
         return strings;
     }
 
@@ -226,11 +231,14 @@ public class LangLoader {
             stargate.debug("LangLoader::Debug::defList", key + " => " + defList.get(key));
         }
     }
-
-    private String removeUTF8BOM(String s) {
-        if (s.startsWith(UTF8_BOM)) {
-            s = s.substring(1);
+    /**
+     * @param text
+     * @return text without utfBOM
+     */
+    private String removeUTF8BOM(String text) {
+        if (text.startsWith(UTF8_BOM)) {
+        	text = text.substring(1);
         }
-        return s;
+        return text;
     }
 }

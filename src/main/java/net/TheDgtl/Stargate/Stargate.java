@@ -36,6 +36,8 @@ import net.TheDgtl.Stargate.listeners.PluginStatusChangeListener;
 import net.TheDgtl.Stargate.listeners.WorldEventsListener;
 import net.TheDgtl.Stargate.threads.BlockPopulatorThread;
 import net.TheDgtl.Stargate.threads.SGThread;
+
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -62,10 +64,10 @@ public class Stargate extends JavaPlugin {
     private LangLoader lang;
     private String portalFolder;
     private String gateFolder;
-    private String defNetwork = "central";
+    private String defNetwork;
     private boolean destroyExplosion = false;
     private int maxGates = 0;
-    private String langName = "en";
+    private String langName;
     private final int activeTime = 10;
     private final int openTime = 10;
     private boolean destMemory = false;
@@ -112,6 +114,13 @@ public class Stargate extends JavaPlugin {
 
     @Override
     public void onEnable() {
+    	//registers bstats metrics
+        int pluginId = 10451;
+        new Metrics(this, pluginId);
+        
+        
+        
+        
         PluginDescriptionFile pdfFile = this.getDescription();
 
         pm = getServer().getPluginManager();
@@ -240,7 +249,6 @@ public class Stargate extends JavaPlugin {
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void migrate() {
         // Only migrate if new file doesn't exist.
         File newPortalDir = new File(portalFolder);
@@ -529,7 +537,6 @@ public class Stargate extends JavaPlugin {
     /*
      * Charge player for {action} if required, true on success, false if can't afford
      */
-    @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
     public boolean chargePlayer(Player player, String target, int cost) {
         // If cost is 0
