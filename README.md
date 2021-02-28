@@ -237,6 +237,12 @@ createConflict=Gate conflicts with existing gate
 ```
 
 # Changes
+#### [Version 0.10.4.2]
+ - Fixed a language enumeration glitch
+ - Cleaned upp the LangLoader class
+#### [Version 0.10.4.1]
+ - Now works with caveair
+ - More restrictive portal open/create params
 #### [Version 0.10.4.0] LCLO Fork
  - Majorly refactored the code.
  - Fixed a bug with underwater networked portals
