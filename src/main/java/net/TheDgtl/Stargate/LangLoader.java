@@ -92,12 +92,11 @@ public class LangLoader {
     }
     
     /**
-     * This could most probably be replaced with 1 line of code:
      * Reads all the lines from the lang.txt file, checks for issues with it
      * then modifies it using the resource file.
      * 
      * This could in essence be replaced by creating a new lang.txt file from
-     * resources if not exists (one line of code).
+     * resources if not exists (one line of code). 
      * 
      * @param lang
      */
