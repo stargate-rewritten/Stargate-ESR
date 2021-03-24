@@ -247,6 +247,7 @@ createConflict=Gate conflicts with existing gate
  - Cleaned upp the LangLoader class
  - Now works with caveair
  - More restrictive portal open/create params
+ - Initial startup now generates an example underwater gate file
 #### [Version 0.10.4.0] LCLO Fork
  - Majorly refactored the code.
  - Fixed a bug with underwater networked portals
