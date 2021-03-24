@@ -237,12 +237,12 @@ createConflict=Gate conflicts with existing gate
 ```
 
 # Changes
-#### [Version 0.10.6.0]
+#### [Version 0.10.6.0] LCLO Fork
  - Cleaned up some extremely inefficient and outdated code.
  - Added some comments to make the code more legible.
  - Updated metrics to bstats framework.
  - Redid the language loader to completely fix issues with displaying foreign languages
-#### [Version 0.10.5.0]
+#### [Version 0.10.5.0] LCLO Fork
  - Fixed a language enumeration glitch
  - Cleaned upp the LangLoader class
  - Now works with caveair
