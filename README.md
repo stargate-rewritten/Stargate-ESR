@@ -237,6 +237,12 @@ createConflict=Gate conflicts with existing gate
 ```
 
 # Changes
+#### [Version 0.10.6.0]
+ - Cleaned up some extremely inefficient and outdated code.
+ - Added some comments to make the code more legible.
+ - Updated metrics to bstats framework.
+#### [Version 0.10.5.0]
+ - Redid the language loader to completely fix issues with displaying foreign languages
 #### [Version 0.10.4.2]
  - Fixed a language enumeration glitch
  - Cleaned upp the LangLoader class
