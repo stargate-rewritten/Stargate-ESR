@@ -929,8 +929,18 @@ public class Portal {
     }
 
     public static Portal createPortal(Stargate stargate, SignChangeEvent event, Player player) {
+    	
+    	
+    	
         Blox id = new Blox(event.getBlock());
         Block idParent = id.getParent();
+        
+        Location spawnpoint = event.getBlock().getWorld().getSpawnLocation();
+        Vector vec = event.getBlock().getLocation().subtract(spawnpoint).toVector();
+        int defaultSpawnProtWidth = 16;
+        if(Math.abs(vec.getBlockX()) < defaultSpawnProtWidth && Math.abs(vec.getBlockZ()) < defaultSpawnProtWidth) {
+        	stargate.sendMessage(player, stargate.getString("spawnBlockMsg"));
+        }
         if (idParent == null) {
             return null;
         }

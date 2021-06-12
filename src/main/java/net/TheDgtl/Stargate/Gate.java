@@ -457,8 +457,16 @@ public class Gate {
 			Material mat = Material.getMaterial(config.get(key));
 			if (mat != null)
 				return mat;
-			stargate.getStargateLogger().log(Level.WARNING,
-					String.format("Error reading %s: %s is not a material", file, key));
+
+			Tag<Material> tag = Bukkit.getTag(Tag.REGISTRY_BLOCKS,
+					NamespacedKey.minecraft(config.get(key).toLowerCase()), Material.class);
+			if (tag != null) {
+				stargate.getStargateLogger().log(Level.WARNING,
+						"%s-material does not support #tag values (use material_names)"+key);
+			} else {
+				stargate.getStargateLogger().log(Level.WARNING,
+						String.format("Error reading %s: %s is not a material", file, key));
+			}
 		}
 
 		return def;
