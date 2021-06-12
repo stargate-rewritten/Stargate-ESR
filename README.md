@@ -237,6 +237,10 @@ createConflict=Gate conflicts with existing gate
 ```
 
 # Changes
+#### [Version 0.10.7.0] LCLO Fork
+ - Added support for tags
+ - Tested on minecraft 1.17.0 with no known issues
+ - More bstats metrics
 #### [Version 0.10.6.0] LCLO Fork
  - Cleaned up some extremely inefficient and outdated code.
  - Added some comments to make the code more legible.
