@@ -131,71 +131,7 @@ public class Gate {
 		this.border = borderList.toArray(this.border);
 		this.controls = controlList.toArray(this.controls);
 	}
-
-	public void save(String gateFolder) {
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(gateFolder + filename));
-
-			writeConfig(bw, "portal-open", portalBlockOpen.name());
-			writeConfig(bw, "portal-closed", portalBlockClosed.name());
-			if (useCost != -1)
-				writeConfig(bw, "usecost", useCost);
-			if (createCost != -1)
-				writeConfig(bw, "createcost", createCost);
-			if (destroyCost != -1)
-				writeConfig(bw, "destroycost", destroyCost);
-			writeConfig(bw, "toowner", toOwner);
-
-			for (Map.Entry<Character, Material> entry : types.entrySet()) {
-				Character type = entry.getKey();
-				Material value = entry.getValue();
-
-				// Skip control values
-				if (type.equals(ANYTHING) || type.equals(ENTRANCE) || type.equals(EXIT)) {
-					continue;
-				}
-
-				bw.append(type);
-				bw.append('=');
-
-				if (value != null) {
-					bw.append(value.toString());
-				}
-
-				bw.newLine();
-			}
-
-			bw.newLine();
-
-			for (Character[] aLayout : layout) {
-				for (Character symbol : aLayout) {
-					bw.append(symbol);
-				}
-
-				bw.newLine();
-			}
-
-			bw.close();
-		} catch (IOException ex) {
-			stargate.getStargateLogger().log(Level.SEVERE, "Could not save Gate " + filename + " - " + ex.getMessage());
-		}
-	}
-
-	private void writeConfig(BufferedWriter bw, String key, int value) throws IOException {
-		bw.append(String.format("%s=%d", key, value));
-		bw.newLine();
-	}
-
-	private void writeConfig(BufferedWriter bw, String key, boolean value) throws IOException {
-		bw.append(String.format("%s=%b", key, value));
-		bw.newLine();
-	}
-
-	private void writeConfig(BufferedWriter bw, String key, String value) throws IOException {
-		bw.append(String.format("%s=%s", key, value));
-		bw.newLine();
-	}
-
+	
 	public Character[][] getLayout() {
 		return layout;
 	}
@@ -533,14 +469,6 @@ public class Gate {
 		File dir = new File(gateFolder);
 		File[] files = dir.exists() ? dir.listFiles(new StargateFilenameFilter()) : new File[0];
 
-		if (files == null || files.length == 0) {
-			if (dir.mkdir()) {
-				populateDefaults(stargate, gateFolder);
-			}
-
-			return;
-		}
-
 		for (File file : files) {
 			Gate gate = loadGate(stargate, file);
 			if (gate != null)
@@ -548,36 +476,6 @@ public class Gate {
 		}
 	}
 
-	public static void populateDefaults(Stargate stargate, String gateFolder) {
-		Character[][] layout = new Character[][] { { ' ', 'X', 'X', ' ' }, { 'X', '.', '.', 'X' },
-				{ '-', '.', '.', '-' }, { 'X', '*', '.', 'X' }, { ' ', 'X', 'X', ' ' }, };
-
-		HashMap<Character, Material> types = new HashMap<>();
-
-		types.put(ENTRANCE, Material.AIR);
-		types.put(EXIT, Material.AIR);
-		types.put(ANYTHING, Material.AIR);
-		types.put('X', Material.OBSIDIAN);
-		types.put('-', Material.OBSIDIAN);
-
-		Gate netherGate = new Gate(stargate, "nethergate.gate", layout, types, new HashMap<Character, Tag<Material>>());
-		netherGate.save(gateFolder);
-		registerGate(netherGate);
-		stargate.debug("Gate.populateDefaults", " created a nether gate");
-
-		types.put(ENTRANCE, Material.WATER);
-		types.put(EXIT, Material.WATER);
-		types.put(ANYTHING, Material.WATER);
-		types.put('X', Material.SEA_LANTERN);
-		types.put('-', Material.SEA_LANTERN);
-
-		Gate waterGate = new Gate(stargate, "water.gate", layout, types, new HashMap<Character, Tag<Material>>());
-		waterGate.setPortalBlockClosed(Material.WATER);
-		waterGate.setPortalBlockOpen(Material.KELP_PLANT);
-		waterGate.save(gateFolder);
-		registerGate(waterGate);
-		stargate.debug("Gate.populateDefaults", " created a water gate");
-	}
 
 	public static Gate[] getGatesByControlBlock(Block block) {
 		return getGatesByControlBlock(block.getType());
