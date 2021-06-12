@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,6 +39,7 @@ import net.TheDgtl.Stargate.threads.BlockPopulatorThread;
 import net.TheDgtl.Stargate.threads.SGThread;
 
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -114,13 +116,8 @@ public class Stargate extends JavaPlugin {
 
     @Override
     public void onEnable() {
-    	//registers bstats metrics
-        int pluginId = 10451;
-        new Metrics(this, pluginId);
-        
-        
-        
-        
+    	enableBStats();
+    	
         PluginDescriptionFile pdfFile = this.getDescription();
 
         pm = getServer().getPluginManager();
@@ -174,7 +171,41 @@ public class Stargate extends JavaPlugin {
         scheduler.scheduleSyncRepeatingTask(this, new SGThread(this), 0L, 100L);
         scheduler.scheduleSyncRepeatingTask(this, new BlockPopulatorThread(this), 0L, 1L);
     }
+    
+    private void enableBStats() {
+    	//registers bstats metrics
+        int pluginId = 10451;
+        Metrics metrics = new Metrics(this, pluginId);
 
+        metrics.addCustomChart(new SimplePie("language", new Callable<String>() {
+        	@Override
+        	public String call() {
+        		return getConfig().getString("lang");
+        	}
+        }));
+
+        metrics.addCustomChart(new SimplePie("gateformats",new Callable<String>() {
+        	@Override
+        	public String call() {
+        		return String.valueOf(Gate.getGateCount());
+        	}
+        }));
+
+        metrics.addCustomChart(new SimplePie("gates",new Callable<String>() {
+        	@Override
+        	public String call() {
+        		return String.valueOf(Portal.gateCount);
+        	}
+        }));
+
+        metrics.addCustomChart(new SimplePie("flags",new Callable<String>() {
+        	@Override
+        	public String call() {
+        		return Portal.UsedFlags.returnString();
+        	}
+        }));
+    }
+    
     public void loadConfig() {
         reloadConfig();
 

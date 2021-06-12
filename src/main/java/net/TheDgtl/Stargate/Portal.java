@@ -886,7 +886,8 @@ public class Portal {
     private Blox getBlockAt(RelativeBlockVector vector) {
         return topLeft.modRelative(vector.getRight(), vector.getDepth(), vector.getDistance(), modX, 1, modZ);
     }
-
+    
+    public static int gateCount = 0;
     private void register() {
         fixed = destination.length() > 0 || random || bungee;
 
@@ -924,7 +925,8 @@ public class Portal {
         for (Blox entrance : getEntrances()) {
             lookupEntrances.put(entrance, this);
         }
-
+        
+        gateCount++;
         allPortals.add(this);
     }
 
@@ -1473,7 +1475,9 @@ public class Portal {
                     } else {
                         ownerName = ownerString;
                     }
-
+                    
+                    UsedFlags.registerFlags(hidden,alwaysOn,priv,free,backwards,show,noNetwork,random,bungee,dest.isEmpty());
+                    
                     Portal portal = new Portal(stargate, topLeft, modX, modZ, rotX, sign, button, dest, name, false, network, gate, ownerUUID, ownerName, hidden, alwaysOn, priv, free, backwards, show, noNetwork, random, bungee);
                     portal.register();
                     portal.close(true);
@@ -1522,7 +1526,46 @@ public class Portal {
 
         return false;
     }
-
+    
+    public static class UsedFlags{
+		public static boolean hidden;
+		public static boolean alwaysOn;
+		public static boolean priv;
+		public static boolean free;
+		public static boolean backwards;
+		public static boolean show;
+		public static boolean noNetwork;
+		public static boolean random;
+		public static boolean bungee;
+		public static boolean networked;
+		public static void registerFlags(boolean h, boolean a, boolean p, boolean f, boolean b, boolean s, boolean n,
+				boolean r, boolean bun, boolean net) {
+			hidden = h | hidden;
+			alwaysOn = a | alwaysOn;
+			priv = p | priv;
+			free = f | free;
+			backwards = b | backwards;
+			show = s | show;
+			noNetwork = n | noNetwork;
+			random = r | random;
+			bungee = bun | bungee;
+			networked = net | networked;
+		}
+		public static String returnString() {
+			return 
+					(hidden ? "H" : "")
+					+ (alwaysOn ? "A" : "")
+					+ (priv ? "P" : "")
+					+ (free ? "F" : "")
+					+ (backwards ? "B" : "")
+					+ (show ? "S" : "")
+					+ (noNetwork ? "N" : "")
+					+ (random ? "R" : "")
+					+ (bungee ? "U" : "")
+					+ (networked ? "W" : "");
+		}
+	}
+    
     public static void closeAllGates(Stargate stargate) {
         stargate.getStargateLogger().info("Closing all stargates.");
 
