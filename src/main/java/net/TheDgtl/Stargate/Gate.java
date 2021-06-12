@@ -17,15 +17,11 @@
  */
 package net.TheDgtl.Stargate;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 
@@ -43,7 +39,7 @@ public class Gate {
 
 	private static final HashMap<String, Gate> gates = new HashMap<>();
 	private static final HashMap<Material, ArrayList<Gate>> controlBlocks = new HashMap<>();
-	private static final HashMap<Tag<Material>, ArrayList<Gate>> controlBlocksTags = new HashMap<>();
+	private static final HashMap<String, ArrayList<Gate>> controlBlocksTags = new HashMap<>();
 	private static final HashSet<Material> frameBlocks = new HashSet<>();
 
 	private final String filename;
@@ -296,20 +292,24 @@ public class Gate {
 		gates.put(gate.getFilename(), gate);
 
 		Material blockID = gate.getControlBlock();
-
+		
 		if (blockID != null) {
 			if (!controlBlocks.containsKey(blockID)) {
 				controlBlocks.put(blockID, new ArrayList<>());
 			}
-
 			controlBlocks.get(blockID).add(gate);
+			return;
 		}
-
+		
+		
 		Tag<Material> blockTag = gate.getControlBlockTag();
-		if (!controlBlocksTags.containsKey(blockTag)) {
-			controlBlocksTags.put(blockTag, new ArrayList<>());
+		Stargate.debug("Gate.registerGate", "Registering a tag "+ blockTag.getKey()+" as controllblock for " + gate.filename);
+		if (!controlBlocksTags.containsKey(blockTag.getKey().toString())) {
+			Stargate.debug("Gate.registerGate", "initial instance");
+			controlBlocksTags.put(blockTag.getKey().toString(), new ArrayList<>());
 		}
-		controlBlocksTags.get(blockTag).add(gate);
+		controlBlocksTags.get(blockTag.getKey().toString()).add(gate);
+		
 	}
 
 	public static Gate loadGate(Stargate stargate, File file) {
@@ -373,7 +373,6 @@ public class Gate {
 				// Load tag from string
 				if (value.startsWith("#")) {
 					String tagString = value.replaceFirst("#", "");
-					stargate.debug("loadGate", tagString);
 					Tag<Material> tag = Bukkit.getTag(Tag.REGISTRY_BLOCKS,
 							NamespacedKey.minecraft(tagString.toLowerCase()), Material.class);
 					if (tag != null) {
@@ -476,7 +475,6 @@ public class Gate {
 		}
 	}
 
-
 	public static Gate[] getGatesByControlBlock(Block block) {
 		return getGatesByControlBlock(block.getType());
 	}
@@ -485,9 +483,15 @@ public class Gate {
 		ArrayList<Gate> result = new ArrayList<>();
 		ArrayList<Gate> fromID = controlBlocks.get(type);
 		ArrayList<Gate> fromTag = null;
-		for (Tag<Material> tag : Gate.controlBlocksTags.keySet()) {
-			if (tag != null && tag.isTagged(type))
-				fromTag = Gate.controlBlocksTags.get(tag);
+		for (String tagString : Gate.controlBlocksTags.keySet()) {
+			Tag<Material> tag = Bukkit.getTag(Tag.REGISTRY_BLOCKS,
+					NamespacedKey.minecraft(tagString.replaceFirst("minecraft:", "")), Material.class);
+			Stargate.debug("Gate.getGatesByControlBlock", "Checking tag " + tag.getKey());
+			if (tag != null && tag.isTagged(type)) {
+				Stargate.debug("Gate.getGatesByControlBlock", "Controllblock has tag");
+				fromTag = Gate.controlBlocksTags.get(tag.getKey().toString());
+			}
+				
 		}
 		if (fromID != null)
 			result.addAll(fromID);

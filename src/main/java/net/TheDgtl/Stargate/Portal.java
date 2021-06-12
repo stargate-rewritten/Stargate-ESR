@@ -887,7 +887,7 @@ public class Portal {
         return topLeft.modRelative(vector.getRight(), vector.getDepth(), vector.getDistance(), modX, 1, modZ);
     }
     
-    public static int gateCount = 0;
+    public static int gateCount = -10;
     private void register() {
         fixed = destination.length() > 0 || random || bungee;
 
@@ -925,8 +925,6 @@ public class Portal {
         for (Blox entrance : getEntrances()) {
             lookupEntrances.put(entrance, this);
         }
-        
-        gateCount++;
         allPortals.add(this);
     }
 
@@ -1021,11 +1019,17 @@ public class Portal {
         Gate gate = null;
         RelativeBlockVector buttonVector = null;
 
+    	String debugMsg = "|";
+        for(Gate debugGate : possibleGates) {
+        	debugMsg = debugMsg + debugGate.getFilename() + "|";
+        }
+        stargate.debug("Portal.createPortal", "Possible gates:" + debugMsg);
+        
         for (Gate possibility : possibleGates) {
             if (gate != null) {
                 break;
             }
-
+            stargate.debug("Portal.createPortal", "Checking gate from file '" + possibility.getFilename() + "'");
             RelativeBlockVector[] vectors = possibility.getControls();
             RelativeBlockVector otherControl = null;
 
@@ -1339,7 +1343,8 @@ public class Portal {
                 if (!wName.equalsIgnoreCase(world.getName())) continue;
                 StringBuilder builder = new StringBuilder();
                 Blox button = portal.button;
-
+                
+                // another for loop maybe?
                 builder.append(portal.name);
                 builder.append(':');
                 builder.append(portal.id.toString());
@@ -1505,7 +1510,6 @@ public class Portal {
                             continue;
                         }
                     }
-
                     portalCount++;
 
                     if (portal.isFixed() && (stargate.isEnableBungee() && portal.isBungee()
@@ -1514,6 +1518,8 @@ public class Portal {
                         OpenCount++;
                     }
                 }
+
+                Portal.gateCount = portalCount;
                 stargate.getStargateLogger().info("[Stargate] {" + world.getName() + "} Loaded " + portalCount + " stargates with " + OpenCount + " set as always-on");
                 return true;
             } catch (Exception e) {

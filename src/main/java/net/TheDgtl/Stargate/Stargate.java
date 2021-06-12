@@ -40,6 +40,7 @@ import net.TheDgtl.Stargate.threads.SGThread;
 
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
+import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -85,6 +86,7 @@ public class Stargate extends JavaPlugin {
     // Used for debug
     private boolean debug = false;
     private boolean permDebug = false;
+    private static Stargate instance;
 
     private final ConcurrentLinkedQueue<Portal> openList = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<Portal> activeList = new ConcurrentLinkedQueue<>();
@@ -116,6 +118,7 @@ public class Stargate extends JavaPlugin {
 
     @Override
     public void onEnable() {
+    	instance = this;
     	enableBStats();
     	
         PluginDescriptionFile pdfFile = this.getDescription();
@@ -192,11 +195,12 @@ public class Stargate extends JavaPlugin {
         	}
         }));
 
-        metrics.addCustomChart(new SimplePie("gates",new Callable<String>() {
-        	@Override
-        	public String call() {
-        		return String.valueOf(Portal.gateCount);
-        	}
+        metrics.addCustomChart(new SingleLineChart("gates", new Callable<Integer>() {
+			@Override
+			public Integer call() throws Exception {
+				return Portal.gateCount;
+			}
+        	
         }));
 
         metrics.addCustomChart(new SimplePie("flags",new Callable<String>() {
@@ -302,11 +306,13 @@ public class Stargate extends JavaPlugin {
         }
     }
 
-    public void debug(String rout, String msg) {
-        if (debug) {
-            log.info("[" + rout + "] " + msg);
+    
+    
+    static public void debug(String rout, String msg) {
+        if (instance.debug) {
+        	instance.log.info("[" + rout + "] " + msg);
         } else {
-            log.log(Level.FINEST, "[" + rout + "] " + msg);
+        	instance.log.log(Level.FINEST, "[" + rout + "] " + msg);
         }
     }
 
