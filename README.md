@@ -134,6 +134,8 @@ toowner=true
 ```
 
 # Custom Gate Layout
+Note that MATERIAL NAMES (such as `OBSIDIAN`) can be found [here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html).<br>
+As of version 10.7, TAGS (such as `#WOOL`) can be found [here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Tag.html).
 ## Normal Portals
 You can create as many gate formats as you want, the gate layouts are stored in plugins/Stargate/gates/.  
 The .gate file must be laid out a specific way, the first lines will be config information, and after a blank line you will lay out the gate format. Here is the default nether.gate file:
