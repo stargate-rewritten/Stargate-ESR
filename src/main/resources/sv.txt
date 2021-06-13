@@ -6,6 +6,7 @@ invalidMsg=Invalid Destination
 blockMsg=Destination Blockerad
 destEmpty=Destinationslista Är Tom
 denyMsg=Du Saknar Tillstånd
+spawnBlockMsg=Portalen är nära spawnpunkten, detta kan påverka den
 
 ecoDeduct=Drog Bort %cost%
 ecoRefund=La Till %cost%
