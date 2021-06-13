@@ -266,10 +266,8 @@ public class Gate {
 						matches = blockString.contains(noLegacy);
 					}
 				} else {
-					stargate.debug("Gate::Matches", "Checking through Tags");
 					Tag<Material> tag = tagPortalTypes.get(key);
 					if (tag == null) {
-						stargate.debug("Gate::Matches", "Tag not found");
 						portalTypes.put(key, topleft.modRelative(x, y, 0, modX, 1, modZ).getType());
 						continue;
 					}
@@ -303,9 +301,7 @@ public class Gate {
 		
 		
 		Tag<Material> blockTag = gate.getControlBlockTag();
-		Stargate.debug("Gate.registerGate", "Registering a tag "+ blockTag.getKey()+" as controllblock for " + gate.filename);
 		if (!controlBlocksTags.containsKey(blockTag.getKey().toString())) {
-			Stargate.debug("Gate.registerGate", "initial instance");
 			controlBlocksTags.put(blockTag.getKey().toString(), new ArrayList<>());
 		}
 		controlBlocksTags.get(blockTag.getKey().toString()).add(gate);
@@ -494,9 +490,7 @@ public class Gate {
 		for (String tagString : Gate.controlBlocksTags.keySet()) {
 			Tag<Material> tag = Bukkit.getTag(Tag.REGISTRY_BLOCKS,
 					NamespacedKey.minecraft(tagString.replaceFirst("minecraft:", "")), Material.class);
-			Stargate.debug("Gate.getGatesByControlBlock", "Checking tag " + tag.getKey());
 			if (tag != null && tag.isTagged(type)) {
-				Stargate.debug("Gate.getGatesByControlBlock", "Controllblock has tag");
 				fromTag = Gate.controlBlocksTags.get(tag.getKey().toString());
 			}
 				

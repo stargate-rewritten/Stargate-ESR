@@ -276,7 +276,7 @@ public class Stargate extends JavaPlugin {
 		String[] gateList = {"nether.gate", "water.gate", "wool.gate"};
 		boolean replace = false;
 		for(String gateName : gateList) {
-			if(!(new File("/gates/"+gateName).exists()))
+			if(!(new File(gateFolder+gateName).exists()))
 				this.saveResource("gates/" + gateName, replace);
 		}
 	}

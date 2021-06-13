@@ -19,6 +19,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -937,8 +938,8 @@ public class Portal {
         
         Location spawnpoint = event.getBlock().getWorld().getSpawnLocation();
         Vector vec = event.getBlock().getLocation().subtract(spawnpoint).toVector();
-        int defaultSpawnProtWidth = 16;
-        if(Math.abs(vec.getBlockX()) < defaultSpawnProtWidth && Math.abs(vec.getBlockZ()) < defaultSpawnProtWidth) {
+        int spawnProtWidth =  stargate.getServer().getSpawnRadius();
+        if(Math.abs(vec.getBlockX()) < spawnProtWidth && Math.abs(vec.getBlockZ()) < spawnProtWidth) {
         	stargate.sendMessage(player, stargate.getString("spawnBlockMsg"));
         }
         if (idParent == null) {
@@ -1028,18 +1029,11 @@ public class Portal {
         Gate[] possibleGates = Gate.getGatesByControlBlock(idParent);
         Gate gate = null;
         RelativeBlockVector buttonVector = null;
-
-    	String debugMsg = "|";
-        for(Gate debugGate : possibleGates) {
-        	debugMsg = debugMsg + debugGate.getFilename() + "|";
-        }
-        stargate.debug("Portal.createPortal", "Possible gates:" + debugMsg);
         
         for (Gate possibility : possibleGates) {
             if (gate != null) {
                 break;
             }
-            stargate.debug("Portal.createPortal", "Checking gate from file '" + possibility.getFilename() + "'");
             RelativeBlockVector[] vectors = possibility.getControls();
             RelativeBlockVector otherControl = null;
 
