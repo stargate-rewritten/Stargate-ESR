@@ -6,6 +6,7 @@ invalidMsg=Destinazione invalida
 blockMsg=Destinazione bloccata
 destEmpty=Lista destinazioni vuota
 denyMsg=Accesso Negato
+spawnBlockMsg=L'area di Spawn interferisce con questo portale.
 
 ecoDeduct=%cost% pagato
 ecoRefund=%cost% rimborsato
