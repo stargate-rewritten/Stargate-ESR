@@ -6,7 +6,7 @@ invalidMsg=Destino no Valido
 blockMsg=Destino Bloqueado
 destEmpty=Lista de Destinos Vacía
 denyMsg=Acceso Denegado
-spawnBlockMsg=Des sections d'apparition interfèrent avec ce portail.
+spawnBlockMsg=Los Chunks en el punto de generación están interfiriendo con este portal.
 
 ecoDeduct=Descontado %cost%
 ecoRefund=Reembolsado %cost%
