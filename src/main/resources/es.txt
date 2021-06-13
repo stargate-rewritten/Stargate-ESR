@@ -1,11 +1,12 @@
 author=Manuestaire & matrix033
 prefix=[Stargate] 
 teleportMsg=Teletransportado
-destroyMsg=Portal DestruÌdo
+destroyMsg=Portal Destru√≠do
 invalidMsg=Destino no Valido
 blockMsg=Destino Bloqueado
-destEmpty=Lista de Destinos VacÌa
+destEmpty=Lista de Destinos Vac√≠a
 denyMsg=Acceso Denegado
+spawnBlockMsg=Des sections d'apparition interf√®rent avec ce portail.
 
 ecoDeduct=Descontado %cost%
 ecoRefund=Reembolsado %cost%
@@ -14,11 +15,11 @@ ecoInFunds=No tienes suficiente dinero
 
 createMsg=Portal creado
 createNetDeny=No tienes acceso a esta red
-createGateDeny=No tienes acceso a este diseÒo de portal
+createGateDeny=No tienes acceso a este dise√±o de portal
 createPersonal=Creando el portal en una red personal
 createNameLength=Nombre demasiado largo o demasiado corto
 createExists=Ya existe una puerta con este nombre
-createFull=Esta red est· llena
+createFull=Esta red est√° llena
 createWorldDeny=No tienes permisos para acceder a ese mundo
 createConflict=El portal entra en conflicto con un portal ya existente
 
