@@ -6,6 +6,7 @@ invalidMsg=Nincs ilyen cél
 blockMsg=Cél blokkolva
 destEmpty=A cél lista üres
 denyMsg=Hozzáférés megtagadva
+spawnBlockMsg=Az ívási terület zavarja ezt a portált.
 
 ecoDeduct=%cost% levonva
 ecoRefund=%cost% visszatérítve
