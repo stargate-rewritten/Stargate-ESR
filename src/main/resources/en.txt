@@ -5,6 +5,7 @@ invalidMsg=Invalid Destination
 blockMsg=Destination Blocked
 destEmpty=Destination List Empty
 denyMsg=Access Denied
+spawnBlockMsg=Spawn chunks are interfering with this portal.
 
 ecoDeduct=Deducted %cost%
 ecoRefund=Refunded %cost%
