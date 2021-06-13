@@ -6,6 +6,7 @@ invalidMsg=Ongeldige bestemming
 blockMsg=Bestemming geblokkeerd
 destEmpty=Bestemmingslijst leeg
 denyMsg=Toegang geweigerd
+spawnBlockMsg=Het spawngebied verstoort dit portaal.
 
 ecoDeduct=%cost% afgeschreven
 ecoRefund=%cost% terug gekregen
