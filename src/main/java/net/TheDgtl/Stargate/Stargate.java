@@ -119,7 +119,6 @@ public class Stargate extends JavaPlugin {
     @Override
     public void onEnable() {
     	instance = this;
-    	enableBStats();
     	
         PluginDescriptionFile pdfFile = this.getDescription();
 
@@ -174,6 +173,7 @@ public class Stargate extends JavaPlugin {
 
         scheduler.scheduleSyncRepeatingTask(this, new SGThread(this), 0L, 100L);
         scheduler.scheduleSyncRepeatingTask(this, new BlockPopulatorThread(this), 0L, 1L);
+    	enableBStats();
     }
     
     private void enableBStats() {
@@ -195,7 +195,7 @@ public class Stargate extends JavaPlugin {
         	}
         }));
 
-        metrics.addCustomChart(new SingleLineChart("gates", new Callable<Integer>() {
+        metrics.addCustomChart(new SingleLineChart("gatesv2", new Callable<Integer>() {
 			@Override
 			public Integer call() throws Exception {
 				return Portal.gateCount;
