@@ -888,7 +888,10 @@ public class Portal {
         return topLeft.modRelative(vector.getRight(), vector.getDepth(), vector.getDistance(), modX, 1, modZ);
     }
     
-    public static int gateCount = -10;
+    static public int portalCount() {
+    	return allPortals.size();
+    }
+    
     private void register() {
         fixed = destination.length() > 0 || random || bungee;
 
@@ -1522,8 +1525,6 @@ public class Portal {
                         OpenCount++;
                     }
                 }
-
-                Portal.gateCount = portalCount;
                 stargate.getStargateLogger().info("[Stargate] {" + world.getName() + "} Loaded " + portalCount + " stargates with " + OpenCount + " set as always-on");
                 return true;
             } catch (Exception e) {

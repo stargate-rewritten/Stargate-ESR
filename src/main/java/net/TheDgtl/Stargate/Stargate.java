@@ -195,10 +195,10 @@ public class Stargate extends JavaPlugin {
         	}
         }));
 
-        metrics.addCustomChart(new SingleLineChart("gatesv2", new Callable<Integer>() {
+        metrics.addCustomChart(new SingleLineChart("gatesv3", new Callable<Integer>() {
 			@Override
 			public Integer call() throws Exception {
-				return Portal.gateCount;
+				return Portal.portalCount();
 			}
         	
         }));
