@@ -30,6 +30,8 @@ public class BlockPopulatorThread extends StargateRunnable {
                 EndGateway gateway = (EndGateway) blk.getState();
                 gateway.setExitLocation(blk.getWorld().getSpawnLocation());
                 gateway.setExactTeleport(true);
+                // https://github.com/stargate-bukkit/Stargate-Bukkit/issues/36
+                gateway.setAge(-9223372036854775808L);
                 gateway.update(false, false);
             } else if (b.getAxis() != null) {
                 Orientable orientable = (Orientable) blk.getBlockData();
