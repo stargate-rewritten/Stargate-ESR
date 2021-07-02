@@ -19,11 +19,11 @@
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
-            <id>vault-repo</id>
-            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
-	
+
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -32,7 +32,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.milkbowl.vault</groupId>
+            <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
             <scope>provided</scope>
@@ -44,11 +44,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-	    <groupId>org.bstats</groupId>
-		    <artifactId>bstats-bukkit</artifactId>
-		    <version>2.2.1</version>
-		    <scope>compile</scope>
-	    </dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>2.2.1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <build>
         <finalName>Stargate-${project.version}</finalName>
@@ -71,7 +71,7 @@
                     <artifactSet>
                         <includes>
                             <include>org.bstats:*</include>
-                         </includes>
+                        </includes>
                     </artifactSet>
                 </configuration>
                 <executions>
@@ -83,9 +83,9 @@
                         <configuration>
                             <relocations>
                                 <relocation>
-					            	<pattern>org.bstats</pattern>
-					            	<shadedPattern>com.mcsmp.bstats</shadedPattern>
-					          	</relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>com.mcsmp.bstats</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
