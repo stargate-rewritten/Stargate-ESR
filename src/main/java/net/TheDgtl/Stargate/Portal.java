@@ -16,10 +16,11 @@ import net.TheDgtl.Stargate.event.StargatePortalEvent;
 import org.bukkit.Axis;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -796,7 +797,7 @@ public class Portal {
         openTime = System.currentTimeMillis() / 1000;
         drawSign();
     }
-
+    
     public final void drawSign() {
         BlockState state = id.getBlock().getState();
 
@@ -805,12 +806,16 @@ public class Portal {
             stargate.debug("Portal::drawSign", "Block: " + id.getBlock().getType() + " @ " + id.getBlock().getLocation());
             return;
         }
-
+        
         Sign sign = (Sign) state;
-        stargate.setLine(sign, 0, "-" + name + "-");
-
+        if(sign.getColor() == DyeColor.BLACK) {
+        	sign.setColor(stargate.getDefaultSignColor());
+        }
+        
+        sign.setLine(0, "-" + name + "-");
+        
         ArrayList<String> lines = getSignLines();
-
+        
         for (int i = 1; i < 4; i++) {
             String line = "";
 
@@ -818,8 +823,7 @@ public class Portal {
                 line = lines.get(i - 1);
             } catch (IndexOutOfBoundsException ignored) {
             }
-
-            stargate.setLine(sign, i, line);
+            sign.setLine(i, line);
         }
 
         sign.update();
