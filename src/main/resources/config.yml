@@ -1,21 +1,74 @@
-#                                                      ‚-.
-#---------------------------------------------------- ((_)) --------------------
-#                                                      ‘-’        
-#  .|'''.|  |''||''|     |     '||''|.    ..|'''.|      |     |''||''| '||''''|  
-#  ||..  '     ||       |||     ||   ||  .|'     '     |||       ||     ||  .    
-#   ''|||.     ||      |  ||    ||''|'   ||    ....   |  ||      ||     ||''|    
-# .     '||    ||     .''''|.   ||   |.  '|.    ||   ;’   |.     ||     ||       
-# |'....|'    .||.   .|.  .||. .||.  '|'  ''|...'|  .|.  .||.   .||.   .||.....| 
-#                                                                                                                         
-#             //  ::::::    :===:  ::    :: ::    :: :: ::::::::  \\
-#            //   ::    :: *@##%@# ::    :: ::    :: ::    ::      \\
-#           ||    ::::::   =-=**%+ ::::::   ::::::   ::    ::       ||
-#            \\   ::    :: .+--::  ::    :: ::    :: ::    ::      //
-#             \\  ::::::::   ::.   ::    :: ::    :: ::    ::     //
-#
-# Stargate Configuration File  v. @version@
-# Main Stargate config
-#
+################################################################################## Version: @version@
+# +--------------▄▄▄-- ‚——. -▄--▄-▄--▄-▄-▄▄▄▄▄---------------------------------------------------+ #
+# |              █▄▄▀ (“‡‡”) █▄▄▀ █▄▄▀ █   █         Support available at: discord.gg/mTaHuK6BVa | #
+# |              █▄▄█  \__/  █  █ █  █ █   █                    ‚-.                              | #
+# |         —————————————————————————————————————————————————— ((_)) ——————————————————          | #
+# |                                                             ‘-’                              | #
+# |         .|'''.|  |''||''|     |     '||''|.    ..|'''.|      |     |''||''| '||''''|         | #
+# |         ||..  '     ||       |||     ||   ||  .|'     '     |||       ||     ||  .           | #
+# |          ''|||.     ||      |  ||    ||''|'   ||    ....   |  ||      ||     ||''|           | #
+# |        .     '||    ||     .''''|.   ||   |.  '|.    ||   ;’   |.     ||     ||              | #
+# |         '....|'    .||.   .|.  .||. .||.  '|'  ''|...'|  .|.  .||.   .||.   .||.....|        | #
+# +----------------------------------------------------------------------------------------------+ #
+# |                        https://spigotmc.org/resources/stargate.87978/                        | #
+# +----------------------------------------------+-----------------------------------------------+ #
+# |      Documentation: https://git.io/Jc6jZ     |       Bug Reports: https://git.io/Jc6jW       | #
+# +----------------------------------------------+-----------------------------------------------+ #
+####################################################################################################
+
+# +----------------------------------------------------------------------------------------------+ #
+# |                                      General Preferences                                     | #
+# +----------------------------------------------------------------------------------------------+ #
+lang: en
+enableBungee: false
+default-gate-network: central
+
+# +----------------------------------------------------------------------------------------------+ #
+# |                                        Gate Behaviour                                        | #
+# +----------------------------------------------------------------------------------------------+ #
+maxgates: 0
+handleVehicles: true
+verifyPortals: false
+protectEntrance: false
+destroyexplosion: false
+
+# +----------------------------------------------------------------------------------------------+ #
+# |                                            Economy                                           | #
+# +----------------------------------------------------------------------------------------------+ #
+useeconomy: false
+createcost: 0
+destroycost: 0
+usecost: 0
+toowner: false
+chargefreedestination: true
+
+# +----------------------------------------------------------------------------------------------+ #
+# |                                       Aesthetic Tweaks                                       | #
+# +----------------------------------------------------------------------------------------------+ #
+signColor: BLACK
+freegatesgreen: false
+sortLists: false
+destMemory: false
+
+# +----------------------------------------------------------------------------------------------+ #
+# |                                           Technical                                          | #
+# +----------------------------------------------------------------------------------------------+ #
+
+#                                         [ Experimental ]                                       
+#                These features are not fully supported; use them at your own risk!              
+
+ignoreEntrance: false
+
+#                                         [ Compatibility ]                                      
+#          These settings are provided to improve SG 10's interactions with other plugins.       
+portal-folder: plugins/Stargate/portals/
+gate-folder: plugins/Stargate/gates/
+
+#                                             [ Debug ]                                          
+#         These settings are provided to help developers diagnose issues with this plugin.       
+debug: false
+permdebug: false
+
 # portal-folder -  The folder for storing portals
 # gate-folder - The folder for storing gate layouts
 # default-gate-network - The default gate network
@@ -44,26 +97,3 @@
 #################
 # debug - Debug -- Only enable if you have issues, massive console output
 # permdebug - This will output any and all Permissions checks to console, used for permissions debugging (Requires debug: true)
-portal-folder: plugins/Stargate/portals/
-gate-folder: plugins/Stargate/gates/
-default-gate-network: central
-destroyexplosion: false
-maxgates: 0
-lang: en
-destMemory: false
-ignoreEntrance: false
-handleVehicles: true
-sortLists: false
-protectEntrance: false
-signColor: BLACK
-useeconomy: false
-createcost: 0
-destroycost: 0
-usecost: 0
-toowner: false
-chargefreedestination: true
-freegatesgreen: false
-debug: false
-permdebug: false
-enableBungee: false
-verifyPortals: false
