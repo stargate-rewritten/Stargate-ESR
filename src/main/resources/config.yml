@@ -19,81 +19,97 @@
 # +----------------------------------------------------------------------------------------------+ #
 # |                                      General Preferences                                     | #
 # +----------------------------------------------------------------------------------------------+ #
+
+# lang - The language file to load for messages
 lang: en
+
+# enableBungee - Whether or not bungee gates are enabled.
 enableBungee: false
+
+# default-gate-network - The default gate network
 default-gate-network: central
 
 # +----------------------------------------------------------------------------------------------+ #
 # |                                        Gate Behaviour                                        | #
 # +----------------------------------------------------------------------------------------------+ #
+
+# maxgates - The maximum number of gates allowed on a network - 0 for unlimited
 maxgates: 0
+
+# handleVehicles - Whether to allow vehicles through gates
 handleVehicles: true
+
+# verifyPortals - Whether or not all the non-sign blocks are checked to match the gate layout when a stargate is loaded.
 verifyPortals: false
+
+# protectEntrance - Whether to protect gate entrance material (More resource intensive. Only enable if using destroyable open/closed material)
 protectEntrance: false
+
+# destroyexplosion - Whether or not to destroy gates with explosions (Creeper, TNT, etc)
 destroyexplosion: false
 
 # +----------------------------------------------------------------------------------------------+ #
 # |                                            Economy                                           | #
 # +----------------------------------------------------------------------------------------------+ #
+
+# useeconomy - Whether to use an economy plugin
 useeconomy: false
+
+# createcost - The cost to create a gate
 createcost: 0
+
+# destroycost - The cost to destroy a gate
 destroycost: 0
+
+# usecost - The cost to use a gate
 usecost: 0
+
+# toowner - Whether the charge for using a gate goes to the gates owner
 toowner: false
+
+# chargefreedestination - Whether a gate whose destination is a free gate is still charged
 chargefreedestination: true
 
 # +----------------------------------------------------------------------------------------------+ #
 # |                                       Aesthetic Tweaks                                       | #
 # +----------------------------------------------------------------------------------------------+ #
+
+# signColor - The color used for drawing signs (Default: BLACK).
 signColor: BLACK
+
+# freegatesgreen - Whether a free gate in the destination list is drawn green
 freegatesgreen: false
+
+# sortLists - Whether to sort network lists alphabetically
 sortLists: false
+
+# destMemory - Whether to remember the cursor location between uses
 destMemory: false
 
 # +----------------------------------------------------------------------------------------------+ #
 # |                                           Technical                                          | #
 # +----------------------------------------------------------------------------------------------+ #
 
-#                                         [ Experimental ]                                       
-#                These features are not fully supported; use them at your own risk!              
+# |                                       [ Experimental ]                                       |
+# |__            These features are not fully supported; use them at your own risk!            __|
 
+# ignoreEntrance - Ignore the entrance blocks of a gate when checking. Used to work around snowmen
 ignoreEntrance: false
 
-#                                         [ Compatibility ]                                      
-#          These settings are provided to improve SG 10's interactions with other plugins.       
-portal-folder: plugins/Stargate/portals/
-gate-folder: plugins/Stargate/gates/
-
-#                                             [ Debug ]                                          
-#         These settings are provided to help developers diagnose issues with this plugin.       
-debug: false
-permdebug: false
+# |                                       [ Compatibility ]                                      |
+# |__      These settings are provided to improve SG 10's interactions with other plugins.     __|
 
 # portal-folder -  The folder for storing portals
+portal-folder: plugins/Stargate/portals/
+
 # gate-folder - The folder for storing gate layouts
-# default-gate-network - The default gate network
-# destroyexplosion - Whether or not to destroy gates with explosions (Creeper, TNT, etc)
-# maxgates - The maximum number of gates allowed on a network - 0 for unlimited
-# lang - The language file to load for messages
-# destMemory - Whether to remember the cursor location between uses
-# ignoreEntrance - Ignore the entrance blocks of a gate when checking. Used to work around snowmen
-# handleVehicles - Whether to allow vehicles through gates
-# sortLists - Whether to sort network lists alphabetically
-# protectEntrance - Whether to protect gate entrance material (More resource intensive. Only enable if using destroyable open/closed material)
-# signColor - The color used for drawing signs (Default: BLACK).
-# verifyPortals - Whether or not all the non-sign blocks are checked to match the gate layout when a stargate is loaded.
-############################
-# Stargate economy options #
-############################
-# useeconomy - Whether to use an economy plugin
-# createcost - The cost to create a gate
-# destroycost - The cost to destroy a gate
-# usecost - The cost to use a gate
-# toowner - Whether the charge for using a gate goes to the gates owner
-# chargefreedestination - Whether a gate whose destination is a free gate is still charged
-# freegatesgreen - Whether a free gate in the destination list is drawn green
-#################
-# Debug options #
-#################
+gate-folder: plugins/Stargate/gates/
+
+# |                                           [ Debug ]                                          |
+# |__     These settings are provided to help developers diagnose issues with this plugin.     __|
+
 # debug - Debug -- Only enable if you have issues, massive console output
+debug: false
+
 # permdebug - This will output any and all Permissions checks to console, used for permissions debugging (Requires debug: true)
+permdebug: false
