@@ -56,15 +56,15 @@ handleVehicles: true
 # This checks that the expected gates are both present and using a valid layout.
 # Designed to catch .gate file modifications, world changes, and terrain regeneration.
 #
-# …««»»…  Should be set to true in conjuction with ignoreEntrance; Players without
-# “NOTE”  perms, block updates, and snowmen would otherwise be able to destroy portals on restart
+# …««»»…  If you set this to true, you should also set ignoreEntrance (below) to true!
+# “NOTE”  Otherwise, disallowed players, block updates, and snowmen can invalidate your portals!
 verifyPortals: false
 
-# Should the verifyPortals check ignore entrance materials?
-# I.e. will a gate validate if its portal-open material isn't present
+# Should the portal verification process account for 𝑡𝑟𝑎𝑣𝑒𝑟𝑠𝑎𝑏𝑙𝑒 (open/closed) materials?
+# ie. will a gate still validate if its portal-open material isn't present?
 #
-# When disabled, this setting makes gate validation more comprehensive,
-# traversable blocks will not be able to overwrite existing blocks.
+# When disabled, this setting makes gate validation more comprehensive;
+# 𝑡𝑟𝑎𝑣𝑒𝑟𝑠𝑎𝑏𝑙𝑒 blocks will no longer be able to overwrite existing blocks.
 ignoreEntrance: false
 
 # SG protects gate 𝑓𝑟𝑎𝑚𝑒 materials; should it also protect gate 𝑡𝑟𝑎𝑣𝑒𝑟𝑠𝑎𝑏𝑙𝑒 (open/closed) materials?
@@ -117,16 +117,16 @@ chargefreedestination: true
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Color.html#field.summary
 signColor: BLACK
 
-# Will free gates show up as green when scrolling throught portals in a networked portal
+# When scrolling through a networked portal's destination list, will free gates be shown in GREEN?
 freegatesgreen: false
 
 # For networked gates, are destinations listed alphabetically instead of chronologically?
 # (This applies to all non-fixed and non-random gates).
 sortLists: false
 
-# Will networked portals remember the last portal it connected to and show this as initial destination?
+# Will the destination a networked portal last connected to be listed first in its scroll menu?
 #
-# …««»»…  This feature does not appear to be working at the moment.
+# …««»»…  This feature is incompatible with MineCraft 1.6+.
 # “NOTE”  There is a planned fix for this in the upcoming SG rewrite (for MC 1.18+).
 destMemory: false
 
@@ -164,4 +164,4 @@ permdebug: false
 
 # An internal value used by the plugin to determine how old your config is.
 # Please do not change this.
-configVersion: 2
+configVersion: 3
