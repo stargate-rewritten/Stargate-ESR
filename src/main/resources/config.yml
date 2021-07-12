@@ -55,7 +55,17 @@ handleVehicles: true
 #
 # This checks that the expected gates are both present and using a valid layout.
 # Designed to catch .gate file modifications, world changes, and terrain regeneration.
+#
+# …««»»…  Should be set to true in conjuction with ignoreEntrance; Players without
+# “NOTE”  perms, block updates, and snowmen would otherwise be able to destroy portals on restart
 verifyPortals: false
+
+# Should the verifyPortals check ignore entrance materials?
+# I.e. will a gate validate if its portal-open material isn't present
+#
+# When disabled, this setting makes gate validation more comprehensive,
+# traversable blocks will not be able to overwrite existing blocks.
+ignoreEntrance: false
 
 # SG protects gate 𝑓𝑟𝑎𝑚𝑒 materials; should it also protect gate 𝑡𝑟𝑎𝑣𝑒𝑟𝑠𝑎𝑏𝑙𝑒 (open/closed) materials?
 # ex. in nether.gate, should nether_portal be protected?
@@ -107,35 +117,22 @@ chargefreedestination: true
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Color.html#field.summary
 signColor: BLACK
 
-# Will SG forcefully use the colour GREEN when formatting all gates with the 'f' flag?
+# Will free gates show up as green when scrolling throught portals in a networked portal
 freegatesgreen: false
 
 # For networked gates, are destinations listed alphabetically instead of chronologically?
 # (This applies to all non-fixed and non-random gates).
 sortLists: false
 
-# Will the direction the user is facing be considered during their teleportation?
+# Will networked portals remember the last portal it connected to and show this as initial destination?
 #
-# If false, users' cursors will be moved to face away from their destination portal.
-# If true, users' cursors will not be moved (they will continue to face their original direction).
+# …««»»…  This feature does not appear to be working at the moment.
+# “NOTE”  There is a planned fix for this in the upcoming SG rewrite (for MC 1.18+).
 destMemory: false
 
 # +----------------------------------------------------------------------------------------------+ #
 # |                                           Technical                                          | #
 # +----------------------------------------------------------------------------------------------+ #
-
-# |                                       [ Experimental ]                                       | #
-# |__            These features are not fully supported; use them at your own risk!            __| #
-
-# When validating a gate, should the blocks directly in front of traversable materials be checked?
-# Ie. must the blocks in front of every portal be air?
-#
-# This setting is unreliable and can lead to some adverse functionality.
-# For instance, snowmen, players, and block updates can prevent portal verification.
-# When ‘verifyPortals’ is true, this can be particularly problematic.
-#  
-# Although this setting can be used to prevent players from constructing portal traps, it 
-ignoreEntrance: false
 
 # |                                       [ Compatibility ]                                      | #
 # |__      These settings are provided to improve SG 10's interactions with other plugins.     __| #
