@@ -593,7 +593,8 @@ public class Portal {
         }
 
         for (RelativeBlockVector control : gate.getControls()) {
-            verified = verified && getBlockAt(control).getBlock().getType().equals(gate.getControlBlock());
+        	Material controlMat = getBlockAt(control).getBlock().getType();
+            verified = verified && gate.isValidControllBlock(controlMat);
         }
 
         return verified;
@@ -1427,124 +1428,134 @@ public class Portal {
     }
 
     // TODO ; fucking gross
-    public static boolean loadAllGates(Stargate stargate, World world) {
-        String location = stargate.getSaveLocation();
+	public static boolean loadAllGates(Stargate stargate, World world) {
+		String location = stargate.getSaveLocation();
 
-        File db = new File(location, world.getName() + ".db");
+		File db = new File(location, world.getName() + ".db");
 
-        if (db.exists()) {
-            int l = 0;
-            int portalCount = 0;
-            try {
-                Scanner scanner = new Scanner(db);
-                while (scanner.hasNextLine()) {
-                    l++;
-                    String line = scanner.nextLine().trim();
-                    if (line.startsWith("#") || line.isEmpty()) {
-                        continue;
-                    }
-                    String[] split = line.split(":");
-                    if (split.length < 8) {
-                        stargate.getStargateLogger().info("[Stargate] Invalid line - " + l);
-                        continue;
-                    }
-                    String name = split[0];
-                    Blox sign = new Blox(world, split[1]);
-                    Blox button = (split[2].length() > 0) ? new Blox(world, split[2]) : null;
-                    int modX = Integer.parseInt(split[3]);
-                    int modZ = Integer.parseInt(split[4]);
-                    float rotX = Float.parseFloat(split[5]);
-                    Blox topLeft = new Blox(world, split[6]);
-                    Gate gate = Gate.getGateByName(split[7]);
-                    if (gate == null) {
-                        stargate.getStargateLogger().info("[Stargate] Gate layout on line " + l + " does not exist [" + split[7] + "]");
-                        continue;
-                    }
+		if (db.exists()) {
+			int l = 0;
+			int portalCount = 0;
+			try {
+				Scanner scanner = new Scanner(db);
+				while (scanner.hasNextLine()) {
+					l++;
+					String line = scanner.nextLine().trim();
+					if (line.startsWith("#") || line.isEmpty()) {
+						continue;
+					}
+					String[] split = line.split(":");
+					if (split.length < 8) {
+						stargate.getStargateLogger().info("[Stargate] Invalid line - " + l);
+						continue;
+					}
+					String name = split[0];
+					Blox sign = new Blox(world, split[1]);
+					Blox button = (split[2].length() > 0) ? new Blox(world, split[2]) : null;
+					int modX = Integer.parseInt(split[3]);
+					int modZ = Integer.parseInt(split[4]);
+					float rotX = Float.parseFloat(split[5]);
+					Blox topLeft = new Blox(world, split[6]);
+					Gate gate = Gate.getGateByName(split[7]);
+					if (gate == null) {
+						stargate.getStargateLogger()
+								.info("[Stargate] Gate layout on line " + l + " does not exist [" + split[7] + "]");
+						continue;
+					}
 
-                    String dest = (split.length > 8) ? split[8] : "";
-                    String network = (split.length > 9) ? split[9] : stargate.getDefaultNetwork();
-                    if (network.isEmpty()) {
-                        network = stargate.getDefaultNetwork();
-                    }
-                    String ownerString = (split.length > 10) ? split[10] : "";
-                    boolean hidden = (split.length > 11) && split[11].equalsIgnoreCase("true");
-                    boolean alwaysOn = (split.length > 12) && split[12].equalsIgnoreCase("true");
-                    boolean priv = (split.length > 13) && split[13].equalsIgnoreCase("true");
-                    boolean free = (split.length > 15) && split[15].equalsIgnoreCase("true");
-                    boolean backwards = (split.length > 16) && split[16].equalsIgnoreCase("true");
-                    boolean show = (split.length > 17) && split[17].equalsIgnoreCase("true");
-                    boolean noNetwork = (split.length > 18) && split[18].equalsIgnoreCase("true");
-                    boolean random = (split.length > 19) && split[19].equalsIgnoreCase("true");
-                    boolean bungee = (split.length > 20) && split[20].equalsIgnoreCase("true");
+					String dest = (split.length > 8) ? split[8] : "";
+					String network = (split.length > 9) ? split[9] : stargate.getDefaultNetwork();
+					if (network.isEmpty()) {
+						network = stargate.getDefaultNetwork();
+					}
+					String ownerString = (split.length > 10) ? split[10] : "";
+					boolean hidden = (split.length > 11) && split[11].equalsIgnoreCase("true");
+					boolean alwaysOn = (split.length > 12) && split[12].equalsIgnoreCase("true");
+					boolean priv = (split.length > 13) && split[13].equalsIgnoreCase("true");
+					boolean free = (split.length > 15) && split[15].equalsIgnoreCase("true");
+					boolean backwards = (split.length > 16) && split[16].equalsIgnoreCase("true");
+					boolean show = (split.length > 17) && split[17].equalsIgnoreCase("true");
+					boolean noNetwork = (split.length > 18) && split[18].equalsIgnoreCase("true");
+					boolean random = (split.length > 19) && split[19].equalsIgnoreCase("true");
+					boolean bungee = (split.length > 20) && split[20].equalsIgnoreCase("true");
 
-                    // Attempt to get owner as UUID
-                    UUID ownerUUID = null;
-                    String ownerName;
-                    if (ownerString.length() > 16) {
-                        try {
-                            ownerUUID = UUID.fromString(ownerString);
-                            OfflinePlayer offlineOwner = Bukkit.getServer().getOfflinePlayer(ownerUUID);
-                            ownerName = offlineOwner.getName();
-                        } catch (IllegalArgumentException ex) {
-                            // neither name nor UUID, so keep it as-is
-                            ownerName = ownerString;
-                            stargate.debug("loadAllGates", "Invalid Stargate owner string: " + ownerString);
-                        }
-                    } else {
-                        ownerName = ownerString;
-                    }
-                    
-                    UsedFlags.registerFlags(hidden,alwaysOn,priv,free,backwards,show,noNetwork,random,bungee,dest.isEmpty());
-                    
-                    Portal portal = new Portal(stargate, topLeft, modX, modZ, rotX, sign, button, dest, name, false, network, gate, ownerUUID, ownerName, hidden, alwaysOn, priv, free, backwards, show, noNetwork, random, bungee);
-                    portal.register();
-                    portal.close(true);
-                }
-                scanner.close();
+					// Attempt to get owner as UUID
+					UUID ownerUUID = null;
+					String ownerName;
+					if (ownerString.length() > 16) {
+						try {
+							ownerUUID = UUID.fromString(ownerString);
+							OfflinePlayer offlineOwner = Bukkit.getServer().getOfflinePlayer(ownerUUID);
+							ownerName = offlineOwner.getName();
+						} catch (IllegalArgumentException ex) {
+							// neither name nor UUID, so keep it as-is
+							ownerName = ownerString;
+							stargate.debug("loadAllGates", "Invalid Stargate owner string: " + ownerString);
+						}
+					} else {
+						ownerName = ownerString;
+					}
 
-                // Open any always-on gates. Do this here as it should be more efficient than in the loop.
-                int OpenCount = 0;
-                for (Iterator<Portal> iter = allPortals.iterator(); iter.hasNext(); ) {
-                    Portal portal = iter.next();
-                    if (portal == null) continue;
+					UsedFlags.registerFlags(hidden, alwaysOn, priv, free, backwards, show, noNetwork, random, bungee,
+							dest.isEmpty());
 
-                    // Verify portal integrity/register portal
-                    if (!portal.wasVerified()) {
-                        if (!portal.isVerified() || !portal.checkIntegrity()) {
-                            // DEBUG
-                            for (RelativeBlockVector control : portal.getGate().getControls()) {
-                                if (!portal.getBlockAt(control).getBlock().getType().equals(portal.getGate().getControlBlock())) {
-                                    stargate.debug("loadAllGates", "Control Block Type == " + portal.getBlockAt(control).getBlock().getType().name());
-                                }
-                            }
-                            portal.unregister(false);
-                            iter.remove();
-                            stargate.getStargateLogger().info("[Stargate] Destroying stargate at " + portal.toString());
-                            continue;
-                        }
-                    }
-                    portalCount++;
+					Portal portal = new Portal(stargate, topLeft, modX, modZ, rotX, sign, button, dest, name, false,
+							network, gate, ownerUUID, ownerName, hidden, alwaysOn, priv, free, backwards, show,
+							noNetwork, random, bungee);
+					portal.register();
+					portal.close(true);
+				}
+				scanner.close();
 
-                    if (portal.isFixed() && (stargate.isEnableBungee() && portal.isBungee()
-                            || portal.getDestination() != null && portal.isAlwaysOn())) {
-                        portal.open(true);
-                        OpenCount++;
-                    }
-                }
-                stargate.getStargateLogger().info("[Stargate] {" + world.getName() + "} Loaded " + portalCount + " stargates with " + OpenCount + " set as always-on");
-                return true;
-            } catch (Exception e) {
-                stargate.getStargateLogger().log(Level.SEVERE, "Exception while reading stargates from " + db.getName() + ": " + l);
-                e.printStackTrace();
-            }
-        } else {
-            stargate.getStargateLogger().info("[Stargate] {" + world.getName() + "} No stargates for world ");
-        }
+				// Open any always-on gates. Do this here as it should be more efficient than in
+				// the loop.
+				int OpenCount = 0;
+				for (Iterator<Portal> iter = allPortals.iterator(); iter.hasNext();) {
+					Portal portal = iter.next();
+					if (portal == null)
+						continue;
 
-        return false;
-    }
+					// Verify portal integrity/register portal
+					if (!portal.wasVerified()) {
+						if (!portal.isVerified() || !portal.checkIntegrity()) {
+							// DEBUG
+							for (RelativeBlockVector control : portal.getGate().getControls()) {
+								Material controllBlockMat = portal.getBlockAt(control).getBlock().getType();
+								if (!portal.gate.isValidControllBlock(controllBlockMat)) {
+									stargate.debug("loadAllGates", "Control Block Type == "
+											+ portal.getBlockAt(control).getBlock().getType().name());
+								}
+							}
+							portal.unregister(false);
+							iter.remove();
+							stargate.getStargateLogger().info("[Stargate] Destroying stargate at " + portal.toString());
+							continue;
+						}
+					}
+					portalCount++;
+
+					if (portal.isFixed() && (stargate.isEnableBungee() && portal.isBungee()
+							|| portal.getDestination() != null && portal.isAlwaysOn())) {
+						portal.open(true);
+						OpenCount++;
+					}
+				}
+				stargate.getStargateLogger().info("[Stargate] {" + world.getName() + "} Loaded " + portalCount
+						+ " stargates with " + OpenCount + " set as always-on");
+				return true;
+			} catch (Exception e) {
+				stargate.getStargateLogger().log(Level.SEVERE,
+						"Exception while reading stargates from " + db.getName() + ": " + l);
+				e.printStackTrace();
+			}
+		} else {
+			stargate.getStargateLogger().info("[Stargate] {" + world.getName() + "} No stargates for world ");
+		}
+
+		return false;
+	}
     
-    public static class UsedFlags{
+	public static class UsedFlags {
 		public static boolean hidden;
 		public static boolean alwaysOn;
 		public static boolean priv;
@@ -1555,6 +1566,7 @@ public class Portal {
 		public static boolean random;
 		public static boolean bungee;
 		public static boolean networked;
+
 		public static void registerFlags(boolean h, boolean a, boolean p, boolean f, boolean b, boolean s, boolean n,
 				boolean r, boolean bun, boolean net) {
 			hidden = h | hidden;
@@ -1568,64 +1580,62 @@ public class Portal {
 			bungee = bun | bungee;
 			networked = net | networked;
 		}
+
 		public static String returnString() {
-			return 
-					(hidden ? "H" : "")
-					+ (alwaysOn ? "A" : "")
-					+ (priv ? "P" : "")
-					+ (free ? "F" : "")
-					+ (backwards ? "B" : "")
-					+ (show ? "S" : "")
-					+ (noNetwork ? "N" : "")
-					+ (random ? "R" : "")
-					+ (bungee ? "U" : "")
-					+ (networked ? "W" : "");
+			return (hidden ? "H" : "") + (alwaysOn ? "A" : "") + (priv ? "P" : "") + (free ? "F" : "")
+					+ (backwards ? "B" : "") + (show ? "S" : "") + (noNetwork ? "N" : "") + (random ? "R" : "")
+					+ (bungee ? "U" : "") + (networked ? "W" : "");
 		}
 	}
     
-    public static void closeAllGates(Stargate stargate) {
-        stargate.getStargateLogger().info("Closing all stargates.");
+	public static void closeAllGates(Stargate stargate) {
+		stargate.getStargateLogger().info("Closing all stargates.");
 
-        for (Portal p : allPortals) {
-            if (p == null) continue;
-            p.close(true);
-        }
-    }
+		for (Portal p : allPortals) {
+			if (p == null)
+				continue;
+			p.close(true);
+		}
+	}
 
-    public static String filterName(String input) {
-        if (input == null) {
-            return "";
-        }
-        return input.replaceAll("[|:#]", "").trim();
-    }
+	public static String filterName(String input) {
+		if (input == null) {
+			return "";
+		}
+		return input.replaceAll("[|:#]", "").trim();
+	}
 
-    @Override
-    public String toString() {
-        return String.format("Portal [id=%s, network=%s name=%s, type=%s]", id, network, name, gate.getFilename());
-    }
+	@Override
+	public String toString() {
+		return String.format("Portal [id=%s, network=%s name=%s, type=%s]", id, network, name, gate.getFilename());
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
 
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((network == null) ? 0 : network.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((network == null) ? 0 : network.hashCode());
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
 
-        Portal other = (Portal) obj;
+		Portal other = (Portal) obj;
 
-        if ((name == null && other.name != null) || (name != null && !name.equalsIgnoreCase(other.name)))
-            return false;
+		if ((name == null && other.name != null) || (name != null && !name.equalsIgnoreCase(other.name)))
+			return false;
 
-        if (network == null) return other.network == null;
-        else return network.equalsIgnoreCase(other.network);
-    }
+		if (network == null)
+			return other.network == null;
+		else
+			return network.equalsIgnoreCase(other.network);
+	}
 }
