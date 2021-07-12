@@ -943,12 +943,7 @@ public class Portal {
         Blox id = new Blox(event.getBlock());
         Block idParent = id.getParent();
         
-        Location spawnpoint = event.getBlock().getWorld().getSpawnLocation();
-        Vector vec = event.getBlock().getLocation().subtract(spawnpoint).toVector();
-        int spawnProtWidth =  stargate.getServer().getSpawnRadius();
-        if(Math.abs(vec.getBlockX()) < spawnProtWidth && Math.abs(vec.getBlockZ()) < spawnProtWidth) {
-        	stargate.sendMessage(player, stargate.getString("spawnBlockMsg"));
-        }
+        
         if (idParent == null) {
             return null;
         }
@@ -1200,7 +1195,7 @@ public class Portal {
                 return null;
             }
         }
-
+        
         if (cost > 0) {
             if (!stargate.chargePlayer(player, cost)) {
                 String inFundMsg = stargate.getString("ecoInFunds");
@@ -1217,6 +1212,13 @@ public class Portal {
             stargate.sendMessage(player, deductMsg, false);
         }
 
+        Location spawnpoint = event.getBlock().getWorld().getSpawnLocation();
+        Vector vec = event.getBlock().getLocation().subtract(spawnpoint).toVector();
+        int spawnProtWidth =  stargate.getServer().getSpawnRadius();
+        if(Math.abs(vec.getBlockX()) < spawnProtWidth && Math.abs(vec.getBlockZ()) < spawnProtWidth) {
+        	stargate.sendMessage(player, stargate.getString("spawnBlockMsg"));
+        }
+        
         // No button on an always-open gate.
         if (!alwaysOn) {
             Material buttonMat = Material.STONE_BUTTON;
