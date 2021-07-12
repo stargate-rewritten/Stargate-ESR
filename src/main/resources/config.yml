@@ -102,6 +102,13 @@ usecost: 0
 # If false, collected funds will be deleted.
 toowner: false
 
+# Does your server have a tax account (closed economy)?
+# If so, please provide the name of your tax account (collected money will be sent to it).
+# If not, leave this section blank (collected money will be deleted).
+#
+# Note that usecost money is excluded from this system when toowner is true.
+taxaccount: 
+
 # Will ‘createcost’ still be charged if the new gate's destination is a gate with the 'f' flag?
 # Note that this only applies to fixed gates.
 chargefreedestination: true
@@ -164,4 +171,4 @@ permdebug: false
 
 # An internal value used by the plugin to determine how old your config is.
 # Please do not change this.
-configVersion: 3
+configVersion: 4

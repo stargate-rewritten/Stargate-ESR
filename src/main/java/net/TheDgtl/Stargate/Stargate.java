@@ -103,6 +103,7 @@ public class Stargate extends JavaPlugin {
 
     private FileConfiguration newConfig;
     private PluginManager pm;
+	private String taxAccount;
 
     @Override
     public void onLoad() {
@@ -233,7 +234,7 @@ public class Stargate extends JavaPlugin {
         protectEntrance = newConfig.getBoolean("protectEntrance");
         enableBungee = newConfig.getBoolean("enableBungee");
         verifyPortals = newConfig.getBoolean("verifyPortals");
-
+        taxAccount = newConfig.getString("taxaccount");
         // Sign color
         String sc = newConfig.getString("signColor");
 
@@ -612,10 +613,11 @@ public class Stargate extends JavaPlugin {
         if (cost == 0) return true;
         // Economy is disabled
         if (!economyHandler.useEconomy()) return true;
-        // Charge player
-        return economyHandler.chargePlayer(player, cost);
-    }
-    
+		// Charge player
+		return ((taxAccount == null) || taxAccount.isBlank()) ? economyHandler.chargePlayer(player, cost)
+				: economyHandler.chargePlayer(player, taxAccount, cost);
+	}
+
     /*
      * Determine the cost of a gate
      */
