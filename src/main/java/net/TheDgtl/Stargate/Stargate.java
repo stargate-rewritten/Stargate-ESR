@@ -213,10 +213,17 @@ public class Stargate extends JavaPlugin {
         }));
     }
     
+    private static int CURRENTCONFIGVERSION = 4;
+    
     public void loadConfig() {
         reloadConfig();
-
         newConfig = this.getConfig();
+        int configVersion = newConfig.getInt("configVersion");
+        if(configVersion != CURRENTCONFIGVERSION) {
+        	Refactorer refact = new Refactorer(newConfig,this);
+        	refact.run();
+        }
+        	
         newConfig.options().copyDefaults(true);
 
         // TODO ; this is dumb
@@ -260,6 +267,9 @@ public class Stargate extends JavaPlugin {
         economyHandler.setFreeGatesGreen(newConfig.getBoolean("freegatesgreen"));
 
         this.saveConfig();
+        
+        
+        
     }
 
     public DyeColor getDefaultSignColor() {
