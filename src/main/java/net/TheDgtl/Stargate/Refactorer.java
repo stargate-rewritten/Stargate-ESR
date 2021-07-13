@@ -67,8 +67,10 @@ public class Refactorer {
 
 		@Override
 		public String[] getNewSetting(String[] oldSetting) {
-			String[] newSetting = new String[2];
-			newSetting[0] = RETCON0_10_8.get(oldSetting[0]);
+			String[] newSetting = oldSetting.clone();
+			String newKey = RETCON0_10_8.get(oldSetting[0]);
+			if(newKey != null)
+				newSetting[0] = newKey;
 			newSetting[1] = oldSetting[1];
 			return newSetting;
 		}
