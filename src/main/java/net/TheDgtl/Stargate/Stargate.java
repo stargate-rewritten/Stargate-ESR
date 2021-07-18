@@ -17,6 +17,8 @@
  */
 package net.TheDgtl.Stargate;
 
+import static org.bukkit.Bukkit.getPluginManager;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -85,7 +87,7 @@ public class Stargate extends JavaPlugin {
     private boolean ignoreEntrance = false;
 
     // Used for debug
-    private boolean debug = false;
+    private boolean debug = true;
     private boolean permDebug = false;
     private static Stargate instance;
 
@@ -148,7 +150,13 @@ public class Stargate extends JavaPlugin {
         pm.registerEvents(new WorldEventsListener(this), this);
         pm.registerEvents(new PluginStatusChangeListener(this), this);
 
-        this.loadConfig();
+        try {
+			this.loadConfig();
+		} catch (InvalidConfig e) {
+			log.warning("Invalid config! This is either your first time running Stargate, or, the config has updated since you last used it.");
+			log.severe("Providing you with a new config; please fill it out before running Stargate.");
+			return;
+		}
 
         // Enable the required channels for Bungee support
         if (enableBungee) {
@@ -213,18 +221,40 @@ public class Stargate extends JavaPlugin {
         }));
     }
     
-    private static int CURRENTCONFIGVERSION = 4;
+    public static int CURRENTCONFIGVERSION = 4;
     
-    public void loadConfig() {
+    private class InvalidConfig extends Exception{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -59059137701140854L;
+    	
+    }
+    
+    public void loadConfig() throws InvalidConfig{
         reloadConfig();
-        newConfig = this.getConfig();
+		newConfig = this.getConfig();
+		
         int configVersion = newConfig.getInt("configVersion");
-        if(configVersion != CURRENTCONFIGVERSION) {
-        	Refactorer refact = new Refactorer(newConfig,this);
-        	refact.run();
+    	debug("stargate.loadConfig","configVersion: " + configVersion);
+    	if (configVersion != CURRENTCONFIGVERSION) {
+    		Refactorer middas = new Refactorer(newConfig,this);
+    		middas.run();
+    		middas.addComments();
+    		/*
+            File configFile = new File(getDataFolder(), "config.yml");
+            if (configFile.exists()){
+            	new File(getDataFolder(),"config.old").delete();
+            	configFile.renameTo(new File(getDataFolder(), "config.old"));
+            }
+            this.saveDefaultConfig();
+            getPluginManager().disablePlugin(this);
+        	throw new InvalidConfig();
+        	*/
+        } else {
+            log.info("Loaded Config");
         }
-        	
-        newConfig.options().copyDefaults(true);
 
         // TODO ; this is dumb
         // Load values into variables
@@ -265,10 +295,6 @@ public class Stargate extends JavaPlugin {
         economyHandler.setToOwner(newConfig.getBoolean("toowner"));
         economyHandler.setChargeFreeDestination(newConfig.getBoolean("chargefreedestination"));
         economyHandler.setFreeGatesGreen(newConfig.getBoolean("freegatesgreen"));
-
-        this.saveConfig();
-        
-        
         
     }
 
@@ -746,7 +772,11 @@ public class Stargate extends JavaPlugin {
                 boolean oldEnableBungee = enableBungee;
 
                 // Reload data
-                loadConfig();
+                try {
+					loadConfig();
+				} catch (InvalidConfig e) {
+					sender.sendMessage("The con");
+				}
                 loadGates();
                 loadAllPortals();
 
