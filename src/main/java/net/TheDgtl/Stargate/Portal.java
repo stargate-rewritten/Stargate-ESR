@@ -21,6 +21,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -938,6 +939,34 @@ public class Portal {
         allPortals.add(this);
     }
 
+    
+    private static HashSet<Material> UNDERWATERBUTTONS = new HashSet<>();
+    static {
+    	Material[] temp = {
+    		Material.BRAIN_CORAL_WALL_FAN,
+    		Material.DEAD_BRAIN_CORAL_WALL_FAN,
+    		Material.BUBBLE_CORAL_WALL_FAN,
+    		Material.DEAD_BUBBLE_CORAL_WALL_FAN,
+    		Material.FIRE_CORAL_WALL_FAN,
+    		Material.DEAD_FIRE_CORAL_WALL_FAN,
+    		Material.HORN_CORAL_WALL_FAN,
+    		Material.DEAD_HORN_CORAL_WALL_FAN,
+    		Material.TUBE_CORAL_WALL_FAN,
+    		Material.DEAD_TUBE_CORAL_WALL_FAN
+    	};
+    	for(Material item : temp)
+    		UNDERWATERBUTTONS.add(item);
+    	
+    }
+    
+    public static boolean isAcceptableControlMaterial(Material mat) {
+    	return isAcceptableControlMaterial(mat, false) || isAcceptableControlMaterial(mat, true);
+    }
+    
+    public static boolean isAcceptableControlMaterial(Material mat, boolean isWaterLogged) {
+    	return isWaterLogged ? UNDERWATERBUTTONS.contains(mat) : Tag.BUTTONS.isTagged(mat);
+    }
+    
     public static Portal createPortal(Stargate stargate, SignChangeEvent event, Player player) {
     	
     	
@@ -1220,29 +1249,28 @@ public class Portal {
         if(Math.abs(vec.getBlockX()) < spawnProtWidth && Math.abs(vec.getBlockZ()) < spawnProtWidth) {
         	stargate.sendMessage(player, stargate.getString("spawnBlockMsg"));
         }
-        
-        // No button on an always-open gate.
-        if (!alwaysOn) {
-            Material buttonMat = Material.STONE_BUTTON;
 
-            if (gate.getPortalBlockClosed() == Material.WATER) {
-                buttonMat = Material.DEAD_TUBE_CORAL_WALL_FAN;
-            }
-            
-            
-            button = topleft.modRelative(buttonVector.getRight(), buttonVector.getDepth(), buttonVector.getDistance() + 1, modX, 1, modZ);
-            
-            
-            //generates a Blockdata
-            Directional buttonData = (Directional) Bukkit.createBlockData(buttonMat);
-            //manipulate the data
-            buttonData.setFacing(buttonfacing);
-            
-            //Sets the blockdata into the world
-            button.getBlock().setBlockData(buttonData);
+		// No button on an always-open gate.
+		if (!alwaysOn) {
+			boolean isWaterGate = (gate.getPortalBlockClosed() == Material.WATER);
+			Material buttonMat = isWaterGate ? Material.DEAD_TUBE_CORAL_WALL_FAN : Material.STONE_BUTTON;
 
-            portal.setButton(button);
-        }
+			button = topleft.modRelative(buttonVector.getRight(), buttonVector.getDepth(),
+					buttonVector.getDistance() + 1, modX, 1, modZ);
+			if (isAcceptableControlMaterial(button.getType(), isWaterGate)) {
+				buttonMat = button.getType();
+			}
+
+			// generates a Blockdata
+			Directional buttonData = (Directional) Bukkit.createBlockData(buttonMat);
+			// manipulate the data
+			buttonData.setFacing(buttonfacing);
+
+			// Sets the blockdata into the world
+			button.getBlock().setBlockData(buttonData);
+
+			portal.setButton(button);
+		}
 
         portal.register();
         portal.drawSign();

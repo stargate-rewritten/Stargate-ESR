@@ -220,7 +220,7 @@ public class PlayerEventsListener extends StargateListener {
 		Material blockMat = block.getType();
 		boolean isEnter = false;
 		if (action == Action.RIGHT_CLICK_BLOCK
-				&& (blockMat == Material.STONE_BUTTON || blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN)) {
+				&& Portal.isAcceptableControlMaterial(blockMat)) {
 
 			if (blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN) {
 				if (antiDoubleActivate == true) {
