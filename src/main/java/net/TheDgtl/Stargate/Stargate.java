@@ -53,6 +53,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
@@ -435,6 +436,12 @@ public class Stargate extends JavaPlugin {
         portal.open(player, false);
     }
 
+    public boolean hasPerm(Player player, Permission perm) {
+    	if (permDebug)
+            debug("hasPerm::SuperPerm(" + player.getName() + ")", perm.getName() + " => " + player.hasPermission(perm));
+    	return player.hasPermission(perm);
+    }
+    
     /*
      * Check whether the player has the given permissions.
      */
@@ -444,7 +451,11 @@ public class Stargate extends JavaPlugin {
         return player.hasPermission(perm);
     }
 
-    /*
+    
+
+    private static Permission USEPERM = new Permission("stargate.use");
+    private static Permission ENTERPERM = new Permission("stargate.use.enter");
+    /**
      * Check a deep permission, this will check to see if the permissions is defined for this use
      * If using Permissions it will return the same as hasPerm
      * If using SuperPerms will return true if the node isn't defined
@@ -461,48 +472,51 @@ public class Stargate extends JavaPlugin {
         return player.hasPermission(perm);
     }
 
-    /*
-     * Check whether player can teleport to dest world
-     */
-    public boolean canAccessWorld(Player player, String world) {
-        // Can use all Stargate player features or access all worlds
-        if (hasPerm(player, "stargate.use") || hasPerm(player, "stargate.world")) {
-            // Do a deep check to see if the player lacks this specific world node
-            return hasPermDeep(player, "stargate.world." + world);
-        }
-        // Can access dest world
-        return hasPerm(player, "stargate.world." + world);
-    }
+	/*
+	 * Check whether player can teleport to dest world
+	 */
+	public boolean canAccessWorld(Player player, String world, boolean isEnter) {
+		// Can use all Stargate player features or access all worlds
+		if (hasPerm(player, isEnter ? ENTERPERM : USEPERM) || hasPerm(player, "stargate.world")) {
+			// Do a deep check to see if the player lacks this specific world node
+			return hasPermDeep(player, "stargate.world." + world);
+		}
+		// Can access dest world
+		return hasPerm(player, "stargate.world." + world);
+	}
 
-    /*
-     * Check whether player can use network
-     */
-    public boolean canAccessNetwork(Player player, String network) {
-        // Can user all Stargate player features, or access all networks
-        if (hasPerm(player, "stargate.use") || hasPerm(player, "stargate.network")) {
-            // Do a deep check to see if the player lacks this specific network node
-            return hasPermDeep(player, "stargate.network." + network);
-        }
-        // Can access this network
-        if (hasPerm(player, "stargate.network." + network)) return true;
-        // Is able to create personal gates (Assumption is made they can also access them)
-        String playerName = player.getName();
-        if (playerName.length() > 11) playerName = playerName.substring(0, 11);
-        return network.equals(playerName) && hasPerm(player, "stargate.create.personal");
-    }
+	/*
+	 * Check whether player can use network
+	 */
+	public boolean canAccessNetwork(Player player, String network, boolean isEnter) {
+		// Can user all Stargate player features, or access all networks
+		if (hasPerm(player, isEnter ? ENTERPERM : USEPERM) || hasPerm(player, "stargate.network")) {
+			// Do a deep check to see if the player lacks this specific network node
+			return hasPermDeep(player, "stargate.network." + network);
+		}
+		// Can access this network
+		if (hasPerm(player, "stargate.network." + network))
+			return true;
+		// Is able to create personal gates (Assumption is made they can also access
+		// them)
+		String playerName = player.getName();
+		if (playerName.length() > 11)
+			playerName = playerName.substring(0, 11);
+		return network.equals(playerName) && hasPerm(player, "stargate.create.personal");
+	}
 
-    /*
-     * Check whether the player can access this server
-     */
-    public boolean canAccessServer(Player player, String server) {
-        // Can user all Stargate player features, or access all servers
-        if (hasPerm(player, "stargate.use") || hasPerm(player, "stargate.servers")) {
-            // Do a deep check to see if the player lacks this specific server node
-            return hasPermDeep(player, "stargate.server." + server);
-        }
-        // Can access this server
-        return hasPerm(player, "stargate.server." + server);
-    }
+	/*
+	 * Check whether the player can access this server
+	 */
+	public boolean canAccessServer(Player player, String server, boolean isEnter) {
+		// Can user all Stargate player features, or access all servers
+		if (hasPerm(player, isEnter ? ENTERPERM : USEPERM) || hasPerm(player, "stargate.servers")) {
+			// Do a deep check to see if the player lacks this specific server node
+			return hasPermDeep(player, "stargate.server." + server);
+		}
+		// Can access this server
+		return hasPerm(player, "stargate.server." + server);
+	}
 
     /*
      * Call the StargateAccessPortal event, used for other plugins to bypass Permissions checks

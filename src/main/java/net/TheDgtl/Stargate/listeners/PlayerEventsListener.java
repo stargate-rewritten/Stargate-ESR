@@ -83,33 +83,27 @@ public class PlayerEventsListener extends StargateListener {
         // No portal or not open
         if (portal == null || !portal.isOpen()) return;
 
-        // Not open for this player
-        if (!portal.isOpenFor(player)) {
-            stargate.sendMessage(player, stargate.getString("denyMsg"));
-            portal.teleport(player, portal, event);
-            return;
-        }
-
         Portal destination = portal.getDestination(player);
         if (!portal.isBungee() && destination == null) return;
 
         boolean deny = false;
-        // Check if player has access to this server for Bungee gates
-        if (portal.isBungee()) {
-            if (!stargate.canAccessServer(player, portal.getNetwork())) {
-                deny = true;
-            }
-        } else {
-            // Check if player has access to this network
-            if (!stargate.canAccessNetwork(player, portal.getNetwork())) {
-                deny = true;
-            }
+        boolean isEnter = !portal.isOpenFor(player);
+		// Check if player has access to this server for Bungee gates
+		if (portal.isBungee()) {
+			if (!stargate.canAccessServer(player, portal.getNetwork(), isEnter)) {
+				deny = true;
+			}
+		} else {
+			// Check if player has access to this network
+			if (!stargate.canAccessNetwork(player, portal.getNetwork(), isEnter)) {
+				deny = true;
+			}
 
-            // Check if player has access to destination world
-            if (!stargate.canAccessWorld(player, destination.getWorld().getName())) {
-                deny = true;
-            }
-        }
+			// Check if player has access to destination world
+			if (!stargate.canAccessWorld(player, destination.getWorld().getName(), isEnter)) {
+				deny = true;
+			}
+		}
 
         if (!stargate.canAccessPortal(player, portal, deny)) {
             stargate.sendMessage(player, stargate.getString("denyMsg"));
@@ -210,56 +204,57 @@ public class PlayerEventsListener extends StargateListener {
         }
 
         destination.teleport(player, portal, event);
-        portal.close(false);
+        if(portal.isOpenFor(player))
+        	portal.close(false);
     }
 
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        Block block = event.getClickedBlock();
-        if (block == null) return;
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		Block block = event.getClickedBlock();
+		if (block == null)
+			return;
 
-        Player player = event.getPlayer();
-        BlockData blockData = block.getBlockData();
-        Action action = event.getAction();
-        Material blockMat = block.getType();
+		Player player = event.getPlayer();
+		BlockData blockData = block.getBlockData();
+		Action action = event.getAction();
+		Material blockMat = block.getType();
+		boolean isEnter = false;
+		if (action == Action.RIGHT_CLICK_BLOCK
+				&& (blockMat == Material.STONE_BUTTON || blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN)) {
 
-        if (action == Action.RIGHT_CLICK_BLOCK
-                && (blockMat == Material.STONE_BUTTON || blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN)) {
-            
-            if (blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN) {
-                if (antiDoubleActivate == true) {
-                    antiDoubleActivate = false;
-                    //stargate.debug("Debug", "Correcting for an issue with underwater portals.");
-                    return;
-                }
-                antiDoubleActivate = true;
-            }
+			if (blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN) {
+				if (antiDoubleActivate == true) {
+					antiDoubleActivate = false;
+					// stargate.debug("Debug", "Correcting for an issue with underwater portals.");
+					return;
+				}
+				antiDoubleActivate = true;
+			}
 
-            Portal portal = Portal.getByBlock(block);
-            if (portal == null) return;
-            
-            
-            // Cancel item use
+			Portal portal = Portal.getByBlock(block);
+			if (portal == null)
+				return;
+
+			// Cancel item use
 			event.setUseItemInHand(Event.Result.DENY);
 			event.setUseInteractedBlock(Event.Result.DENY);
-            
 
-            boolean deny = false;
-            if (!stargate.canAccessNetwork(player, portal.getNetwork())) {
-                deny = true;
-            }
+			boolean deny = false;
+			if (!stargate.canAccessNetwork(player, portal.getNetwork(), isEnter)) {
+				deny = true;
+			}
 
-            if (!stargate.canAccessPortal(player, portal, deny)) {
-                stargate.sendMessage(player, stargate.getString("denyMsg"));
-                return;
-            }
+			if (!stargate.canAccessPortal(player, portal, deny)) {
+				stargate.sendMessage(player, stargate.getString("denyMsg"));
+				return;
+			}
 
-            stargate.openPortal(player, portal);
-            if (portal.isOpenFor(player)) {
-                event.setUseInteractedBlock(Event.Result.ALLOW);
-            }
-        }
-        
+			stargate.openPortal(player, portal);
+			if (portal.isOpenFor(player)) {
+				event.setUseInteractedBlock(Event.Result.ALLOW);
+			}
+		}
+
 		if (blockData instanceof WallSign
 				&& (action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK)) {
 
@@ -277,7 +272,7 @@ public class PlayerEventsListener extends StargateListener {
 			}
 
 			boolean deny = false;
-			if (!stargate.canAccessNetwork(player, portal.getNetwork())) {
+			if (!stargate.canAccessNetwork(player, portal.getNetwork(), isEnter)) {
 				deny = true;
 			}
 
@@ -290,7 +285,7 @@ public class PlayerEventsListener extends StargateListener {
 				portal.cycleDestination(player, action == Action.RIGHT_CLICK_BLOCK ? 1 : -1);
 			}
 		}
-    }
+	}
 
 	private boolean itemIsColor(ItemStack item) {
 		if(item == null)

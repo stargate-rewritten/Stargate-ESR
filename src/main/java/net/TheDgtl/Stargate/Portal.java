@@ -109,6 +109,7 @@ public class Portal {
     private boolean show;
     private boolean noNetwork;
     private boolean random;
+    private boolean chase; //allow other players to enter the gate with no perms (no activation)
     private final boolean bungee;
 
     // In-use information
@@ -633,7 +634,7 @@ public class Portal {
             }
 
             // Check if this player can access the dest world
-            if (!stargate.canAccessWorld(player, portal.getWorld().getName())) continue;
+            if (!stargate.canAccessWorld(player, portal.getWorld().getName(),false)) continue;
 
             // Visible to this player.
             if (stargate.canSee(player, portal)) {
@@ -1121,20 +1122,20 @@ public class Portal {
 
         // Check if the user can create gates to this world.
         // Todo ; To? in? Both?
-        if (!bungee && !deny && destName.length() > 0) {
-            Portal p = Portal.getByName(destName, network);
+		if (!bungee && !deny && destName.length() > 0) {
+			Portal p = Portal.getByName(destName, network);
 
-            if (p != null) {
-                String world = p.getWorld().getName();
+			if (p != null) {
+				String world = p.getWorld().getName();
 
-                if (!stargate.canAccessWorld(player, world)) {
-                    stargate.debug("canCreate", "Player does not have access to destination world");
+				if (!stargate.canAccessWorld(player, world, false)) {
+					stargate.debug("canCreate", "Player does not have access to destination world");
 
-                    deny = true;
-                    denyMsg = stargate.getString("createWorldDeny");
-                }
-            }
-        }
+					deny = true;
+					denyMsg = stargate.getString("createWorldDeny");
+				}
+			}
+		}
 
         // Bleh, gotta check to make sure none of this gate belongs to another gate. Boo slow.
         for (RelativeBlockVector v : gate.getBorder()) {
