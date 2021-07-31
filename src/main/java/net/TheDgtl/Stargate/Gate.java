@@ -156,11 +156,15 @@ public class Gate {
 		return exitBlock;
 	}
 
-	public Tag<Material> getControlBlockTag() {
+	public boolean isValidControllBlock(Material block) {
+		return (getControlBlock() != null) ? getControlBlock().equals(block) : getControlBlockTag().isTagged(block);
+	}
+
+	private Tag<Material> getControlBlockTag() {
 		return tagTypes.get('-');
 	}
 
-	public Material getControlBlock() {
+	private Material getControlBlock() {
 		return types.get('-');
 	}
 
