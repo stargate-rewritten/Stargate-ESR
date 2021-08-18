@@ -240,6 +240,20 @@ createConflict=Gate conflicts with existing gate
 ```
 
 # Changes
+#### [Version 0.10.8.1] LCLO Fork
+ - Fixed a compilation error impacting fresh installs.
+#### [Version 0.10.8.0] LCLO Fork
+ - Improved configuration
+ - Added support for vanilla sign colours
+ - Added support for closed economies
+ - Allowed button/coral customisation
+ - Hid the purple beacon from end_gateway
+ - Migrated to new Vault repository
+ - Added Chinese translations
+ - Added a warning for spawn protection interference
+ - Fixed an issue with portal verification
+ - Fixed an issue with bstats
+ - Facilitated a [specific use case](https://git.io/Jle4w)
 #### [Version 0.10.7.2] LCLO Fork
  - Corrects some minor structure issues
 #### [Version 0.10.7.0] LCLO Fork

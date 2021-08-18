@@ -63,8 +63,8 @@ public class LangLoader {
         updateLanguage(lang);
 
         strList = load(lang);
-        // We have a default hashMap used for when new text is added.
-        InputStream is = Stargate.class.getResourceAsStream("/"+lang+".txt");
+        // Backup language that will fill in the gaps of any missing text files
+        InputStream is = Stargate.class.getResourceAsStream("/en.txt");
         if (is != null) {
             defList = load(is);
         } else {
