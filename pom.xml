@@ -97,7 +97,7 @@
                 <directory>src/main/resources/</directory>
                 <filtering>true</filtering>
                 <includes>
-                    <include>*</include>
+                    <include>**</include>
                 </includes>
             </resource>
         </resources>
