@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public class Refactorer {
 			e1.printStackTrace();
 			return;
 		}
-		InputStreamReader reader = new InputStreamReader(stream);
+		InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
 		BufferedReader bReader = new BufferedReader(reader);
 		String line;
 		try {
@@ -124,7 +125,7 @@ public class Refactorer {
 			e1.printStackTrace();
 			return;
 		}
-		InputStreamReader reader = new InputStreamReader(stream);
+		InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
 		BufferedReader bReader = new BufferedReader(reader);
 		
 		String finalText = "";
@@ -165,7 +166,7 @@ public class Refactorer {
 		
 		try {
 			OutputStream writerStream = new FileOutputStream(configFile);
-			OutputStreamWriter writer= new OutputStreamWriter(writerStream);
+			OutputStreamWriter writer= new OutputStreamWriter(writerStream, StandardCharsets.UTF_8);
 			writer.write(finalText);
 			writer.close();
 		} catch (FileNotFoundException e) {
