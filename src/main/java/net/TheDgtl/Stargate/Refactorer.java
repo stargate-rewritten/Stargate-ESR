@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class Refactorer {
@@ -28,22 +29,19 @@ public class Refactorer {
 	 */
 
 	private int configVersion;
-	private FileConfiguration defaultConfig;
-	private FileConfiguration config;
+	private Map<String,Object> configHashMap;
 	private Stargate stargate;
 
 	public Refactorer(FileConfiguration config, Stargate stargate) {
-		this.config = config;
+		this.configHashMap = config.getValues(true);
 		this.stargate = stargate;
-		configVersion = config.getInt("configVersion");
-		stargate.saveResource("config.yml", true);
-		stargate.reloadConfig();
-		defaultConfig = stargate.getConfig();
 	}
 
 	/**
 	 * Used in debug, when you want to see the state of the currently stored
 	 * configuration
+	 * 
+	 * Displays the current text in the config file
 	 */
 	public void dispConfig() {
 		InputStream stream;
@@ -77,106 +75,44 @@ public class Refactorer {
 		}
 	}
 	
-	public void run() {
+	public Map<String,Object> getNewConfigMap() {
+		
+		configVersion = (int) configHashMap.get("configVersion");
+		
+		/*
+		 * This section is here for future refactoring (includes the Modificator stuff)
+		 */
 		switch (configVersion) {
 		case 0:
 		case 4:
-			Modificator retCon0_10_8 = new RetCon0_10_8();
-			recursiveConfigScroller("", "", retCon0_10_8);
 		default:
-			defaultConfig.set("configVersion", Stargate.CURRENTCONFIGVERSION);
+			configHashMap.put("configVersion", Stargate.CURRENTCONFIGVERSION);
 		}
-		try {
-			defaultConfig.save(new File(stargate.getDataFolder(), "config.yml"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		};
-	}
-	
-	private void recursiveConfigScroller(String oldPath, String newPath, Modificator mod) {
-		ConfigurationSection section = config.getConfigurationSection(oldPath);
-		Set<String> keys = section.getKeys(false);
-		Map<String, Object> sectionMap = section.getValues(false);
-		for (String key : keys) {
-			Object[] oldSetting = new Object[] { key, sectionMap.get(key) };
-			
-			Object[] newSetting = mod.getNewSetting(oldSetting);
-			String newSubPath = newPath + "." + newSetting[0];
-			
-			if (section.isConfigurationSection(key)) {
-				recursiveConfigScroller(oldPath + "." + key, newSubPath, mod);
-				continue;
-			}
-			defaultConfig.set(newSubPath, newSetting[1]);
-		}
+		
+		return configHashMap;
 	}
 	
 	
 	static private String ENDOFCOMMENT = "_endOfComment_";
 	static private String STARTOFCOMMENT = "comment_";
 	
-	void addComments() {
-		InputStream stream;
-		File configFile = new File(stargate.getDataFolder(), "config.yml");
-		try {
-			stream = new FileInputStream(configFile);
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return;
-		}
-		InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
-		BufferedReader bReader = new BufferedReader(reader);
+	public FileConfiguration writeNewConfig(Map<String,Object> configMap) {
 		
-		String finalText = "";
+		stargate.saveResource("config.yml", true);
+		stargate.reloadConfig();
+		FileConfiguration config = stargate.getConfig();
+		
+		ConfigParser parser = new ConfigParser();
+		parser.insertNewData(config, configMap);
 		try {
-			String line;
-			boolean isSkippingComment = false;
-			while ((line = bReader.readLine()) != null) {
-				if (isSkippingComment) {
-					Stargate.debug("Refactorer.fancySave", "ignoring line " + line);
-					if(line.contains(ENDOFCOMMENT))
-						isSkippingComment = false;
-					continue;
-				}
-				String possibleComment = line.strip();
-				if (possibleComment.startsWith(STARTOFCOMMENT)) {
-					int indent = countSpaces(line);
-					String key = possibleComment.split(":")[0];
-					String comment = defaultConfig.getString(key);
-					String[] commentLines = comment.split("\n");
-					line = "";
-					Stargate.debug("Refactorer.fancySave",
-							"Initial comment: |\n" + comment);
-					/*
-					 * Go through every line, except the last one, which is just going to be a
-					 * ENDOFCOMMENT identifier
-					 */
-					for (int i = 0; i < commentLines.length - 1; i++) {
-						line = line + "\n" + " ".repeat(indent) + "# " + commentLines[i];
-					}
-					isSkippingComment = true;
-				}
-				finalText = finalText + line + "\n";
-			}
+			String text = parser.concatText(config);
+			parser.writeText(text);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			parser.close();
 		}
-		
-		try {
-			OutputStream writerStream = new FileOutputStream(configFile);
-			OutputStreamWriter writer= new OutputStreamWriter(writerStream, StandardCharsets.UTF_8);
-			writer.write(finalText);
-			writer.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		return config;
 	}
 	
 	/**
@@ -197,28 +133,152 @@ public class Refactorer {
 		return spaceAmount;
 	}
 	
-	private interface Modificator {
+	/**
+	 * Used to generate a new config file from all the known data
+	 */
+	private class ConfigParser{
+		InputStream iStream;
+		InputStreamReader reader;
+		BufferedReader bReader;
+		OutputStream writerStream;
+		OutputStreamWriter writer;
+		private File configFile;
+		
+		ConfigParser(){
+			this.configFile = new File(stargate.getDataFolder(), "config.yml");
+		}
+		
+		/**
+		 * Modifies the specified configuration, also modifies config file
+		 * @param config
+		 * @param configMap
+		 */
+		public void insertNewData(FileConfiguration config, Map<String, Object> configMap) {
+			for(String key : config.getKeys(true)) {
+				Object value = configMap.get(key);
+				if(value != null) {
+					config.set(key, value);
+				}
+			}
+			try {
+				config.save(new File(stargate.getDataFolder(), "config.yml"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			};
+		}
+	
+		public String concatText(FileConfiguration config) throws IOException {
+			String finalText = "";
+			BufferedReader reader = getReader();
+			String line;
+			boolean isSkippingComment = false;
+			while ((line = bReader.readLine()) != null) {
+				if (isSkippingComment) {
+					Stargate.debug("Refactorer.fancySave", "ignoring line " + line);
+					if (line.contains(ENDOFCOMMENT))
+						isSkippingComment = false;
+					continue;
+				}
+				String possibleComment = line.strip();
+				if (possibleComment.startsWith(STARTOFCOMMENT)) {
+					String key = possibleComment.split(":")[0];
+					int indent = countSpaces(line);
+					String comment = readComment(key, indent, config);
+					finalText = finalText + comment + "\n";
+					isSkippingComment = true;
+					continue;
+				}
+				finalText = finalText + line + "\n";
+			}
+			return finalText;
+		}
+		
+		public void writeText(String text) throws IOException {
+			OutputStreamWriter writer = getWriter();
+			writer.write(text);
+		}
+		
+		/**
+		 * Close all resources used by this class
+		 */
+		public void close() {
+			try {
+				bReader.close();
+				reader.close();
+				iStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (NullPointerException e) {}
+
+			try {
+				writer.close();
+				writerStream.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NullPointerException e) {}
+		}
+
+		private String readComment(String key, int indent, FileConfiguration config) {
+			String comment = config.getString(key);
+			String[] commentLines = comment.split("\n");
+			Stargate.debug("Refactorer.fancySave", "Initial comment: |\n" + comment);
+			/*
+			 * Go through every line, except the last one, which is just going to be a
+			 * ENDOFCOMMENT identifier
+			 */
+			String clearedComment = "";
+			for (int i = 0; i < commentLines.length - 1; i++) {
+				clearedComment = clearedComment + "\n" + " ".repeat(indent) + "# " + commentLines[i];
+			}
+			return clearedComment;
+		}
+
+		private BufferedReader getReader() throws FileNotFoundException {
+			iStream = new FileInputStream(configFile);
+			reader = new InputStreamReader(iStream, StandardCharsets.UTF_8);
+			return bReader = new BufferedReader(reader);
+		}
+		
+		private OutputStreamWriter getWriter() throws FileNotFoundException {
+			writerStream = new FileOutputStream(configFile);
+			return writer = new OutputStreamWriter(writerStream, StandardCharsets.UTF_8);
+		}
+	}
+
+	/**
+	 * A modificator is meant to be able to completely change the location of every key and its relevant setting.
+	 * It can also change the setting itself if necessary.
+	 */
+	private abstract class Modificator {
 		/**
 		 * 
 		 * @param oldSetting a string where index 0 is the key, and index 1 is the value
 		 * @return new setting where index 0 is the key, and index 1 is the value
 		 */
-		Object[] getNewSetting(Object[] oldSetting);
-	}
-
-	static private class RetCon0_10_8 implements Modificator {
-		private static HashMap<String, String> RETCON0_10_8 = new HashMap<>();
-		static {
+		protected abstract Setting getNewSetting(Setting oldSetting);
+		
+		public HashMap<String,Object> refactor(Map<String,Object> config) {
+			HashMap<String,Object> newConfig = new HashMap<>();
+			for(String branch : config.keySet()){
+				Setting oldSetting = new Setting(branch, config.get(branch));
+				Setting newSetting = getNewSetting(oldSetting);
+				newConfig.put(newSetting.key, newSetting.value);
+			}
+			return newConfig;
 		}
-
-		@Override
-		public Object[] getNewSetting(Object[] oldSetting) {
-			Object[] newSetting = oldSetting.clone();
-			String newKey = RETCON0_10_8.get(oldSetting[0]);
-			if(newKey != null)
-				newSetting[0] = newKey;
-			newSetting[1] = oldSetting[1];
-			return newSetting;
+		
+		
+		/**
+		 * A convenience class
+		 */
+		protected class Setting{
+			private final String key;
+			private final Object value;
+			
+			Setting(String key,Object value){
+				this.key = key; this.value = value;
+			}
 		}
 	}
 }
