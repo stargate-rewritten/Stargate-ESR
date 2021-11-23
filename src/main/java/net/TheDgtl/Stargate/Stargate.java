@@ -682,7 +682,7 @@ public class Stargate extends JavaPlugin {
         if (src.getGate().getToOwner() && src.isOwner(player)) return 0;
         // Player gets free gate use
         if (hasPerm(player, "stargate.free") || hasPerm(player, "stargate.free.use")) return 0;
-
+        
         return src.getGate().getUseCost();
     }
 

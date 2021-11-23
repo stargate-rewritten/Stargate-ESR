@@ -111,12 +111,12 @@ public class PlayerEventsListener extends StargateListener {
             portal.close(false);
             return;
         }
-
+        
         int cost = stargate.getUseCost(player, portal, destination);
         if (cost > 0) {
             boolean success;
             if (portal.getGate().getToOwner()) {
-                if (portal.getOwnerUUID() == null) {
+                if (portal.getOwnerUUID() != null) {
                     success = stargate.chargePlayer(player, portal.getOwnerUUID(), cost);
                 } else {
                     //noinspection deprecation

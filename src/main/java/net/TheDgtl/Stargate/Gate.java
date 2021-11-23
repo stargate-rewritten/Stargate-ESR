@@ -30,6 +30,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class Gate {
 
@@ -423,7 +424,7 @@ public class Gate {
 		gate.destroyCost = readConfig(stargate, config, file, "destroycost", -1);
 		gate.createCost = readConfig(stargate, config, file, "createcost", -1);
 		gate.toOwner = (config.containsKey("toowner") ? Boolean.parseBoolean(config.get("toowner"))
-				: stargate.getEconomyHandler().isToOwner());
+				: stargate.getEconomyHandler().isToOwner()) || JavaPlugin.getPlugin(Stargate.class).getConfig().getBoolean("toowner");
 
 		if (gate.getControls().length != 2) {
 			stargate.getStargateLogger().log(Level.SEVERE,
