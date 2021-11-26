@@ -6,6 +6,10 @@ Please work in a fork of the repository!<br><br>
 All changes should be made in a branch called `feature:#` or `fix:#` (with # being the [issue](https://github.com/the-lockedcraft-legacy-organization/Stargate-Bukkit/issues) your changes are correlated to).<br>
 Once you have tested your change, please make a pull request [here](https://github.com/the-lockedcraft-legacy-organization/Stargate-Bukkit/pulls).
 ## Code Style
+  
+#### Use spaces, not tabs
+> To prevent merge conflicts, please set your IDE to use 4 spaces instead of the tab character.
+  
 #### Always use descriptive names.
 > Comments are great, however, they can generally be replaced with descriptive variable/method/class naming.
   
