@@ -143,7 +143,7 @@ comment_taxaccount: |
  
   Note that usecost money is excluded from this system when toowner is true.
   _endOfComment_
-taxaccount: 
+taxaccount: ""
 
 comment_chargefreedestination: |
   Will ‘createcost’ still be charged if the new gate's destination is a gate with the 'f' flag?

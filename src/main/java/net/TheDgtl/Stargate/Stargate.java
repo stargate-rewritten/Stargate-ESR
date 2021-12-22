@@ -241,8 +241,8 @@ public class Stargate extends JavaPlugin {
     	debug("stargate.loadConfig","configVersion: " + configVersion);
     	if (configVersion != CURRENTCONFIGVERSION) {
     		Refactorer middas = new Refactorer(newConfig,this);
-    		middas.run();
-    		middas.addComments();
+    		Map<String,Object> configMap = middas.getNewConfigMap();
+    		newConfig = middas.writeNewConfig(configMap);
     		/*
             File configFile = new File(getDataFolder(), "config.yml");
             if (configFile.exists()){
