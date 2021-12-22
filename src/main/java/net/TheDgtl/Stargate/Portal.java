@@ -525,9 +525,11 @@ public class Portal {
     }
 
     public void teleport(final Vehicle vehicle) {
-        Location traveller = new Location(this.world, vehicle.getLocation().getX(), vehicle.getLocation().getY(), vehicle.getLocation().getZ());
+        Location traveller = new Location(this.world, vehicle.getLocation().getX(), vehicle.getLocation().getY(),
+                vehicle.getLocation().getZ());
         Location exit = getExit(traveller);
-
+        
+        Stargate.debug("Portal#teleport(Vehicle)", String.format("Teleporting to location %s", exit.toString()));
         double velocity = vehicle.getVelocity().length();
 
         // Stop and teleport
@@ -538,26 +540,16 @@ public class Portal {
         newVelocity.multiply(velocity);
 
         List<Entity> passengers = vehicle.getPassengers();
-        if (!passengers.isEmpty()) {
-            final Vehicle v = exit.getWorld().spawn(exit, vehicle.getClass());
-            final Entity passenger = passengers.get(0);
-            vehicle.eject();
-            vehicle.remove();
+        vehicle.eject();
+        for (Entity passenger : passengers) {
             passenger.eject();
             passenger.teleport(exit);
             stargate.getServer().getScheduler().scheduleSyncDelayedTask(stargate, () -> {
-                v.addPassenger(passenger);
-                v.setVelocity(newVelocity);
+                vehicle.addPassenger(passenger);
             }, 1);
-        } else {
-            Vehicle mc = Objects.requireNonNull(exit.getWorld()).spawn(exit, vehicle.getClass());
-            if (mc instanceof StorageMinecart) {
-                StorageMinecart smc = (StorageMinecart) mc;
-                smc.getInventory().setContents(((StorageMinecart) vehicle).getInventory().getContents());
-            }
-            mc.setVelocity(newVelocity);
-            vehicle.remove();
         }
+        vehicle.teleport(exit);
+        vehicle.setVelocity(newVelocity);
     }
 
     public Location getExit(Location traveller) {

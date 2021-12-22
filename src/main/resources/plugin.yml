@@ -5,7 +5,7 @@ description: Stargate mod for Bukkit
 authors: [Drakia, PseudoKnight, Frostalf, InteriorCamping, LittleBigBug, TheViperShow, Thorinwasher, Ghost_chu]
 softdepend: [Vault]
 website: https://discord.gg/mTaHuK6BVa
-api-version: @spigot-version@
+api-version: 1.15
 commands:
   sg:
     description: Used to reload the plugin. Console use only.
