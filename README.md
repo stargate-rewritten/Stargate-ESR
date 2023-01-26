@@ -1,5 +1,10 @@
 > **Note that improved documentation can now be found** [here](https://www.spigotmc.org/resources/stargate.87978/)<br>
 > **Note that a** [support discord](https://discord.gg/mTaHuK6BVa) **has now been created!**
+
+> **THIS BRANCH HAS BEEN ARCHIVED AND IS NO LONGER SUPPORTED!**<br>
+> **It features an extension of Drakia's original 2013 codebase**.<br>
+> **Stargate 10 has been replaced by [Stargate Rewritten](https://github.com/stargate-rewritten/Stargate-Bukkit); please use that instead!**.
+
 # Description
 Create gates that allow for instant-teleportation between large distances. Gates can be always-open or triggered; they can share a network or be split into clusters; they can be hidden on a network or accessible to everybody.
 
