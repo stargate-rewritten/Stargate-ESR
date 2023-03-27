@@ -934,7 +934,7 @@ public class Portal {
         allPortals.add(this);
     }
 
-    
+    /*
     private static HashSet<Material> UNDERWATERBUTTONS = new HashSet<>();
     static {
     	Material[] temp = {
@@ -952,14 +952,11 @@ public class Portal {
     	for(Material item : temp)
     		UNDERWATERBUTTONS.add(item);
     	
-    }
+    }*/
     
+       
     public static boolean isAcceptableControlMaterial(Material mat) {
-    	return isAcceptableControlMaterial(mat, false) || isAcceptableControlMaterial(mat, true);
-    }
-    
-    public static boolean isAcceptableControlMaterial(Material mat, boolean isWaterLogged) {
-    	return isWaterLogged ? UNDERWATERBUTTONS.contains(mat) : Tag.BUTTONS.isTagged(mat);
+    	return Tag.BUTTONS.isTagged(mat);
     }
     
     public static Portal createPortal(Stargate stargate, SignChangeEvent event, Player player) {
@@ -1247,12 +1244,11 @@ public class Portal {
 
 		// No button on an always-open gate.
 		if (!alwaysOn) {
-			boolean isWaterGate = (gate.getPortalBlockClosed() == Material.WATER);
-			Material buttonMat = isWaterGate ? Material.DEAD_TUBE_CORAL_WALL_FAN : Material.STONE_BUTTON;
+			Material buttonMat = Material.STONE_BUTTON;
 
 			button = topleft.modRelative(buttonVector.getRight(), buttonVector.getDepth(),
 					buttonVector.getDistance() + 1, modX, 1, modZ);
-			if (isAcceptableControlMaterial(button.getType(), isWaterGate)) {
+			if (isAcceptableControlMaterial(button.getType())) {
 				buttonMat = button.getType();
 			}
 

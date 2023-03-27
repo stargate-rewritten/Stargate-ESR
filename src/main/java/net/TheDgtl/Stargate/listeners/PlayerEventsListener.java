@@ -55,7 +55,7 @@ public class PlayerEventsListener extends StargateListener {
         PlayerTeleportEvent.TeleportCause cause = event.getCause();
         if (!event.isCancelled()
                 && (cause == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL
-                || cause == PlayerTeleportEvent.TeleportCause.END_GATEWAY && World.Environment.THE_END == event.getFrom().getWorld().getEnvironment())
+                || cause == PlayerTeleportEvent.TeleportCause.END_PORTAL && World.Environment.THE_END == event.getFrom().getWorld().getEnvironment())
                 && Portal.getByAdjacentEntrance(event.getFrom()) != null) {
             event.setCancelled(true);
         }
@@ -222,14 +222,6 @@ public class PlayerEventsListener extends StargateListener {
 		if (action == Action.RIGHT_CLICK_BLOCK
 				&& Portal.isAcceptableControlMaterial(blockMat)) {
 
-			if (blockMat == Material.DEAD_TUBE_CORAL_WALL_FAN) {
-				if (antiDoubleActivate == true) {
-					antiDoubleActivate = false;
-					// stargate.debug("Debug", "Correcting for an issue with underwater portals.");
-					return;
-				}
-				antiDoubleActivate = true;
-			}
 
 			Portal portal = Portal.getByBlock(block);
 			if (portal == null)

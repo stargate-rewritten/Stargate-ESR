@@ -145,6 +145,10 @@ public class Gate {
         return exits;
     }
 
+    public boolean isValidControllBlock(Material block) {
+	return (getControlBlock() != null) && getControlBlock().equals(block);
+    }
+        
     public RelativeBlockVector getExit() {
         return exitBlock;
     }

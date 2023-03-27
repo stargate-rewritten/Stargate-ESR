@@ -108,13 +108,10 @@ public class BlockEventsListener extends StargateListener {
 
         // Handle keeping portal material and buttons around
         switch (block.getType()) {
-            case NETHER_PORTAL:
+            case PORTAL:
                 portal = Portal.getByEntrance(block);
                 break;
             case STONE_BUTTON:
-            case DEAD_TUBE_CORAL_WALL_FAN:
-                portal = Portal.getByControl(block);
-                break;
         }
 
         if (portal != null) event.setCancelled(true);
