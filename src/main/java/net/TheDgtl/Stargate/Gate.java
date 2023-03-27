@@ -31,6 +31,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.Keyed;
 
 public class Gate {
 
@@ -242,7 +243,8 @@ public class Gate {
 
 					Material type = topleft.modRelative(x, y, 0, modX, 1, modZ).getType();
 
-					if (type.isAir())
+                                        // isAir() was not implemented until some point after 1.14
+					if (type.equals(Material.CAVE_AIR) || type.equals(Material.VOID_AIR) )
 						type = Material.AIR;
 
 					if (type != portalBlockClosed && type != portalBlockOpen) {
@@ -305,6 +307,7 @@ public class Gate {
 		}
 		
 		
+                // The Tag<> = an array list of materials, called blockTag.
 		Tag<Material> blockTag = gate.getControlBlockTag();
 		if (!controlBlocksTags.containsKey(blockTag.getKey().toString())) {
 			controlBlocksTags.put(blockTag.getKey().toString(), new ArrayList<>());

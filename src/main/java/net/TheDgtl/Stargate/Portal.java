@@ -802,11 +802,14 @@ public class Portal {
             return;
         }
         
-        Sign sign = (Sign) state;
-        if(sign.getColor() == DyeColor.BLACK) {
-        	sign.setColor(stargate.getDefaultSignColor());
-        }
+        Sign sign = (Sign) state;      
         
+        if (NonLegacyMethod.GET_SIGN_COLOR.isImplemented() && NonLegacyMethod.SET_SIGN_COLOR.isImplemented()) {
+            if(NonLegacyMethod.GET_SIGN_COLOR.invoke(sign) == DyeColor.BLACK) {
+                NonLegacyMethod.SET_SIGN_COLOR.invoke(sign, stargate.getDefaultSignColor());
+            }
+        }       
+
         sign.setLine(0, "-" + name + "-");
         
         ArrayList<String> lines = getSignLines();

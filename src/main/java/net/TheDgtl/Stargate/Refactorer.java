@@ -77,7 +77,8 @@ public class Refactorer {
 	
 	public Map<String,Object> getNewConfigMap() {
 		
-		configVersion = (int) configHashMap.get("configVersion");
+                Object nonCastedConfigVersion = configHashMap.get("configVersion");
+		configVersion = (nonCastedConfigVersion == null) ? -1 : (int) nonCastedConfigVersion;
 		
 		/*
 		 * This section is here for future refactoring (includes the Modificator stuff)
