@@ -404,7 +404,7 @@ public class Portal {
         if (isOpen() && !force) return false;
 
         Material openType = gate.getPortalBlockOpen();
-        Axis ax = openType == Material.NETHER_PORTAL ? rot : null;
+        Axis ax = openType == Material.PORTAL ? rot : null;
         for (Blox inside : getEntrances()) {
             stargate.getBlockPopulatorQueue().add(new BloxPopulator(inside, openType, ax));
         }
