@@ -1,9 +1,10 @@
-> **Note that improved documentation can now be found** [here](https://www.spigotmc.org/resources/stargate.87978/)<br>
-> **Note that a** [support discord](https://discord.gg/mTaHuK6BVa) **has now been created!**
+> **Note that improved documentation can now be found** [here](https://sgrewritten.org/wiki)<br>
+> **Note that a** [support discord](https://sgrewritten.org/discord) **has now been created!**
 
-> **THIS BRANCH HAS BEEN ARCHIVED AND IS NO LONGER SUPPORTED!**<br>
-> **It features an extension of Drakia's original 2013 codebase**.<br>
-> **Stargate 10 has been replaced by [Stargate Rewritten](https://github.com/stargate-rewritten/Stargate-Bukkit); please use that instead!**.
+> **THIS IS AN EXTENDED SUPPORT RELEASE FOR VERSIONS 1.13.2-1.16.5!**<br>
+> **This version extends Drakia's original 2013 codebase, with some backported fixes**.<br>
+> **THIS VERSION WILL RECEIVE NO SUPPORT BEYOND CRITICAL BUG FIXES**<br><br>
+> **For modern versions of stargate, please look [here](https://sgrewritten.org/downloads) instead!**.
 
 # Description
 Create gates that allow for instant-teleportation between large distances. Gates can be always-open or triggered; they can share a network or be split into clusters; they can be hidden on a network or accessible to everybody.
@@ -21,6 +22,7 @@ Create gates that allow for instant-teleportation between large distances. Gates
 - LockedCraft forked that to fix some issues in the PseudoKnight version, update to 1.15, and add underwater portals.
 - LittleBigBug forked that to clean up the project; meanwhile, PseudoKnight made some upstream changes.
 - Version 10 a is fork (with LBB & PK's changes merged) made to update to 1.16 and resolve some underwater issues.
+- This is an EXTENDED SUPPORT VERSION, backported to 1.13.2-1.16.5 and minimally maintained by [SGR](https://sgrewritten.org).
 
 # Permissions
 ```
@@ -245,6 +247,9 @@ createConflict=Gate conflicts with existing gate
 ```
 
 # Changes
+#### [Version 0.10.9.1] UNIFIED LEGACY ESR -- 1.13.2 - 1.16.5
+ - Backported this plugin to 1.16.5
+ - This branch will now receive MINIMAL MAINTENANCE.
 #### [Version 0.10.8.1] LCLO Fork
  - Fixed a compilation error impacting fresh installs.
 #### [Version 0.10.8.0] LCLO Fork
