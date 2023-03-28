@@ -731,7 +731,7 @@ public class Portal {
 			} else {
 				int index = destinations.indexOf(destination);
 				if ((index == max) && (max > 1) && (++done <= 3)) {
-					if (iConomyHandler.useiConomy() && iConomyHandler.freeGatesGreen) {
+					if (EconomyHandler.useEconomy() && EconomyHandler.freeGatesGreen) {
 						Portal dest = Portal.getByName(destinations.get(index - 2), network);
 						boolean green = Stargate.isFree(activePlayer, this, dest);
 						Stargate.setLine(sign, done, (green ? ChatColor.DARK_GREEN : "") + destinations.get(index - 2));
@@ -740,7 +740,7 @@ public class Portal {
 					}
 				}
 				if ((index > 0) && (++done <= 3)) {
-					if (iConomyHandler.useiConomy() && iConomyHandler.freeGatesGreen) {
+					if (EconomyHandler.useEconomy() && EconomyHandler.freeGatesGreen) {
 						Portal dest = Portal.getByName(destinations.get(index - 1), network);
 						boolean green = Stargate.isFree(activePlayer, this, dest);
 						Stargate.setLine(sign, done, (green ? ChatColor.DARK_GREEN : "") + destinations.get(index - 1));
@@ -749,7 +749,7 @@ public class Portal {
 					}
 				}
 				if (++done <= 3) {
-					if (iConomyHandler.useiConomy() && iConomyHandler.freeGatesGreen) {
+					if (EconomyHandler.useEconomy() && EconomyHandler.freeGatesGreen) {
 						Portal dest = Portal.getByName(destination, network);
 						boolean green = Stargate.isFree(activePlayer, this, dest);
 						Stargate.setLine(sign, done, (green ? ChatColor.DARK_GREEN : "") + ">" + destination + "<");
@@ -758,7 +758,7 @@ public class Portal {
 					}
 				}
 				if ((max >= index + 1) && (++done <= 3)) {
-					if (iConomyHandler.useiConomy() && iConomyHandler.freeGatesGreen) {
+					if (EconomyHandler.useEconomy() && EconomyHandler.freeGatesGreen) {
 						Portal dest = Portal.getByName(destinations.get(index + 1), network);
 						boolean green = Stargate.isFree(activePlayer, this, dest);
 						Stargate.setLine(sign, done, (green ? ChatColor.DARK_GREEN : "") + destinations.get(index + 1));
@@ -767,7 +767,7 @@ public class Portal {
 					}
 				}
 				if ((max >= index + 2) && (++done <= 3)) {
-					if (iConomyHandler.useiConomy() && iConomyHandler.freeGatesGreen) {
+					if (EconomyHandler.useEconomy() && EconomyHandler.freeGatesGreen) {
 						Portal dest = Portal.getByName(destinations.get(index + 2), network);
 						boolean green = Stargate.isFree(activePlayer, this, dest);
 						Stargate.setLine(sign, done, (green ? ChatColor.DARK_GREEN : "") + destinations.get(index + 2));
@@ -1128,13 +1128,13 @@ public class Portal {
 		if (cost > 0) {
 			if (!Stargate.chargePlayer(player, null, cost)) {
 				String inFundMsg = Stargate.getString("ecoInFunds");
-				inFundMsg = Stargate.replaceVars(inFundMsg, new String[] {"%cost%", "%portal%"}, new String[] {iConomyHandler.format(cost), name});
+				inFundMsg = Stargate.replaceVars(inFundMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(cost), name});
 				Stargate.sendMessage(player, inFundMsg);
 				Stargate.debug("createPortal", "Insufficient Funds");
 				return null;
 			}
 			String deductMsg = Stargate.getString("ecoDeduct");
-			deductMsg = Stargate.replaceVars(deductMsg, new String[] {"%cost%", "%portal%"}, new String[] {iConomyHandler.format(cost), name});
+			deductMsg = Stargate.replaceVars(deductMsg, new String[] {"%cost%", "%portal%"}, new String[] {EconomyHandler.format(cost), name});
 			Stargate.sendMessage(player, deductMsg, false);
 		}
 		

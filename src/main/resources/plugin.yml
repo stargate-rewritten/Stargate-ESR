@@ -1,9 +1,10 @@
 name: Stargate
 main: net.TheDgtl.Stargate.Stargate
-version: 0.7.9.11-ChoiceCraft
-description: Stargate mod for Bukkit
-author: Drakia
-website: http://www.thedgtl.net
+version: 0.7.10.1-ESR
+description: The Extended Support Release for Stargate, targeting 1.5.2 - 1.7.10.
+api: 1.5
+author: Drakia, MCLive, and ZackRuybal
+website: https://sgrewritten.org
 commands:
   stargate:
     description: Used to reload the plugin. Console use only.
