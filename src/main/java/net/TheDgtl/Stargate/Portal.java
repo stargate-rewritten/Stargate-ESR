@@ -1285,7 +1285,7 @@ public class Portal {
 				buttonMat = button.getType();
 			}
 
-                        button.setData(facing);
+                        button.setData((byte) facing);
 
 			portal.setButton(button);
 		}
