@@ -84,7 +84,6 @@ public class Portal {
     private final int modX;
     private final int modZ;
     private final float rotX;
-    private final Axis rot;
 
     // Block references
     private final Blox id;
@@ -138,7 +137,6 @@ public class Portal {
         this.modX = modX;
         this.modZ = modZ;
         this.rotX = rotX;
-        this.rot = rotX == 0.0F || rotX == 180.0F ? Axis.X : Axis.Z;
         this.id = id;
         this.destination = dest;
         this.button = button;
@@ -256,10 +254,6 @@ public class Portal {
 
     public float getRotation() {
         return rotX;
-    }
-
-    public Axis getAxis() {
-        return rot;
     }
 
     public Player getActivePlayer() {
@@ -407,7 +401,6 @@ public class Portal {
         if (isOpen() && !force) return false;
 
         Material openType = gate.getPortalBlockOpen();
-        Axis ax = openType == Material.PORTAL ? rot : null;
         for (Blox inside : getEntrances()) {
             stargate.getBlockPopulatorQueue().add(new BloxPopulator(inside, openType));
         }
@@ -576,11 +569,13 @@ public class Portal {
 
         final Entity passenger = vehicle.getPassenger();
         vehicle.eject();
-        passenger.eject();
-        passenger.teleport(exit);
-        stargate.getServer().getScheduler().scheduleSyncDelayedTask(Stargate.stargate, () -> {
-            vehicle.setPassenger(passenger);
-        }, 1);
+        if (passenger != null) {      
+            passenger.eject();
+            passenger.teleport(exit);
+            stargate.getServer().getScheduler().scheduleSyncDelayedTask(Stargate.stargate, () -> {
+                vehicle.setPassenger(passenger);
+            }, 1);
+        }
         vehicle.teleport(exit);
         vehicle.setVelocity(newVelocity);
     }
@@ -988,7 +983,7 @@ public class Portal {
     
        
     public static boolean isAcceptableControlMaterial(Material mat) {
-    	return Tag.BUTTONS.isTagged(mat);
+        return mat.equals(Material.WOOD_BUTTON) || mat.equals(Material.STONE_BUTTON);
     }
     
     public static Portal createPortal(Stargate stargate, SignChangeEvent event, Player player) {
