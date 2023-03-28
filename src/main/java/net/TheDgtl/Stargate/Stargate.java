@@ -39,6 +39,7 @@ import net.TheDgtl.Stargate.listeners.PluginStatusChangeListener;
 import net.TheDgtl.Stargate.listeners.WorldEventsListener;
 import net.TheDgtl.Stargate.threads.BlockPopulatorThread;
 import net.TheDgtl.Stargate.threads.SGThread;
+import org.apache.commons.lang.StringUtils;
 
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
@@ -664,7 +665,7 @@ public class Stargate extends JavaPlugin {
         // Economy is disabled
         if (!economyHandler.useEconomy()) return true;
 		// Charge player
-		return ((taxAccount == null) || taxAccount.isBlank()) ? economyHandler.chargePlayer(player, cost)
+		return ((taxAccount == null) || StringUtils.isBlank(taxAccount)) ? economyHandler.chargePlayer(player, cost)
 				: economyHandler.chargePlayer(player, taxAccount, cost);
 	}
 

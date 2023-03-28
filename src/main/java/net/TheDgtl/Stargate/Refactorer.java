@@ -11,15 +11,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class Refactorer {
@@ -180,7 +174,7 @@ public class Refactorer {
 						isSkippingComment = false;
 					continue;
 				}
-				String possibleComment = line.strip();
+				String possibleComment = StringUtils.strip(line);
 				if (possibleComment.startsWith(STARTOFCOMMENT)) {
 					String key = possibleComment.split(":")[0];
 					int indent = countSpaces(line);
@@ -230,7 +224,7 @@ public class Refactorer {
 			 */
 			String clearedComment = "";
 			for (int i = 0; i < commentLines.length - 1; i++) {
-				clearedComment = clearedComment + "\n" + " ".repeat(indent) + "# " + commentLines[i];
+				clearedComment = clearedComment + "\n" + StringUtils.repeat(" ", indent) + "# " + commentLines[i];
 			}
 			return clearedComment;
 		}
