@@ -66,7 +66,7 @@ import org.jetbrains.annotations.NotNull;
 public class Stargate extends JavaPlugin {
     private Logger log;
     private Server server;
-    private Stargate stargate;
+    public static Stargate stargate;
     private EconomyHandler economyHandler;
     private LangLoader lang;
     private String portalFolder;

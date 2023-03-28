@@ -409,7 +409,7 @@ public class Portal {
         Material openType = gate.getPortalBlockOpen();
         Axis ax = openType == Material.PORTAL ? rot : null;
         for (Blox inside : getEntrances()) {
-            stargate.getBlockPopulatorQueue().add(new BloxPopulator(inside, openType, ax));
+            stargate.getBlockPopulatorQueue().add(new BloxPopulator(inside, openType));
         }
 
         isOpen = true;
