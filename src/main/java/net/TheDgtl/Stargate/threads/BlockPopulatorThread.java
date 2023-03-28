@@ -33,7 +33,7 @@ public class BlockPopulatorThread extends StargateRunnable {
                 // force a location to prevent exit gateway generation
                 EndGateway gateway = (EndGateway) blk.getState();
                 // https://github.com/stargate-bukkit/Stargate-Bukkit/issues/36
-                NonLegacyMethod.END_GATEWAY.invoke(blk, -9223372036854775808L);
+                NonLegacyMethod.REAGE_END_GATEWAY.invoke(blk, -9223372036854775808L);
                 if(blk.getWorld().getEnvironment() == World.Environment.THE_END){
                       gateway.setExitLocation(blk.getWorld().getSpawnLocation());
                       gateway.setExactTeleport(true);
