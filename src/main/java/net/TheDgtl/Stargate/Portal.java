@@ -578,8 +578,8 @@ public class Portal {
         vehicle.eject();
         passenger.eject();
         passenger.teleport(exit);
-        stargate.getServer().getScheduler().scheduleSyncDelayedTask(Stargate.stargate, new Runnable() {
-            vehicle.addPassenger(passenger);
+        stargate.getServer().getScheduler().scheduleSyncDelayedTask(Stargate.stargate, () -> {
+            vehicle.setPassenger(passenger);
         }, 1);
         vehicle.teleport(exit);
         vehicle.setVelocity(newVelocity);
