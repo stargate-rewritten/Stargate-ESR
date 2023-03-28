@@ -89,6 +89,10 @@ public class Blox {
     public int getData() {
 	return world.getBlockAt(x, y, z).getData();
     }
+    
+    public int getData(byte data) {
+	return world.getBlockAt(x, y, z).getData();
+    }
 
     public Material getType() {
         return world.getBlockAt(x, y, z).getType();

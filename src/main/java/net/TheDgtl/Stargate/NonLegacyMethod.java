@@ -34,7 +34,7 @@ public enum NonLegacyMethod {
      * 
      * <p> This ESR supports pre-1.9 versions.</p>
      */
-    REAGE_END_GATEWAY("org.bukkit.block.EndGateway", "setAge");
+    CHANGE_END_GATEWAY_AGE("org.bukkit.block.EndGateway", "setAge");
 
     private String classToCheckFor;
     private String methodInClassToCheckFor;

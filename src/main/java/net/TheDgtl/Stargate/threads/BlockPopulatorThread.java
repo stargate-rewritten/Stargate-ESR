@@ -3,6 +3,7 @@ package net.TheDgtl.Stargate.threads;
 import net.TheDgtl.Stargate.BloxPopulator;
 import net.TheDgtl.Stargate.NonLegacyMethod;
 import net.TheDgtl.Stargate.Stargate;
+import net.TheDgtl.Stargate.Blox;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -33,7 +34,7 @@ public class BlockPopulatorThread extends StargateRunnable {
                 // force a location to prevent exit gateway generation
                 EndGateway gateway = (EndGateway) blk.getState();
                 // https://github.com/stargate-bukkit/Stargate-Bukkit/issues/36
-                NonLegacyMethod.REAGE_END_GATEWAY.invoke(blk, -9223372036854775808L);
+                NonLegacyMethod.CHANGE_END_GATEWAY_AGE.invoke(blk, -9223372036854775808L);
                 if(blk.getWorld().getEnvironment() == World.Environment.THE_END){
                       gateway.setExitLocation(blk.getWorld().getSpawnLocation());
                       gateway.setExactTeleport(true);

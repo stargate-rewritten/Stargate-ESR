@@ -24,17 +24,20 @@ public class BloxPopulator {
     private Blox blox;
     private Material nextMat;
     private Axis nextAxis;
+    private byte nextData;
 
     public BloxPopulator(Blox b, Material m) {
         blox = b;
         nextMat = m;
         nextAxis = null;
+        nextData = 0;
     }
 
-    public BloxPopulator(Blox b, Material m, Axis a) {
+    public BloxPopulator(Blox b, Material m, byte d) {
         blox = b;
         nextMat = m;
-        nextAxis = a;
+        nextData = d;
+        //nextAxis = a;
     }
 
     public void setBlox(Blox b) {
@@ -45,18 +48,22 @@ public class BloxPopulator {
         nextMat = m;
     }
 
-    public void setAxis(Axis a) {
-        nextAxis = a;
+    public void setData(byte d) {
+        nextData = d;
     }
 
     public Blox getBlox() {
         return blox;
     }
 
+    public byte getData() {
+	return nextData;
+    }
+	
     public Material getMat() {
         return nextMat;
     }
-
+    
     public Axis getAxis() {
         return nextAxis;
     }
