@@ -215,7 +215,6 @@ public class PlayerEventsListener extends StargateListener {
 			return;
 
 		Player player = event.getPlayer();
-		BlockData blockData = block.getBlockData();
 		Action action = event.getAction();
 		Material blockMat = block.getType();
 		boolean isEnter = false;
@@ -247,7 +246,7 @@ public class PlayerEventsListener extends StargateListener {
 			}
 		}
 
-		if (blockData instanceof WallSign
+		if (block.getType() == Material.WALL_SIGN
 				&& (action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK)) {
 
 			Portal portal = Portal.getByBlock(block);

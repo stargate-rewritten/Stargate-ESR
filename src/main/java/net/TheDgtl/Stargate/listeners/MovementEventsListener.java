@@ -19,7 +19,7 @@ public class MovementEventsListener extends StargateListener {
     @EventHandler
     public void onVehicleMove(VehicleMoveEvent event) {
         if (!stargate.isHandleVehicles()) return;
-        List<Entity> passengers = event.getVehicle().getPassengers();
+        Entity passenger = event.getVehicle().getPassenger();
         Vehicle vehicle = event.getVehicle();
 
         Portal portal = Portal.getByEntrance(event.getTo());
@@ -28,8 +28,8 @@ public class MovementEventsListener extends StargateListener {
         // We don't support vehicles in Bungee portals
         if (portal.isBungee()) return;
 
-        //noinspection StatementWithEmptyBody
-        if (!passengers.isEmpty() && passengers.get(0) instanceof Player) {
+        if (passenger instanceof Player) {
+            Player player = (Player)passenger;
         } else {
             Portal dest = portal.getDestination();
             if (dest == null) return;

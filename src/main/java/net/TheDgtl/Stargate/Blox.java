@@ -81,6 +81,14 @@ public class Blox {
     public void setType(Material type) {
         world.getBlockAt(x, y, z).setType(type);
     }
+    
+    public void setData(int data) {
+	world.getBlockAt(x, y, z).setData((byte)data);
+    }
+
+    public int getData() {
+	return world.getBlockAt(x, y, z).getData();
+    }
 
     public Material getType() {
         return world.getBlockAt(x, y, z).getType();
@@ -121,15 +129,32 @@ public class Blox {
         int offsetY = 0;
         int offsetZ = 0;
 
-        BlockData blk = getBlock().getBlockData();
-        if (blk instanceof WallSign) {
-            BlockFace facing = ((WallSign) blk).getFacing().getOppositeFace();
-            offsetX = facing.getModX();
-            offsetZ = facing.getModZ();
-        } else if (blk instanceof Sign) {
-            offsetY = -1;
-        } else {
+        
+	if (null == getBlock().getType()) {
             return;
+        } else switch (getBlock().getType()) {
+            case WALL_SIGN:
+                switch (getData()) {
+                    case 0x2:
+                        offsetZ = 1;
+                        break;
+                    case 0x3:
+                        offsetZ = -1;
+                        break;
+                    case 0x4:
+                        offsetX = 1;
+                        break;
+                    case 0x5:
+                        offsetX = -1;
+                        break;
+                    default:
+                        break;
+                }   break;
+            case SIGN_POST:
+                offsetY = -1;
+                break;
+            default:
+                return;
         }
         parent = new Blox(world, getX() + offsetX, getY() + offsetY, getZ() + offsetZ);
     }

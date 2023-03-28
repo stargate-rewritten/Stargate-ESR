@@ -239,7 +239,7 @@ public class Gate {
                 }
 
                 Material id = portalTypes.get(key);
-                boolean matches = false;
+                //boolean matches = false;
                 if (id == null) {
                     portalTypes.put(key, topleft.modRelative(x, y, 0, modX, 1, modZ).getType());
                     continue;

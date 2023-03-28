@@ -38,6 +38,9 @@ import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.material.Button;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.Step;
 import org.bukkit.util.Vector;
 
 /**
@@ -481,9 +484,9 @@ public class Portal {
         RelativeBlockVector[] controls = gate.getControls();
 
         for (RelativeBlockVector vector : controls) {
-            BlockData data = getBlockAt(vector).getBlock().getBlockData();
+            MaterialData mat = getBlockAt(vector).getBlock().getState().getData();
 
-            if (data instanceof Powerable && ((Powerable) data).isPowered()) {
+            if (mat instanceof Button && ((Button)mat).isPowered()) {
                 return true;
             }
         }
@@ -524,6 +527,38 @@ public class Portal {
         }
     }
 
+    /*public void teleport(final Vehicle vehicle) {
+        Location traveller = new Location(this.world, vehicle.getLocation().getX(), vehicle.getLocation().getY(),
+                vehicle.getLocation().getZ());
+        Location exit = getExit(traveller);
+        
+        Stargate.debug("Portal#teleport(Vehicle)", String.format("Teleporting to location %s", exit.toString()));
+        double velocity = vehicle.getVelocity().length();
+
+        // Stop and teleport
+        vehicle.setVelocity(new Vector());
+
+        // Get new velocity
+        final Vector newVelocity = new Vector(modX, 0.0F, modZ);
+        newVelocity.multiply(velocity);
+
+        final Entity passenger = vehicle.getPassenger();
+        if (passenger != null) {
+            final Vehicle v = exit.getWorld().spawn(exit, vehicle.getClass());
+            vehicle.eject();
+            vehicle.teleport(exit);
+            
+        for (Entity passenger : passengers) {
+            passenger.eject();
+            passenger.teleport(exit);
+            stargate.getServer().getScheduler().scheduleSyncDelayedTask(stargate, () -> {
+                vehicle.addPassenger(passenger);
+            }, 1);
+        }
+        vehicle.teleport(exit);
+        vehicle.setVelocity(newVelocity);
+    }*/
+    
     public void teleport(final Vehicle vehicle) {
         Location traveller = new Location(this.world, vehicle.getLocation().getX(), vehicle.getLocation().getY(),
                 vehicle.getLocation().getZ());
@@ -539,15 +574,13 @@ public class Portal {
         final Vector newVelocity = new Vector(modX, 0.0F, modZ);
         newVelocity.multiply(velocity);
 
-        List<Entity> passengers = vehicle.getPassengers();
+        final Entity passenger = vehicle.getPassenger();
         vehicle.eject();
-        for (Entity passenger : passengers) {
-            passenger.eject();
-            passenger.teleport(exit);
-            stargate.getServer().getScheduler().scheduleSyncDelayedTask(stargate, () -> {
-                vehicle.addPassenger(passenger);
-            }, 1);
-        }
+        passenger.eject();
+        passenger.teleport(exit);
+        stargate.getServer().getScheduler().scheduleSyncDelayedTask(Stargate.stargate, new Runnable() {
+            vehicle.addPassenger(passenger);
+        }, 1);
         vehicle.teleport(exit);
         vehicle.setVelocity(newVelocity);
     }
@@ -564,9 +597,8 @@ public class Portal {
         }
 
         if (loc != null) {
-            BlockData bd = getWorld().getBlockAt(loc).getBlockData();
-            if (bd instanceof Bisected && ((Bisected) bd).getHalf() == Bisected.Half.BOTTOM) {
-                loc.add(0, 0.5, 0);
+            if (getWorld().getBlockAt(loc).getState().getData() instanceof Step) {
+		loc.setY(loc.getY() + 0.5);
             }
 
             loc.setPitch(traveller.getPitch());
@@ -872,7 +904,7 @@ public class Portal {
 
         Block idBlock = id.getBlock();
 
-        if (idBlock.getBlockData() instanceof WallSign) {
+        if (id.getBlock().getType() == Material.WALL_SIGN && id.getBlock().getState() instanceof Sign) {
             Sign sign = (Sign) idBlock.getState();
 
             sign.setLine(0, getName());
@@ -1032,24 +1064,24 @@ public class Portal {
         int modX = 0;
         int modZ = 0;
         float rotX = 0f;
-        BlockFace buttonfacing = BlockFace.DOWN;
+        int facing = 0;
 
         if (idParent.getX() > id.getBlock().getX()) {
             modZ -= 1;
             rotX = 90f;
-            buttonfacing = BlockFace.WEST;
+            facing = 2;
         } else if (idParent.getX() < id.getBlock().getX()) {
             modZ += 1;
             rotX = 270f;
-            buttonfacing = BlockFace.EAST;
+            facing = 1;
         } else if (idParent.getZ() > id.getBlock().getZ()) {
             modX += 1;
             rotX = 180f;
-            buttonfacing = BlockFace.NORTH;
+            facing = 4;
         } else if (idParent.getZ() < id.getBlock().getZ()) {
             modX -= 1;
             rotX = 0f;
-            buttonfacing = BlockFace.SOUTH;
+            facing = 3;
         }
         Gate[] possibleGates = Gate.getGatesByControlBlock(idParent);
         Gate gate = null;
@@ -1244,6 +1276,7 @@ public class Portal {
 
 		// No button on an always-open gate.
 		if (!alwaysOn) {
+			boolean isWaterGate = (gate.getPortalBlockClosed() == Material.WATER);
 			Material buttonMat = Material.STONE_BUTTON;
 
 			button = topleft.modRelative(buttonVector.getRight(), buttonVector.getDepth(),
@@ -1252,13 +1285,7 @@ public class Portal {
 				buttonMat = button.getType();
 			}
 
-			// generates a Blockdata
-			Directional buttonData = (Directional) Bukkit.createBlockData(buttonMat);
-			// manipulate the data
-			buttonData.setFacing(buttonfacing);
-
-			// Sets the blockdata into the world
-			button.getBlock().setBlockData(buttonData);
+                        button.setData(facing);
 
 			portal.setButton(button);
 		}

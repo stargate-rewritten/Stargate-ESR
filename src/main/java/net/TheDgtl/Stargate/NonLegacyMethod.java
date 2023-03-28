@@ -27,7 +27,14 @@ public enum NonLegacyMethod {
      *
      * <p>This ESR supports pre-1.16 versions.</p>
      */
-    SET_SIGN_COLOR("org.bukkit.block.Sign", "setColor");
+    SET_SIGN_COLOR("org.bukkit.block.Sign", "setColor"),
+    
+    /**
+     * Interacting with END_GATEWAYS
+     * 
+     * <p> This ESR supports pre-1.9 versions.</p>
+     */
+    END_GATEWAY("org.bukkit.block.EndGateway", "setAge");
 
     private String classToCheckFor;
     private String methodInClassToCheckFor;

@@ -3,6 +3,7 @@ package net.TheDgtl.Stargate.listeners;
 import net.TheDgtl.Stargate.Portal;
 import net.TheDgtl.Stargate.Stargate;
 import net.TheDgtl.Stargate.event.StargateDestroyEvent;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
@@ -27,17 +28,21 @@ public class BlockEventsListener extends StargateListener {
         if (event.isCancelled()) return;
         Player player = event.getPlayer();
         Block block = event.getBlock();
-        if (!(block.getBlockData() instanceof WallSign)) return;
-
+        if (block.getType() != Material.WALL_SIGN) return;
+        
         final Portal portal = Portal.createPortal(stargate, event, player);
         // Not creating a gate, just placing a sign
         if (portal == null) return;
 
         stargate.sendMessage(player, stargate.getString("createMsg"), false);
         stargate.debug("onSignChange", "Initialized stargate: " + portal.getName());
-        stargate.getServer().getScheduler().scheduleSyncDelayedTask(stargate, portal::drawSign, 1L);
+        stargate.getServer().getScheduler().scheduleSyncDelayedTask(stargate, new Runnable() {
+            public void run() {
+                portal.drawSign();
+            }
+        }, 1);
     }
-
+    
     // Switch to HIGHEST priority so as to come after block protection plugins (Hopefully)
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event) {
