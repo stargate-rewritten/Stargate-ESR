@@ -664,7 +664,7 @@ public class Stargate extends JavaPlugin {
         // Economy is disabled
         if (!economyHandler.useEconomy()) return true;
 		// Charge player
-		return ((taxAccount == null) || taxAccount.isBlank()) ? economyHandler.chargePlayer(player, cost)
+		return ((taxAccount == null) || taxAccount.trim().isEmpty()) ? economyHandler.chargePlayer(player, cost)
 				: economyHandler.chargePlayer(player, taxAccount, cost);
 	}
 

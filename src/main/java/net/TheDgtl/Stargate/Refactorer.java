@@ -180,7 +180,7 @@ public class Refactorer {
 						isSkippingComment = false;
 					continue;
 				}
-				String possibleComment = line.strip();
+				String possibleComment = line.trim();
 				if (possibleComment.startsWith(STARTOFCOMMENT)) {
 					String key = possibleComment.split(":")[0];
 					int indent = countSpaces(line);
@@ -230,9 +230,17 @@ public class Refactorer {
 			 */
 			String clearedComment = "";
 			for (int i = 0; i < commentLines.length - 1; i++) {
-				clearedComment = clearedComment + "\n" + " ".repeat(indent) + "# " + commentLines[i];
+				clearedComment = clearedComment + "\n" + repeat(" ",indent) + "# " + commentLines[i];
 			}
 			return clearedComment;
+		}
+
+		private String repeat(String repeatable, int repetitions){
+			StringBuilder builder = new StringBuilder();
+			for(int i = 0; i < repetitions; i++){
+				builder.append(repeatable);
+			}
+			return builder.toString();
 		}
 
 		private BufferedReader getReader() throws FileNotFoundException {
