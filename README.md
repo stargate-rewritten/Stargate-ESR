@@ -1,7 +1,7 @@
 > **Note that improved documentation can now be found** [here](https://sgrewritten.org/wiki)<br>
 > **Note that a** [support discord](https://sgrewritten.org/discord) **has now been created!**
 
-> **THIS IS AN EXTENDED SUPPORT RELEASE FOR VERSIONS 1.13.2-1.16.5!**<br>
+> **THIS IS AN [EXTENDED SUPPORT RELEASE](https://sgrewritten.org/esr) FOR VERSIONS 1.13.2-1.16.5!**<br>
 > **This version extends Drakia's original 2013 codebase, with some backported fixes**.<br>
 > **THIS VERSION WILL RECEIVE NO SUPPORT BEYOND CRITICAL BUG FIXES**<br><br>
 > **For modern versions of stargate, please look [here](https://sgrewritten.org/downloads) instead!**.

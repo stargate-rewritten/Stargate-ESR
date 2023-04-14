@@ -4,7 +4,7 @@ version: @version@
 description: The 1.13 - 1.16 ESR release for Stargate -- Minecraft's original portal plugin.
 authors: [Drakia, PseudoKnight, contributors from the SG-Rewritten Project (including Thorin, Pheotis, Ghost, \& Knarvik), and contributors for the LCLO (including Frostalf, InteriorCamping, LittleBigBug, \& TheViperShow)]
 softdepend: [Vault]
-website: https://discord.gg/mTaHuK6BVa
+website: https://sgrewritten.org
 api-version: 1.13
 commands:
   sg:
