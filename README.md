@@ -1,30 +1,25 @@
-**BUILD:** [![Build Status](https://travis-ci.org/TownyKingdoms/Stargate-Bukkit.svg?branch=master)](https://travis-ci.org/TownyKingdoms/Stargate-Bukkit)
+> **Note that a** [support discord](https://sgrewritten.org/discord) **has now been created!**
 
-A note from Assassin
-=======
-This is my own repo forked from the above (look above, can't remember who atm). All it's set up to do is make the latest version of Stargate, compiled together with the latest version of everything else.
-All builds are handled by Travis CI (click the build status image above). Forked simply because a version of this that doesn't throw errors needed to be made available for everyone.
+> **THIS IS AN [EXTENDED SUPPORT RELEASE](https://sgrewritten.org/esr) FOR VERSIONS 1.1-1.4.7!**<br>
+> **This version extends Drakia's original 2013 codebase, with some backported fixes**.<br>
+> **THIS VERSION WILL RECEIVE NO SUPPORT BEYOND CRITICAL BUG FIXES**<br><br>
+> **For modern versions of stargate, please look [here](https://sgrewritten.org/downloads) instead!**.
 
-Check the releases page for releases.
+# Description
+Create gates that allow for instant-teleportation between large distances. Gates can be always-open or triggered; they can share a network or be split into clusters; they can be hidden on a network or accessible to everybody.
 
+- Player permissions -- let players build their own networks.
+- iConomy support -- can add costs for create, destroy and use.
+- Capacity to add custom gates, as well as some pre-set examples
+- Message customization
+- Gate options
 
-Stargate [![Build Status](https://travis-ci.org/DustCore/Stargate-Bukkit.png?branch=master)](https://travis-ci.org/DustCore/Stargate-Bukkit)
-========
-
-
-Updates
-=============
-Please visit http://forum.thedgtl.net for all updates and support!
-
-
-Description
-=============
-This is a port of the Stargate plugin from hMod by Dinnerbone.
-Create gates that allow for instant-teleportation between large distances. Gates can be always-open, or triggered, they can be hidden, or accessible to everybody, they can share a network, or they can be split into clusters.
-This port will import your existing locations.dat file from the hMod Stargate plugin!
-iConomy support added back in, only costs are create, destroy and use.
-
-
+## Background
+- This plugin was originally TheDgtl's Bukkit port of the Stargate plugin for hMod by Dinnerbone.
+- Shortly after this plugin was dropped by TheDgtl, the DustCore network made a fork with tweaks, maven, and CI.
+- MCLive forked DustCore's version some time later, updating it to spigot and patched a few bugs.
+- TownyKingdoms forked MCLive's version a few years later, making minor tweaks to support newer versions of MC.
+- This is an EXTENDED SUPPORT VERSION, backported to 1.5.2-1.7.10 and minimally maintained by [SGR](https://sgrewritten.org).
 
 Permissions
 =============
@@ -230,18 +225,29 @@ createWorldDeny=You do not have access to that world
 createConflict=Gate conflicts with existing gate
 
 
-
-Known Bugs
-=============
-Unable to reproduce: Stargates teleport a user into the ground/under the ground
-Bukkit Issue: Stargate will randomly NPE when drawing a sign. Long-standing Bukkit
-              issue, that they just made worse by disallowing me to override the
-              sign class. This won't actually affect Stargate use.
-
-
-
 Changes
 =============
+#### [Version 0.7.10.1] UNIFIED LEGACY ESR -- 1.1 - 1.4.7
+ - Backported this plugin to 1.5.2
+ - This branch will now receive MINIMAL MAINTENANCE.
+[Version 0.8.0.3] TownyKingdoms Fork
+*(Originally Packaged as 0.7.9.11-TKPublic)*
+ - Updated to 1.12
+ - Changed build procces to include releases folder.
+ - Fixed minor compilation bugs.
+[Version 0.8.0.2] MCLIVE FORK
+*(Originally Packaged as 0.7.9.11-CHOICECRAFT)*
+ - Updated to 1.11
+ - Switched to Spigot from Bukkit
+ - Cleaned up maven formatting
+ - Removed mcstats
+ - Fixed an issue wherein activators could crash if used outside of world bounds.
+[Version 0.8.0.1] DUSTCORE FORK
+*(Originally Packaged as 0.7.9.10-CHOICECRAFT)*
+ - Updated to 1.6
+ - Moved plugin to maven
+ - Added vault support
+ - Minor refactor to plugin structure
 [Version 0.7.9.10]
  - Fix personal gate permission check for players with mixed-case names
 

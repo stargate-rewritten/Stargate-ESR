@@ -3,7 +3,7 @@ main: net.TheDgtl.Stargate.Stargate
 version: 0.7.10.1-ESR
 description: The Extended Support Release for Stargate, targeting 1.1.1 - 1.4.7.
 api: 1.1
-author: Drakia, MCLive, and ZackRuybal
+author: [Drakia, McLive, contributors from DustCore Networks (including Scavy), contributors from TownyKingdoms (including ZachRuybal), and contributors from the SG-Rewritten Project (including Thorin, Pheotis, \& Knarvik)]
 website: https://sgrewritten.org
 commands:
   stargate:

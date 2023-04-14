@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>Stargate</name>
-    <description>The Extended Support Release for Stargate, targeting versions below 1.7.10</description>
+    <description>The Extended Support Release for Stargate, targeting versions 1.1 - 1.4.7</description>
     <url>https://sgrewritten.org</url>
 
     <properties>
