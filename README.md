@@ -1,7 +1,7 @@
 > **Note that improved documentation can now be found** [here](https://sgrewritten.org/wiki)<br>
 > **Note that a** [support discord](https://sgrewritten.org/discord) **has now been created!**
 
-> **THIS IS AN EXTENDED SUPPORT RELEASE FOR VERSIONS 1.13.2-1.16.5!**<br>
+> **THIS IS AN [EXTENDED SUPPORT RELEASE](https://sgrewritten.org/esr) FOR VERSIONS 1.8.8-1.12.2!**<br>
 > **This version extends Drakia's original 2013 codebase, with some backported fixes**.<br>
 > **THIS VERSION WILL RECEIVE NO SUPPORT BEYOND CRITICAL BUG FIXES**<br><br>
 > **For modern versions of stargate, please look [here](https://sgrewritten.org/downloads) instead!**.
@@ -247,8 +247,8 @@ createConflict=Gate conflicts with existing gate
 ```
 
 # Changes
-#### [Version 0.10.9.1] UNIFIED LEGACY ESR -- 1.13.2 - 1.16.5
- - Backported this plugin to 1.16.5
+#### [Version 0.9.5.1] UNIFIED LEGACY ESR -- 1.8.8 - 1.12.2
+ - Backported this plugin to 1.8.8
  - This branch will now receive MINIMAL MAINTENANCE.
 #### [Version 0.10.8.1] LCLO Fork
  - Fixed a compilation error impacting fresh installs.
