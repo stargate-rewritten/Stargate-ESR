@@ -1,11 +1,16 @@
 > **Note that a** [support discord](https://sgrewritten.org/discord) **has now been created!**
 
-> **THIS IS AN [EXTENDED SUPPORT RELEASE](https://sgrewritten.org/esr) FOR VERSIONS 1.1-1.4.7!**<br>
-> **This version extends Drakia's original 2013 codebase, with some backported fixes**.<br>
+> **THIS IS AN [EXTENDED SUPPORT RELEASE](https://sgrewritten.org/esr) FOR VERSIONS b1.1-b1.8.1!**<br>
+> **This version backports Drakia's original 2013 codebase and some downstream fixes**.<br>
 > **THIS VERSION WILL RECEIVE NO SUPPORT BEYOND CRITICAL BUG FIXES**<br><br>
 > **For modern versions of stargate, please look [here](https://sgrewritten.org/downloads) instead!**.
 
+# !!! Work in Progress !!! -- Early Dev Build!
+
+
+
 # Description
+
 Create gates that allow for instant-teleportation between large distances. Gates can be always-open or triggered; they can share a network or be split into clusters; they can be hidden on a network or accessible to everybody.
 
 - Player permissions -- let players build their own networks.
@@ -19,7 +24,7 @@ Create gates that allow for instant-teleportation between large distances. Gates
 - Shortly after this plugin was dropped by TheDgtl, the DustCore network made a fork with tweaks, maven, and CI.
 - MCLive forked DustCore's version some time later, updating it to spigot and patched a few bugs.
 - TownyKingdoms forked MCLive's version a few years later, making minor tweaks to support newer versions of MC.
-- This is an EXTENDED SUPPORT VERSION, backported to 1.5.2-1.7.10 and minimally maintained by [SGR](https://sgrewritten.org).
+- This is an EXTENDED SUPPORT VERSION, backported to b1.1-b1.8.1 and minimally maintained by [SGR](https://sgrewritten.org).
 
 Permissions
 =============
@@ -120,12 +125,12 @@ Gate networks:
  - You can specify (and create) your own network on the third line of the sign when making a new gate.
  - Gates on one network will not see gates on the second network, and vice versa.
  - Gates on different worlds, but in the same network, will see eachother.
- 
+
 Hidden Gates:
  - Hidden gates are like normal gates, but only show on the destination list of other gates under certain conditions.
  - A hidden gate is only visible to the creator of the gate, or somebody with the stargate.hidden permission.
  - Set the 4th line of the stargate sign to 'H' to make it a hidden gate.
- 
+
 iConomy Support:
  The latest version of Stargate has support for iConomy. Gate creation, destruction and use can all have different costs associated with them. You can also define per-gate layout costs. The default cost is assigned in the config.yml file, while the per-gate costs re defined in the .gate files. To define a certain cost to a gate just add these lines to your .gate file:
 usecost=5
@@ -160,7 +165,7 @@ You will also notice a "*" in the gate layout, this is the "exit point" of the g
 As of version 0.5.5 you can supply block data in the format
 X=35:15
 Which would only allow black wool. If no data is supplied any version of a block will work (Any color of wool for example)
- 
+
 
 
 Configuration
@@ -227,8 +232,8 @@ createConflict=Gate conflicts with existing gate
 
 Changes
 =============
-#### [Version 0.7.10.1] UNIFIED LEGACY ESR -- 1.1 - 1.4.7
- - Backported this plugin to 1.5.2
+#### [Version 0.6.11.1] UNIFIED LEGACY ESR -- b1.1 - b1.8.1
+ - Backported this plugin to b1.1
  - This branch will now receive MINIMAL MAINTENANCE.
 [Version 0.8.0.3] TownyKingdoms Fork
 *(Originally Packaged as 0.7.9.11-TKPublic)*
