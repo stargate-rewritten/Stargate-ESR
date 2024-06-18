@@ -5,7 +5,7 @@
     <groupId>org.TheDgtl</groupId>
     <artifactId>Stargate</artifactId>
     <version>0.10.9.1-ESR</version>
-    <name>StarGate</name>
+    <name>Stargate</name>
     <description>The Extended Support Release for Stargate, targeting versions 1.13 - 1.16.</description>
 
     <properties>
